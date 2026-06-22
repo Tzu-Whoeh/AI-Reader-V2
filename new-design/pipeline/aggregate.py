@@ -12,7 +12,7 @@ def aggregate(store):
             "characters": m.get("characters",[]),
             "items": m.get("items",[]),
             "locations": m.get("locations",[]),
-            "events": m.get("events",[]),
+            "events": m.get("parent_events", m.get("events",[])),  # 新流程用 parent_events
             "scenes": m.get("scenes",[]),
             "_chapter": ch,
             "character_relations": m.get("character_relations",[]),
