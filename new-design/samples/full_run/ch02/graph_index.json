@@ -1,0 +1,724 @@
+{
+  "adjacency": {
+    "character:1": {
+      "rel:social→": [
+        "character:4",
+        "character:6",
+        "character:2"
+      ],
+      "rel:affective→": [
+        "character:4"
+      ],
+      "rel:kin→": [
+        "character:6"
+      ],
+      "rel:attitude←": [
+        "character:4"
+      ],
+      "rel:attitude→": [
+        "character:4",
+        "character:4"
+      ],
+      "参与事件": [
+        "event:0",
+        "event:1",
+        "event:2",
+        "event:3",
+        "event:4",
+        "event:sub1.0",
+        "event:sub1.1",
+        "event:sub2.0",
+        "event:sub2.1",
+        "event:sub2.3",
+        "event:sub3.1",
+        "event:sub4.2",
+        "event:sub4.3",
+        "event:sub4.5",
+        "event:sub4.6",
+        "event:sub5.2",
+        "event:sub5.3",
+        "event:sub5.4",
+        "event:sub5.5",
+        "event:sub5.6"
+      ]
+    },
+    "character:4": {
+      "rel:social←": [
+        "character:1"
+      ],
+      "rel:affective←": [
+        "character:1"
+      ],
+      "rel:event→": [
+        "character:5"
+      ],
+      "rel:attitude→": [
+        "character:1"
+      ],
+      "rel:attitude←": [
+        "character:1",
+        "character:1"
+      ],
+      "参与事件": [
+        "event:1",
+        "event:2",
+        "event:3",
+        "event:4",
+        "event:sub2.0",
+        "event:sub3.0",
+        "event:sub4.0",
+        "event:sub4.1",
+        "event:sub4.2",
+        "event:sub4.3",
+        "event:sub4.4",
+        "event:sub4.5",
+        "event:sub4.7",
+        "event:sub5.0",
+        "event:sub5.1",
+        "event:sub5.2",
+        "event:sub5.3",
+        "event:sub5.5",
+        "event:sub5.6",
+        "event:sub5.7"
+      ]
+    },
+    "character:6": {
+      "rel:kin←": [
+        "character:1"
+      ],
+      "rel:social←": [
+        "character:1"
+      ],
+      "参与事件": [
+        "event:sub1.2",
+        "event:sub2.2",
+        "event:sub4.9"
+      ]
+    },
+    "character:2": {
+      "rel:social←": [
+        "character:1"
+      ],
+      "参与事件": [
+        "event:0",
+        "event:sub1.3"
+      ]
+    },
+    "character:5": {
+      "rel:event←": [
+        "character:4"
+      ],
+      "参与事件": [
+        "event:2",
+        "event:sub4.8",
+        "event:sub4.9",
+        "event:sub4.10",
+        "event:sub4.11"
+      ]
+    },
+    "item:1": {
+      "位于": [
+        "location:1"
+      ],
+      "被事件涉及": [
+        "event:sub1.0"
+      ]
+    },
+    "location:1": {
+      "含物品": [
+        "item:1",
+        "item:2"
+      ],
+      "承载场景": [
+        "scene:1",
+        "scene:3"
+      ],
+      "loc:containment←": [
+        "location:3",
+        "location:4",
+        "location:6"
+      ],
+      "事件地点": [
+        "event:0",
+        "event:1",
+        "event:2"
+      ]
+    },
+    "item:2": {
+      "位于": [
+        "location:1"
+      ],
+      "部分属于": [
+        "item:4"
+      ]
+    },
+    "item:4": {
+      "包含部件": [
+        "item:2"
+      ],
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.0"
+      ]
+    },
+    "item:3": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub3.0",
+        "event:sub4.0"
+      ]
+    },
+    "location:4": {
+      "含物品": [
+        "item:3",
+        "item:4",
+        "item:5",
+        "item:6",
+        "item:7",
+        "item:8",
+        "item:9",
+        "item:10"
+      ],
+      "承载场景": [
+        "scene:4",
+        "scene:5"
+      ],
+      "loc:containment→": [
+        "location:6",
+        "location:1"
+      ],
+      "loc:movement←": [
+        "location:3"
+      ],
+      "loc:movement→": [
+        "location:6"
+      ],
+      "事件地点": [
+        "event:3",
+        "event:4"
+      ]
+    },
+    "item:5": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.4"
+      ]
+    },
+    "item:6": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.7"
+      ]
+    },
+    "item:7": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.9"
+      ]
+    },
+    "item:8": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.11"
+      ]
+    },
+    "item:9": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub4.12"
+      ]
+    },
+    "item:10": {
+      "位于": [
+        "location:4"
+      ],
+      "被事件涉及": [
+        "event:sub5.0"
+      ]
+    },
+    "scene:1": {
+      "发生于": [
+        "location:1"
+      ],
+      "含事件": [
+        "event:0",
+        "event:1"
+      ]
+    },
+    "scene:3": {
+      "发生于": [
+        "location:1"
+      ],
+      "含事件": [
+        "event:2"
+      ]
+    },
+    "scene:4": {
+      "发生于": [
+        "location:4"
+      ],
+      "含事件": [
+        "event:3"
+      ]
+    },
+    "scene:5": {
+      "发生于": [
+        "location:4"
+      ],
+      "含事件": [
+        "event:4"
+      ]
+    },
+    "location:3": {
+      "loc:containment→": [
+        "location:1"
+      ],
+      "loc:movement→": [
+        "location:4"
+      ]
+    },
+    "location:6": {
+      "loc:containment←": [
+        "location:4"
+      ],
+      "loc:containment→": [
+        "location:1"
+      ],
+      "loc:movement←": [
+        "location:4"
+      ],
+      "loc:movement→": [
+        "location:9"
+      ]
+    },
+    "location:5": {
+      "loc:adjacency→": [
+        "location:10"
+      ]
+    },
+    "location:10": {
+      "loc:adjacency←": [
+        "location:5",
+        "location:8"
+      ]
+    },
+    "location:8": {
+      "loc:adjacency→": [
+        "location:10"
+      ]
+    },
+    "location:9": {
+      "loc:movement←": [
+        "location:6"
+      ],
+      "loc:remote→": [
+        "location:2"
+      ]
+    },
+    "location:2": {
+      "loc:remote←": [
+        "location:9"
+      ]
+    },
+    "event:0": {
+      "参与者": [
+        "character:1",
+        "character:2"
+      ],
+      "发生场景": [
+        "scene:1"
+      ],
+      "发生地点": [
+        "location:1"
+      ],
+      "含子事件": [
+        "event:sub1.0",
+        "event:sub1.1",
+        "event:sub1.2"
+      ]
+    },
+    "event:1": {
+      "参与者": [
+        "character:1",
+        "character:4"
+      ],
+      "发生场景": [
+        "scene:1"
+      ],
+      "发生地点": [
+        "location:1"
+      ],
+      "含子事件": [
+        "event:sub1.3"
+      ]
+    },
+    "event:2": {
+      "参与者": [
+        "character:1",
+        "character:4",
+        "character:5"
+      ],
+      "发生场景": [
+        "scene:3"
+      ],
+      "发生地点": [
+        "location:1"
+      ],
+      "含子事件": [
+        "event:sub3.0",
+        "event:sub3.1"
+      ]
+    },
+    "event:3": {
+      "参与者": [
+        "character:1",
+        "character:4"
+      ],
+      "发生场景": [
+        "scene:4"
+      ],
+      "发生地点": [
+        "location:4"
+      ],
+      "含子事件": [
+        "event:sub4.0",
+        "event:sub4.1",
+        "event:sub4.2",
+        "event:sub4.3",
+        "event:sub4.4",
+        "event:sub4.5",
+        "event:sub4.6",
+        "event:sub4.7"
+      ]
+    },
+    "event:4": {
+      "参与者": [
+        "character:1",
+        "character:4"
+      ],
+      "发生场景": [
+        "scene:5"
+      ],
+      "发生地点": [
+        "location:4"
+      ],
+      "含子事件": [
+        "event:sub5.0",
+        "event:sub5.1",
+        "event:sub5.2",
+        "event:sub5.3",
+        "event:sub5.4",
+        "event:sub5.5",
+        "event:sub5.6",
+        "event:sub5.7"
+      ]
+    },
+    "event:sub1.0": {
+      "涉及物品": [
+        "item:1"
+      ],
+      "参与者": [
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:0"
+      ]
+    },
+    "event:sub1.1": {
+      "参与者": [
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:0"
+      ]
+    },
+    "event:sub1.2": {
+      "参与者": [
+        "character:6"
+      ],
+      "子事件属于": [
+        "event:0"
+      ]
+    },
+    "event:sub1.3": {
+      "参与者": [
+        "character:2"
+      ],
+      "子事件属于": [
+        "event:1"
+      ]
+    },
+    "event:sub2.0": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ]
+    },
+    "event:sub2.1": {
+      "参与者": [
+        "character:1"
+      ]
+    },
+    "event:sub2.2": {
+      "参与者": [
+        "character:6"
+      ]
+    },
+    "event:sub2.3": {
+      "参与者": [
+        "character:1"
+      ]
+    },
+    "event:sub3.0": {
+      "涉及物品": [
+        "item:3"
+      ],
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:2"
+      ]
+    },
+    "event:sub3.1": {
+      "参与者": [
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:2"
+      ]
+    },
+    "event:sub4.0": {
+      "涉及物品": [
+        "item:3",
+        "item:4"
+      ],
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.1": {
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.2": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.3": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.4": {
+      "涉及物品": [
+        "item:5"
+      ],
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.5": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.6": {
+      "参与者": [
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.7": {
+      "涉及物品": [
+        "item:6"
+      ],
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:3"
+      ]
+    },
+    "event:sub4.8": {
+      "参与者": [
+        "character:5"
+      ]
+    },
+    "event:sub4.9": {
+      "涉及物品": [
+        "item:7"
+      ],
+      "参与者": [
+        "character:6",
+        "character:5"
+      ]
+    },
+    "event:sub4.10": {
+      "参与者": [
+        "character:5"
+      ]
+    },
+    "event:sub4.11": {
+      "涉及物品": [
+        "item:8"
+      ],
+      "参与者": [
+        "character:5"
+      ]
+    },
+    "event:sub4.12": {
+      "涉及物品": [
+        "item:9"
+      ]
+    },
+    "event:sub5.0": {
+      "涉及物品": [
+        "item:10"
+      ],
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.1": {
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.2": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.3": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.4": {
+      "参与者": [
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.5": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.6": {
+      "参与者": [
+        "character:4",
+        "character:1"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    },
+    "event:sub5.7": {
+      "参与者": [
+        "character:4"
+      ],
+      "子事件属于": [
+        "event:4"
+      ]
+    }
+  },
+  "labels": {
+    "character:1": "华剑雄",
+    "character:2": "老赵",
+    "character:3": "丁主任",
+    "character:4": "武田勇夫",
+    "character:5": "无名女人",
+    "character:6": "日本义父",
+    "item:1": "雪佛来轿车",
+    "item:2": "长条刑凳",
+    "item:3": "三角烙铁",
+    "item:4": "碳火盆",
+    "item:5": "手表",
+    "item:6": "铁口杯",
+    "item:7": "铁钳",
+    "item:8": "绳子",
+    "item:9": "衣物",
+    "item:10": "衣服",
+    "location:1": "虹口日本宪兵司令部",
+    "location:2": "７６号",
+    "location:3": "二楼办公室",
+    "location:4": "地下刑讯室",
+    "location:5": "花园",
+    "location:6": "地下通道",
+    "location:7": "走廊",
+    "location:8": "柳月仿",
+    "location:9": "虹口",
+    "location:10": "草坪",
+    "scene:1": "抵达宪兵部",
+    "scene:2": "回忆受宠原因",
+    "scene:3": "寻找武田并进入刑讯室",
+    "scene:4": "观察刑讯与内心独白",
+    "scene:5": "告别与离去",
+    "event:0": "华剑雄抵达宪兵部",
+    "event:1": "华剑雄得知武田在刑讯",
+    "event:2": "华剑雄进入刑讯室",
+    "event:3": "武田向华剑雄道歉",
+    "event:4": "武田邀华剑雄饮酒"
+  }
+}
