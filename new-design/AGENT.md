@@ -1,0 +1,90 @@
+# AGENT.md · new-design 叙事分析框架 协作手册
+
+本文件给在本仓库 `new-design/` 下工作的 AI agent。讲红线、纪律、命名约定、已知坑,
+不重复使用说明 —— 怎么跑看 `APP_USAGE.md`,浏览器看 `BROWSER_USAGE.md`,架构看 `README.md`。
+
+## 0. 一句话定位
+
+中文叙事文本(网文/小说)结构化分析框架。原则:**模型做判断、代码兜底校验、不确定项交人工**。
+任何改动不得破坏这条 —— 尤其不能把"代码确定性校验"退化成"再过一次模型"。
+
+## 1. 真正的入口与模块地图
+
+| 文件 | 角色 | 备注 |
+|---|---|---|
+| `pipeline/app.py` | **全流程主入口** | 清洗→拆章→逐章六维度+事件→逐章后处理→全局聚合;断点续跑;单章错误隔离 |
+| `pipeline/event_pipeline.py` | 两层事件抽取 | 父事件(章级)+子事件(场景级)+两道校验 |
+| `pipeline/merge_core.py` | 章节内归并 | 锚点校验 + 跨维度 id 解析 + sanitize_items;**纯确定性** |
+| `pipeline/cross_chapter.py` | 跨章缝合 | 并查集全局实体归一 + 个人时间线 + 同步点 + 歧义报告 |
+| `pipeline/entity_normalize.py` | 脏人名归一 | 符号归一 + 名字相似×上下文佐证 + role_conflict 防误合 |
+| `pipeline/aggregate.py` | 全局分维度聚合 | 跨章后每维度一个全局文件 |
+| `pipeline/clean_split.py` | 清洗+拆章 | 确定性,规则在 NOISE_PATTERNS / CHAPTER_PATTERNS |
+| `pipeline/graph_index.py` | 全向图索引 | **逐章**建图(谁指向我/我连到谁);在 `analyze_chapter` 内调用 |
+| `pipeline/gap_scan.py` | 漏标疑点扫描 | **逐章**找疑点(只报不改);在 `analyze_chapter` 内调用 |
+| `pipeline/storage.py` | 三层产物落盘契约 | output/chNN/* 与 output/global/* |
+| `pipeline/server.py` | 可视化后端 | 纯标准库 http.server,零三方依赖 |
+
+⚠️ `pipeline/orchestrator.py` 是**遗留四维度旧版**(用旧中文提示词名、不跑事件/跨章/落盘)。
+新工作一律以 `app.py` 为准。除非明确要清理遗留代码,否则不要改它、也不要参照它写新逻辑。
+
+## 2. 命名约定(踩过的坑,务必遵守)
+
+- 提示词文件用 `prompts/` 下的**编号英文名**:`01_scene_splitting.txt`、`02_character_pass1_recognition.txt` …
+  `app.py`/`event_pipeline.py` 按这套名加载。**不要**用 README/docs/07 里出现的中文名
+  (`人物分析_Pass1_*.txt`、`事件分析_Pass1_*.txt`)—— 那是历史残留,会 FileNotFoundError。
+- 候选清单注入提示词时用**纯数字 id**(不加 C/I/L 前缀),否则模型会照抄前缀导致连线值非数字。
+- 物品关系字段:一对一用 `part_of`,平级成套用 `set_group`。
+
+## 3. 不可动摇的可靠性四道防线
+
+改任何东西前先确认没削弱这四条 —— 它们是本框架根除幻觉的核心:
+
+1. **锚点校验**(`merge_core.anchor_clean` / 事件 `anchor_text` 句内校验):
+   所有 mention/alias/事件物品必须**逐字出现在原文**,否则剔除并记入 `_validation`。
+2. **id 引用**:Pass2 / 跨章 / 子事件只能引用已存在的 id,机制上无法凭空造实体。
+3. **绝对时间纪律**:只认原文字面时间,无明确日期一律 null,绝不推算。
+4. **歧义交人工**:跨章/脏名非高置信归并全进 `ambiguities`,代码不擅自终裁。
+
+## 4. 调用配置(动模型参数前对齐)
+
+模型 `huihui_ai/Qwen3.6-abliterated:35b`;`format:"json"`(必须,否则全角标点污染 JSON 结构位)、
+`think:false`、`stream:false`;temperature 场景 0.15 / 其余 0.12;
+`app.py` 整章 `num_ctx=49152`,`event_pipeline` 默认 8192。
+平台环境替换各文件的 `call_model()`(并对事件管道 `EP.call_model=...`)。
+
+## 5. 逐章后处理(确定性,挂在章节产物上)
+
+`analyze_chapter` 在事件抽取后做两步纯确定性后处理(不调模型),结果写进该章 `_merged.json`:
+
+- `_graph` ← `graph_index.build_graph(merged, ev)`:全向邻接表,任意节点一跳列出全部邻居。
+- `_gap_suspects` ← `gap_scan.scan(text, merged, ev)`:漏标疑点清单(人物出现未挂事件 / 物品漏挂场景 /
+  owner 未匹配 / 关系 id 悬空)。只报不改,供定向补抽。
+- 两步各自 try/except 隔离:任一失败只记入 `_postproc_errors`,不影响该章主产物落盘。
+
+## 6. 已知坑 / 待修(改前先看,别重复踩)
+
+- **container 关系靠关键字黑白名单**(`sanitize_items` 的 PLACE_WORDS/CONTAINER_WORDS):
+  词表外的容器(行李/麻袋等)会漏,需随语料维护;README 已承认会过度标注。
+- **跨章并查集 O(n²)**(`cross_chapter.resolve_global_entities`):长篇全本要留意性能。
+- **长章多块的块内跨块实体归一**:接口预留未实现,短章无需;要做复用并查集逻辑。
+- **文档"五维度 vs 六维度"口径不一**:事件其实是第六个一等中枢,README 标题仍写五维度。
+- **历史样本用旧 `events` 键**:`samples/` 里部分 `_merged.json` 用顶层 `events`;新流程产出
+  `parent_events`/`sub_events`。`aggregate.py` 已兼容(`m.get("parent_events", m.get("events",[]))`),
+  但读旧样本的新代码要注意这个键名差异。
+
+## 7. 改这个项目的工作纪律
+
+- **改提示词**:先在 `samples/` 的真实文本上验证;稳定性测试(同 prompt 跑 3 次)+
+  泛化测试(结构不同的文本)再定稿。停在边际收益递减处,别过度工程化 prompt ——
+  优先用后处理校验脚本兜底,而不是把规则全堆进 prompt。
+- **改归并/校验/后处理代码**:保持纯确定性,不得引入二次模型调用。
+- **改清洗/拆章规则**:动 NOISE_PATTERNS / CHAPTER_PATTERNS 后,在多个结构不同的样本上验证不误删/误切。
+- **验证产物**:对照 `samples/full_run/` 的三层结构;改落盘逻辑先核 `storage.py` 路径契约。
+- **提交方式**:严肃改走 feature 分支 + PR + squash merge;多文件改用一次原子 commit,
+  不要 N 次写 main 产生中间红 commit。
+
+## 8. 部署相关(本框架在 AI-Reader-V2 中的位置)
+
+- 默认直连 Ollama `127.0.0.1:11434`;线上经 ops 平台 / 隧道调用时替换 `call_model()`。
+- 可视化 `server.py` 纯标准库,可独立起在任意有 output/ 与原文的机器上。
+- 改部署/服务配置前报计划等批准(L4 自治档:改 server 配置属"先告诉用户等 OK"类)。

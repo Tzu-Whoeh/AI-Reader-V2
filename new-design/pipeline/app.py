@@ -102,6 +102,15 @@ def analyze_chapter(text):
     ev=EP.analyze_events(text, merged["scenes"], merged["characters"], merged["items"])
     merged["parent_events"]=ev["parent_events"]
     merged["sub_events"]=ev["sub_events"]
+    # 确定性后处理(不调模型):逐章建全向图索引 + 漏标疑点扫描,挂进本章产物
+    try:
+        merged["_graph"]=graph_index.build_graph(merged, ev)
+    except Exception as e:
+        merged["_graph"]=None; merged.setdefault("_postproc_errors",[]).append(f"graph_index: {e}")
+    try:
+        merged["_gap_suspects"]=gap_scan.scan(text, merged, ev)
+    except Exception as e:
+        merged["_gap_suspects"]=[]; merged.setdefault("_postproc_errors",[]).append(f"gap_scan: {e}")
     return merged
 
 def load_presplit(dir_path):

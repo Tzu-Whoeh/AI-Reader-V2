@@ -1,5 +1,4 @@
 """全局分维度聚合:读所有章节 _merged,跨章归一,每维度输出一个全局文件。"""
-import sys; sys.path.insert(0,'/tmp')
 import cross_chapter as cc
 import entity_normalize as EN
 
