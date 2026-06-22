@@ -83,17 +83,31 @@ def extract_sub_events(fulltext, scenes, parents, characters, items,
             # 过滤越界 participants
             se["participants"]=[p for p in se.get("participants",[]) if p in cids]
             # (b) 物品锚点校验: items 必须出现在 anchor_text 句内
+            # (c) 场景一致性: 物品所属 scene 与子事件 scene 不符 → 疑似 id 复用(同名不同个体)
+            #     标记到 se["_item_warnings"],并从 items 剔除明显错配的(物品scene与本场景完全无交集)
             anc=se.get("anchor_text","")
-            if anc:
-                kept=[]
-                for iid in se.get("items",[]):
-                    if iid not in item_by_id: continue
-                    names=[item_by_id[iid]["name"]]+item_by_id[iid].get("mentions",[])
-                    if any(n and n in anc for n in names):
-                        kept.append(iid)
-                se["items"]=kept
-            else:
-                se["items"]=[i for i in se.get("items",[]) if i in item_by_id]
+            cur_scene=s["index"]
+            kept=[]; warnings=[]
+            cand=se.get("items",[]) if anc else [i for i in se.get("items",[]) if i in item_by_id]
+            for iid in cand:
+                if iid not in item_by_id: continue
+                it=item_by_id[iid]
+                names=[it["name"]]+it.get("mentions",[])
+                # 锚点:物品名须在 anchor_text 里(无anchor则跳过此项)
+                if anc and not any(n and n in anc for n in names):
+                    continue
+                # 场景一致性:物品 scene 与当前子事件场景比对
+                isc=it.get("scene")
+                isc_set=set(isc) if isinstance(isc,list) else ({isc} if isc is not None else set())
+                if isc_set and cur_scene not in isc_set:
+                    # 物品属于别的场景却被本场景子事件引用 → 大概率 id 复用(同名不同个体)
+                    warnings.append({"item_id":iid,"name":it["name"],
+                                     "item_scene":isc,"event_scene":cur_scene,
+                                     "reason":"物品所属场景与事件场景不符,疑似同名不同个体的id复用"})
+                    continue  # 剔除错配引用
+                kept.append(iid)
+            se["items"]=kept
+            if warnings: se["_item_warnings"]=warnings
         subs[s["index"]]=evs
     return subs
 
