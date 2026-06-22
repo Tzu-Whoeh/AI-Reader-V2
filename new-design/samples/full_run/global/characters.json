@@ -1,0 +1,577 @@
+{
+  "global_characters": [
+    {
+      "global_id": 1,
+      "canonical": "华剑雄",
+      "all_names": [
+        "他",
+        "剑雄君",
+        "华剑雄",
+        "华处长",
+        "老子"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 1
+        },
+        {
+          "chapter": 2,
+          "local_id": 1
+        }
+      ]
+    },
+    {
+      "global_id": 2,
+      "canonical": "老头子",
+      "all_names": [
+        "周老板",
+        "老头子"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 3,
+      "canonical": "柳媚",
+      "all_names": [
+        "柳媚"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 4,
+      "canonical": "汪主席",
+      "all_names": [
+        "汪主席",
+        "汪政府"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 5,
+      "canonical": "大使",
+      "all_names": [
+        "大使",
+        "特命全权大使",
+        "老家伙"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 6,
+      "canonical": "萧红",
+      "all_names": [
+        "萧红"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 6
+        }
+      ]
+    },
+    {
+      "global_id": 7,
+      "canonical": "裴仁基",
+      "all_names": [
+        "裴仁基"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 7
+        }
+      ]
+    },
+    {
+      "global_id": 8,
+      "canonical": "颜雨",
+      "all_names": [
+        "颜雨"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 8
+        }
+      ]
+    },
+    {
+      "global_id": 9,
+      "canonical": "老赵",
+      "all_names": [
+        "司机",
+        "老赵"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 10,
+      "canonical": "丁主任",
+      "all_names": [
+        "丁",
+        "丁主任"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 11,
+      "canonical": "武田勇夫",
+      "all_names": [
+        "武田",
+        "武田勇夫",
+        "武田君"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 12,
+      "canonical": "无名女人",
+      "all_names": [
+        "无名女人",
+        "那女人"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 13,
+      "canonical": "日本义父",
+      "all_names": [
+        "义父",
+        "日本义父"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 6
+        }
+      ]
+    }
+  ],
+  "character_timelines": {
+    "2": [
+      {
+        "seq": 1,
+        "event_id": 1,
+        "chapter": 1,
+        "desc": "老头子召回华剑雄",
+        "is_flashback": false
+      }
+    ],
+    "1": [
+      {
+        "seq": 1,
+        "event_id": 2,
+        "chapter": 1,
+        "desc": "华剑雄回忆长春之行起因",
+        "is_flashback": true
+      },
+      {
+        "seq": 2,
+        "event_id": 4,
+        "chapter": 1,
+        "desc": "华剑雄在长春逗留一月",
+        "is_flashback": true
+      },
+      {
+        "seq": 3,
+        "event_id": 5,
+        "chapter": 1,
+        "desc": "华剑雄离开长春当晚大使被刺",
+        "is_flashback": true
+      },
+      {
+        "seq": 4,
+        "event_id": 6,
+        "chapter": 1,
+        "desc": "华剑雄去长春前传递情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 5,
+        "event_id": 7,
+        "chapter": 1,
+        "desc": "华剑雄在长春与颜雨保持关系并逗留",
+        "is_flashback": true
+      },
+      {
+        "seq": 6,
+        "event_id": 1,
+        "chapter": 1,
+        "desc": "老头子召回华剑雄",
+        "is_flashback": false
+      },
+      {
+        "seq": 7,
+        "event_id": 8,
+        "chapter": 1,
+        "desc": "华剑雄看钟准备赴约",
+        "is_flashback": false
+      },
+      {
+        "seq": 8,
+        "event_id": 13,
+        "chapter": 2,
+        "desc": "华剑雄回忆昨日约酒送情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 9,
+        "event_id": 9,
+        "chapter": 2,
+        "desc": "轿车抵达宪兵司令部",
+        "is_flashback": false
+      },
+      {
+        "seq": 10,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      },
+      {
+        "seq": 11,
+        "event_id": 11,
+        "chapter": 2,
+        "desc": "华剑雄得知武田在刑讯室",
+        "is_flashback": false
+      },
+      {
+        "seq": 12,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      },
+      {
+        "seq": 13,
+        "event_id": 15,
+        "chapter": 2,
+        "desc": "华剑雄与武田一同离开",
+        "is_flashback": false
+      }
+    ],
+    "4": [
+      {
+        "seq": 1,
+        "event_id": 3,
+        "chapter": 1,
+        "desc": "汪主席在东京定大计",
+        "is_flashback": true
+      }
+    ],
+    "5": [
+      {
+        "seq": 1,
+        "event_id": 5,
+        "chapter": 1,
+        "desc": "华剑雄离开长春当晚大使被刺",
+        "is_flashback": true
+      }
+    ],
+    "6": [
+      {
+        "seq": 1,
+        "event_id": 6,
+        "chapter": 1,
+        "desc": "华剑雄去长春前传递情报",
+        "is_flashback": true
+      }
+    ],
+    "8": [
+      {
+        "seq": 1,
+        "event_id": 7,
+        "chapter": 1,
+        "desc": "华剑雄在长春与颜雨保持关系并逗留",
+        "is_flashback": true
+      }
+    ],
+    "9": [
+      {
+        "seq": 1,
+        "event_id": 9,
+        "chapter": 2,
+        "desc": "轿车抵达宪兵司令部",
+        "is_flashback": false
+      },
+      {
+        "seq": 2,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      }
+    ],
+    "10": [
+      {
+        "seq": 1,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      }
+    ],
+    "11": [
+      {
+        "seq": 1,
+        "event_id": 13,
+        "chapter": 2,
+        "desc": "华剑雄回忆昨日约酒送情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 2,
+        "event_id": 11,
+        "chapter": 2,
+        "desc": "华剑雄得知武田在刑讯室",
+        "is_flashback": false
+      },
+      {
+        "seq": 3,
+        "event_id": 12,
+        "chapter": 2,
+        "desc": "武田刑讯无名女人（进行中）",
+        "is_flashback": false
+      },
+      {
+        "seq": 4,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      },
+      {
+        "seq": 5,
+        "event_id": 15,
+        "chapter": 2,
+        "desc": "华剑雄与武田一同离开",
+        "is_flashback": false
+      }
+    ],
+    "12": [
+      {
+        "seq": 1,
+        "event_id": 12,
+        "chapter": 2,
+        "desc": "武田刑讯无名女人（进行中）",
+        "is_flashback": false
+      },
+      {
+        "seq": 2,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      }
+    ]
+  },
+  "relations": [
+    {
+      "from_id": 2,
+      "to_id": 1,
+      "relation_type": "social",
+      "label": "上级派遣下属",
+      "evidence": "周老板亲自点名派他去的...华剑雄是76号所有人员的负责人。",
+      "confidence": "high",
+      "from_global": 2,
+      "to_global": 1,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "attitude",
+      "label": "对上司感到紧张敬畏",
+      "evidence": "每次见老头子他都说不出的紧张，外人看不出来。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 2,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 5,
+      "relation_type": "social",
+      "label": "曾共同饮酒的熟人",
+      "evidence": "那个大使和他一起喝过好几次酒...是个清瘦的老家伙。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 5,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "event",
+      "label": "通过萧红传递情报",
+      "evidence": "把汪伪要和伪满洲国谈判建交的情报...通过萧红传递给重庆方面。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 6,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 8,
+      "relation_type": "affective",
+      "label": "保持肉体关系与爱慕",
+      "evidence": "保持着特殊的关系...不知是基于对华剑雄的爱慕，还是受了什么人的指使。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 8,
+      "chapter": 1
+    },
+    {
+      "from_id": 8,
+      "to_id": 1,
+      "relation_type": "awareness",
+      "label": "知其表面职务不知秘密使命",
+      "evidence": "只知道华剑雄已经投入到汪伪的76号并身居要职，但并不知道华剑雄的秘密使命。",
+      "confidence": "high",
+      "from_global": 8,
+      "to_global": 1,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "social",
+      "label": "表面朋友实为监视对象",
+      "evidence": "华剑雄对武田彬彬有礼，内心觉得好笑并观察其动静。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "affective",
+      "label": "交情深厚/约定饮酒",
+      "evidence": "两人有约，武田向华剑雄道歉并拍肩邀饮。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "kin",
+      "label": "义父子关系",
+      "evidence": "华剑雄的多年未见的日本籍义父。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 13,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "social",
+      "label": "受义父影响获信任",
+      "evidence": "日本义父起到很大作用，使华剑雄受到绝对信任。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 13,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "social",
+      "label": "主仆关系",
+      "evidence": "老赵是华剑雄的司机，曾半开玩笑评价。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 9,
+      "chapter": 2
+    },
+    {
+      "from_id": 4,
+      "to_id": 5,
+      "relation_type": "event",
+      "label": "刑讯折磨",
+      "evidence": "武田用烙铁压住女人胸脯，使其痛苦不堪。",
+      "confidence": "high",
+      "from_global": 11,
+      "to_global": 12,
+      "chapter": 2
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "attitude",
+      "label": "对华剑雄露出笑容/道歉",
+      "evidence": "武田眼神缓和，对华剑雄露出难看的笑容并道歉。",
+      "confidence": "high",
+      "from_global": 11,
+      "to_global": 1,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "觉得武田好笑/虚伪",
+      "evidence": "华剑雄觉得明明是野兽却做出彬彬有礼的样子，很是好笑。",
+      "confidence": "high",
+      "from_global": 1,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "调侃武田公务繁忙",
+      "evidence": "华剑雄轻飘飘回答，听出或故意忽略武田的客套。",
+      "confidence": "medium",
+      "from_global": 1,
+      "to_global": 11,
+      "chapter": 2
+    }
+  ],
+  "ambiguities": []
+}

@@ -1,0 +1,60 @@
+{
+  "relations": [
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "办公室在76号内",
+      "evidence": "华剑雄回到办公室...汪伪政府自己也知道和伪满洲国建交之事必定是惹得全国人神共愤，所以下令７６号全力保障使团的安全。"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "containment",
+      "label": "长春属于伪满洲国",
+      "evidence": "南京政府派去长春使节团...和伪满洲国谈判...在长春的近郊僻静之所选择了一所深宅大院作为大使官邸"
+    },
+    {
+      "from_id": 7,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "大使官邸位于长春近郊",
+      "evidence": "在长春的近郊僻静之所选择了一所深宅大院作为大使官邸"
+    },
+    {
+      "from_id": 6,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "76号位于上海",
+      "evidence": "他在上海也是诸事缠身...７６号许多事情眼看要停摆"
+    },
+    {
+      "from_id": 10,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "办公室位于上海",
+      "evidence": "回到办公室...老头子只好在谈判大功告成、即将举行签约仪式之际把他召回了上海。"
+    },
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从76号办公室出发",
+      "evidence": "华剑雄独自一个人坐在办公桌后面...匆匆的站起身，穿好外衣"
+    },
+    {
+      "from_id": 10,
+      "to_id": 9,
+      "relation_type": "remote",
+      "label": "办公室与重庆情报关联",
+      "evidence": "通过萧红传递给重庆方面...按理说，重庆方面知道自己负责警卫"
+    },
+    {
+      "from_id": 10,
+      "to_id": 5,
+      "relation_type": "remote",
+      "label": "办公室与东京决策关联",
+      "evidence": "汪主席早已在东京和日本人当面定下大计...华剑雄独自一个人坐在办公桌后面"
+    }
+  ]
+}

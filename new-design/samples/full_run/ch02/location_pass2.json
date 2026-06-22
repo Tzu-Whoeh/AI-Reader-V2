@@ -1,0 +1,84 @@
+{
+  "relations": [
+    {
+      "from_id": 3,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "二楼办公室在司令部内",
+      "evidence": "宪兵司令部二楼办公室里",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "地下刑讯室在通道内",
+      "evidence": "通道两边排列着十余间刑讯室",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下刑讯室在司令部内",
+      "evidence": "武田在地下刑讯室里...提到虹口的武田",
+      "confidence": "high"
+    },
+    {
+      "from_id": 6,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下通道属于司令部",
+      "evidence": "穿过宪兵司令部花园...下到宽敞的地下通道里",
+      "confidence": "high"
+    },
+    {
+      "from_id": 5,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "草坪紧邻花园区域",
+      "evidence": "巨大的花园和草坪...青草繁花之下",
+      "confidence": "high"
+    },
+    {
+      "from_id": 8,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "柳月仿与76号相邻",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium"
+    },
+    {
+      "from_id": 3,
+      "to_id": 4,
+      "relation_type": "movement",
+      "label": "从办公室前往刑讯室",
+      "evidence": "没找到...武田在地下刑讯室里...华剑雄推开沉重的铁门走了进去",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从刑讯室走出至通道",
+      "evidence": "走出闷热得令华剑雄浑身冒汗的刑讯室...走出地下通道",
+      "confidence": "high"
+    },
+    {
+      "from_id": 6,
+      "to_id": 9,
+      "relation_type": "movement",
+      "label": "从司令部前往柳月仿",
+      "evidence": "去柳月仿喝上几杯...钻进了他那辆黑色雪佛来",
+      "confidence": "high"
+    },
+    {
+      "from_id": 9,
+      "to_id": 2,
+      "relation_type": "remote",
+      "label": "情节往返于两地之间",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium"
+    }
+  ]
+}

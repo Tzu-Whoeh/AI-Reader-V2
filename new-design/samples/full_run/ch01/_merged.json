@@ -1,0 +1,705 @@
+{
+  "scenes": [
+    {
+      "index": 1,
+      "title": "归家与回忆起笔",
+      "type": "现实叙述",
+      "location": "办公室",
+      "summary": "华剑雄回到上海办公室，感到紧张疲惫，开始回想长春之行的经历。",
+      "start_text": "从老头子那里出来",
+      "end_text": "回想起这次长春之行的种种情形",
+      "location_ref": {
+        "location_id": 10,
+        "matched": "办公室"
+      }
+    },
+    {
+      "index": 2,
+      "title": "长春往事回放",
+      "type": "回忆",
+      "location": "长春",
+      "summary": "回顾被派往长春的任务背景、谈判细节以及大使遇刺的突发变故。",
+      "start_text": "去长春也是周老板亲自点名派他去的",
+      "end_text": "居然被人刺杀了",
+      "location_ref": {
+        "location_id": 1,
+        "matched": "长春"
+      }
+    },
+    {
+      "index": 3,
+      "title": "局势分析与内心盘算",
+      "type": "内心独白",
+      "location": "办公室",
+      "summary": "华剑雄分析大使身份、各方势力及颜雨的关系，思考如何脱身与应对。",
+      "start_text": "那个大使和他一起喝过好几次酒",
+      "end_text": "仍冒着华剑雄翻脸抓人的风险与他保持着肉体关系",
+      "location_ref": {
+        "location_id": 10,
+        "matched": "办公室"
+      }
+    },
+    {
+      "index": 4,
+      "title": "情绪爆发与决心",
+      "type": "内心独白",
+      "location": "办公室",
+      "summary": "对华剑雄对抢功者发狠，确立保存自己的原则，并决定弄清情况。",
+      "start_text": "想得实在是心烦",
+      "end_text": "何况性命攸关",
+      "location_ref": {
+        "location_id": 10,
+        "matched": "办公室"
+      }
+    },
+    {
+      "index": 5,
+      "title": "准备出门行动",
+      "type": "动作",
+      "location": "办公室",
+      "summary": "华剑雄写密信、藏糖，检查手枪，叫司机准备外出赴约。",
+      "start_text": "「咚咚……」墙上的自鸣钟响了起来",
+      "end_text": "开门叫来了司机",
+      "location_ref": {
+        "location_id": 10,
+        "matched": "办公室"
+      }
+    }
+  ],
+  "characters": [
+    {
+      "id": 1,
+      "name": "华剑雄",
+      "aliases": [
+        "老子",
+        "他"
+      ],
+      "confidence": "high",
+      "role": "周老板点名派去的76号所有人员的负责人，负责长春使节团警卫及后续刺杀案调查。",
+      "evidence": "文中多次以'华剑雄'为主语叙述其心理活动与行动；'老子'为自称且语境明确指向说话者本人。",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "老头子",
+      "aliases": [
+        "周老板"
+      ],
+      "confidence": "high",
+      "role": "76号最高长官，华剑雄的上司。",
+      "evidence": "'从老头子那里出来'与'去长春也是周老板亲自点名派他去的'形成对应；且文中明确说'他是周老板点名派去的...负责人'并提及'老头子只好...把他召回'。",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "柳媚",
+      "aliases": [],
+      "confidence": "high",
+      "role": "华剑雄办公室中的人物，文中提到其踪影但未详细展开。",
+      "evidence": "'没看到柳媚的踪影'，作为具体人名出现。",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "汪主席",
+      "aliases": [
+        "汪政府"
+      ],
+      "confidence": "medium",
+      "role": "汪伪政府领导人，在东京与日本人定下大计。",
+      "evidence": "'汪主席早已在东京和日本人当面定下大计'；后文提及'汪政府选他做首任大使'及'汪伪也担待不起'，虽未明说汪主席即汪政府决策核心，但语境紧密关联。",
+      "note": "文中交替使用'汪主席'与'汪政府/汪伪'，推测为同一政治实体或代表人物，归并把握度中等。"
+    },
+    {
+      "id": 5,
+      "name": "大使",
+      "aliases": [
+        "特命全权大使",
+        "老家伙"
+      ],
+      "confidence": "high",
+      "role": "汪伪政府首任驻满洲国使节，原金陵大学名教授，被刺杀身亡。",
+      "evidence": "'最重要的警卫目标特命全权大使居然被人刺杀了'；'那个大使...是个清瘦的老家伙'; '原先是金陵大学的一位名教授'。",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "萧红",
+      "aliases": [],
+      "confidence": "high",
+      "role": "传递情报的人员，将汪伪与满洲国谈判建交的情报传递给重庆方面。",
+      "evidence": "'通过萧红传递给重庆方面'，明确作为信息中介的具体人物出现。",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "裴仁基",
+      "aliases": [],
+      "confidence": "high",
+      "role": "其消息走漏导致刺杀事件发生的关键人物（可能是被刺大使或相关重要人物）。",
+      "evidence": "'问题是裴仁基到长春的消息是怎么走漏的？'，紧接在讨论使节团安全与刺杀背景之后。",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "颜雨",
+      "aliases": [],
+      "confidence": "high",
+      "role": "军统女情报人员，在华剑雄身边保持特殊关系（肉体/爱慕）。",
+      "evidence": "'长春那边都还有个叫颜雨的军统女情报人员和他保持着特殊的关系'。",
+      "note": ""
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "name": "烟",
+      "category": "prop",
+      "mentions": [
+        "一支烟"
+      ],
+      "owner": "",
+      "function": "吸烟用",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 2,
+      "name": "椅子",
+      "category": "set",
+      "mentions": [
+        "椅子"
+      ],
+      "owner": "",
+      "function": "坐具",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 3,
+      "name": "自鸣钟",
+      "category": "prop",
+      "mentions": [
+        "墙上的自鸣钟"
+      ],
+      "owner": "",
+      "function": "计时物",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 4,
+      "name": "卷烟纸",
+      "category": "prop",
+      "mentions": [
+        "一叠卷烟纸"
+      ],
+      "owner": "",
+      "function": "包装/辅助物",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 5,
+      "name": "密写笔",
+      "category": "prop",
+      "mentions": [
+        "一只特殊的密写笔"
+      ],
+      "owner": "",
+      "function": "书写工具",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 6,
+      "name": "水果糖",
+      "category": "prop",
+      "mentions": [
+        "一块水果糖"
+      ],
+      "owner": "",
+      "function": "食物/容器内物",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 7,
+      "name": "衣兜",
+      "category": "set",
+      "mentions": [
+        "衣兜"
+      ],
+      "owner": "",
+      "function": "随身容器/衣物部件",
+      "confidence": "high",
+      "note": "",
+      "part_of": {
+        "relation": "container",
+        "whole_id": 8,
+        "confidence": "high"
+      },
+      "set_group": ""
+    },
+    {
+      "id": 8,
+      "name": "外衣",
+      "category": "set",
+      "mentions": [
+        "外衣"
+      ],
+      "owner": "",
+      "function": "衣物",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 9,
+      "name": "枪袋",
+      "category": "prop",
+      "mentions": [
+        "枪袋"
+      ],
+      "owner": "",
+      "function": "容器/随身物",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 10,
+      "name": "手枪",
+      "category": "prop",
+      "mentions": [
+        "枪袋里的手枪"
+      ],
+      "owner": "",
+      "function": "武器",
+      "confidence": "high",
+      "note": "",
+      "part_of": {
+        "relation": "container",
+        "whole_id": 9,
+        "confidence": "high"
+      },
+      "set_group": ""
+    }
+  ],
+  "locations": [
+    {
+      "id": 1,
+      "name": "长春",
+      "scale": "city",
+      "mentions": [
+        "长春",
+        "关外"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "上海",
+      "scale": "city",
+      "mentions": [
+        "上海"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "南京政府",
+      "scale": "building",
+      "mentions": [
+        "南京政府"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "伪满洲国",
+      "scale": "city",
+      "mentions": [
+        "伪满洲国",
+        "满洲国"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "东京",
+      "scale": "city",
+      "mentions": [
+        "东京"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "７６号",
+      "scale": "building",
+      "mentions": [
+        "７６号"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "大使官邸",
+      "scale": "building",
+      "mentions": [
+        "深宅大院",
+        "大使官邸"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "金陵大学",
+      "scale": "building",
+      "mentions": [
+        "金陵大学"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "重庆",
+      "scale": "city",
+      "mentions": [
+        "重庆"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "办公室",
+      "scale": "room",
+      "mentions": [
+        "办公室"
+      ],
+      "confidence": "high",
+      "note": ""
+    }
+  ],
+  "_validation": {
+    "anchors": [],
+    "xref": []
+  },
+  "counts": {
+    "scenes": 5,
+    "characters": 8,
+    "items": 10,
+    "locations": 10
+  },
+  "events": [
+    {
+      "desc": "老头子召回华剑雄",
+      "narrative_order": 1,
+      "story_order": 8,
+      "is_flashback": false,
+      "participants": [
+        2,
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄回忆长春之行起因",
+      "narrative_order": 2,
+      "story_order": 1,
+      "is_flashback": true,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "汪主席在东京定大计",
+      "narrative_order": 3,
+      "story_order": 2,
+      "is_flashback": true,
+      "participants": [
+        4
+      ],
+      "storyline": "背景铺垫",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄在长春逗留一月",
+      "narrative_order": 4,
+      "story_order": 3,
+      "is_flashback": true,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄离开长春当晚大使被刺",
+      "narrative_order": 5,
+      "story_order": 4,
+      "is_flashback": true,
+      "participants": [
+        1,
+        5
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄去长春前传递情报",
+      "narrative_order": 6,
+      "story_order": 5,
+      "is_flashback": true,
+      "participants": [
+        1,
+        6
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄在长春与颜雨保持关系并逗留",
+      "narrative_order": 7,
+      "story_order": 6,
+      "is_flashback": true,
+      "participants": [
+        1,
+        8
+      ],
+      "storyline": "情感线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄看钟准备赴约",
+      "narrative_order": 8,
+      "story_order": 9,
+      "is_flashback": false,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    }
+  ],
+  "time_expressions": [
+    {
+      "text": "才一天时间",
+      "kind": "duration",
+      "anchor": "离开长春至今"
+    },
+    {
+      "text": "这次",
+      "kind": "relative",
+      "anchor": "去长春之行"
+    },
+    {
+      "text": "也是",
+      "kind": "relative",
+      "anchor": "周老板点名派他"
+    },
+    {
+      "text": "早已",
+      "kind": "relative",
+      "anchor": "汪主席定下大计"
+    },
+    {
+      "text": "整整逗留了一个月",
+      "kind": "duration",
+      "anchor": "华剑雄在长春"
+    },
+    {
+      "text": "到最后几天",
+      "kind": "relative",
+      "anchor": "在华剑雄烦透生活时"
+    },
+    {
+      "text": "离开的当天晚上",
+      "kind": "clock",
+      "anchor": "大使被刺杀"
+    },
+    {
+      "text": "喝过好几次酒",
+      "kind": "relative",
+      "anchor": "大使生前交往"
+    },
+    {
+      "text": "三顾茅庐才请出山",
+      "kind": "relative",
+      "anchor": "大使任职前经历"
+    },
+    {
+      "text": "七天的时间限制",
+      "kind": "duration",
+      "anchor": "华剑雄破案期限"
+    },
+    {
+      "text": "去长春前",
+      "kind": "relative",
+      "anchor": "情报传递时机"
+    },
+    {
+      "text": "到现在为止",
+      "kind": "relative",
+      "anchor": "颜雨关系现状"
+    },
+    {
+      "text": "这次",
+      "kind": "relative",
+      "anchor": "华剑雄去长春时"
+    },
+    {
+      "text": "好几夜",
+      "kind": "duration",
+      "anchor": "在华颜雨处逗留"
+    },
+    {
+      "text": "五点",
+      "kind": "clock",
+      "anchor": "华剑雄看钟时间"
+    }
+  ],
+  "character_relations": [
+    {
+      "from_id": 2,
+      "to_id": 1,
+      "relation_type": "social",
+      "label": "上级派遣下属",
+      "evidence": "周老板亲自点名派他去的...华剑雄是76号所有人员的负责人。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "attitude",
+      "label": "对上司感到紧张敬畏",
+      "evidence": "每次见老头子他都说不出的紧张，外人看不出来。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 5,
+      "relation_type": "social",
+      "label": "曾共同饮酒的熟人",
+      "evidence": "那个大使和他一起喝过好几次酒...是个清瘦的老家伙。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "event",
+      "label": "通过萧红传递情报",
+      "evidence": "把汪伪要和伪满洲国谈判建交的情报...通过萧红传递给重庆方面。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 8,
+      "relation_type": "affective",
+      "label": "保持肉体关系与爱慕",
+      "evidence": "保持着特殊的关系...不知是基于对华剑雄的爱慕，还是受了什么人的指使。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 8,
+      "to_id": 1,
+      "relation_type": "awareness",
+      "label": "知其表面职务不知秘密使命",
+      "evidence": "只知道华剑雄已经投入到汪伪的76号并身居要职，但并不知道华剑雄的秘密使命。",
+      "confidence": "high"
+    }
+  ],
+  "location_relations": [
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "办公室在76号内",
+      "evidence": "华剑雄回到办公室...汪伪政府自己也知道和伪满洲国建交之事必定是惹得全国人神共愤，所以下令７６号全力保障使团的安全。"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "containment",
+      "label": "长春属于伪满洲国",
+      "evidence": "南京政府派去长春使节团...和伪满洲国谈判...在长春的近郊僻静之所选择了一所深宅大院作为大使官邸"
+    },
+    {
+      "from_id": 7,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "大使官邸位于长春近郊",
+      "evidence": "在长春的近郊僻静之所选择了一所深宅大院作为大使官邸"
+    },
+    {
+      "from_id": 6,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "76号位于上海",
+      "evidence": "他在上海也是诸事缠身...７６号许多事情眼看要停摆"
+    },
+    {
+      "from_id": 10,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "办公室位于上海",
+      "evidence": "回到办公室...老头子只好在谈判大功告成、即将举行签约仪式之际把他召回了上海。"
+    },
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从76号办公室出发",
+      "evidence": "华剑雄独自一个人坐在办公桌后面...匆匆的站起身，穿好外衣"
+    },
+    {
+      "from_id": 10,
+      "to_id": 9,
+      "relation_type": "remote",
+      "label": "办公室与重庆情报关联",
+      "evidence": "通过萧红传递给重庆方面...按理说，重庆方面知道自己负责警卫"
+    },
+    {
+      "from_id": 10,
+      "to_id": 5,
+      "relation_type": "remote",
+      "label": "办公室与东京决策关联",
+      "evidence": "汪主席早已在东京和日本人当面定下大计...华剑雄独自一个人坐在办公桌后面"
+    }
+  ]
+}

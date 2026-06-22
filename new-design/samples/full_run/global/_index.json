@@ -1,0 +1,25 @@
+{
+  "chapters": [
+    1,
+    2
+  ],
+  "global_files": [
+    "characters.json",
+    "items.json",
+    "locations.json",
+    "timeline.json",
+    "scenes.json"
+  ],
+  "counts": {
+    "global_characters": 13,
+    "global_items": 21,
+    "global_locations": 18,
+    "global_events": 15,
+    "sync_points": 11
+  },
+  "ambiguities": {
+    "characters": 0,
+    "items": 0,
+    "locations": 3
+  }
+}

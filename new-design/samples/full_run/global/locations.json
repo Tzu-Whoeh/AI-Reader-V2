@@ -1,0 +1,525 @@
+{
+  "global_locations": [
+    {
+      "global_id": 1,
+      "canonical": "长春",
+      "all_names": [
+        "关外",
+        "长春"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 1
+        }
+      ]
+    },
+    {
+      "global_id": 2,
+      "canonical": "上海",
+      "all_names": [
+        "上海"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 3,
+      "canonical": "南京政府",
+      "all_names": [
+        "南京政府"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 4,
+      "canonical": "伪满洲国",
+      "all_names": [
+        "伪满洲国",
+        "满洲国"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 5,
+      "canonical": "东京",
+      "all_names": [
+        "东京"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 6,
+      "canonical": "７６号",
+      "all_names": [
+        "７６号"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 6
+        },
+        {
+          "chapter": 2,
+          "local_id": 2
+        },
+        {
+          "chapter": 2,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 7,
+      "canonical": "大使官邸",
+      "all_names": [
+        "大使官邸",
+        "深宅大院"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 7
+        }
+      ]
+    },
+    {
+      "global_id": 8,
+      "canonical": "金陵大学",
+      "all_names": [
+        "金陵大学"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 8
+        }
+      ]
+    },
+    {
+      "global_id": 9,
+      "canonical": "重庆",
+      "all_names": [
+        "重庆"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 9
+        }
+      ]
+    },
+    {
+      "global_id": 10,
+      "canonical": "二楼办公室",
+      "all_names": [
+        "二楼办公室",
+        "二楼办公室里",
+        "办公室",
+        "宪兵司令部二楼办公室里"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 10
+        },
+        {
+          "chapter": 2,
+          "local_id": 3
+        },
+        {
+          "chapter": 2,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 11,
+      "canonical": "虹口日本宪兵司令部",
+      "all_names": [
+        "宪兵司令部",
+        "宪兵司令部办公大楼",
+        "日本宪兵司令部",
+        "虹口",
+        "虹口日本宪兵司令部",
+        "虹口的武田"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 1
+        },
+        {
+          "chapter": 2,
+          "local_id": 9
+        }
+      ]
+    },
+    {
+      "global_id": 12,
+      "canonical": "地下刑讯室",
+      "all_names": [
+        "刑讯室",
+        "地下刑讯室",
+        "地下刑讯室里"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 4
+        },
+        {
+          "chapter": 2,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 13,
+      "canonical": "花园",
+      "all_names": [
+        "宪兵司令部花园的假山",
+        "巨大花园",
+        "花园"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 5
+        },
+        {
+          "chapter": 2,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 14,
+      "canonical": "地下通道",
+      "all_names": [
+        "地下通道",
+        "宽敞的地下通道里"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 6
+        },
+        {
+          "chapter": 2,
+          "local_id": 6
+        }
+      ]
+    },
+    {
+      "global_id": 15,
+      "canonical": "走廊",
+      "all_names": [
+        "走廊",
+        "走廊深处",
+        "长长的走廊里"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 7
+        },
+        {
+          "chapter": 2,
+          "local_id": 7
+        }
+      ]
+    },
+    {
+      "global_id": 16,
+      "canonical": "草坪",
+      "all_names": [
+        "花园和草坪",
+        "草坪"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 8
+        },
+        {
+          "chapter": 2,
+          "local_id": 10
+        }
+      ]
+    },
+    {
+      "global_id": 17,
+      "canonical": "柳月仿",
+      "all_names": [
+        "柳月仿"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 9
+        },
+        {
+          "chapter": 2,
+          "local_id": 8
+        }
+      ]
+    },
+    {
+      "global_id": 18,
+      "canonical": "黑色雪佛来",
+      "all_names": [
+        "黑色雪佛来"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 10
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "办公室在76号内",
+      "evidence": "华剑雄回到办公室...汪伪政府自己也知道和伪满洲国建交之事必定是惹得全国人神共愤，所以下令７６号全力保障使团的安全。",
+      "from_global": 10,
+      "to_global": 6,
+      "chapter": 1
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "containment",
+      "label": "长春属于伪满洲国",
+      "evidence": "南京政府派去长春使节团...和伪满洲国谈判...在长春的近郊僻静之所选择了一所深宅大院作为大使官邸",
+      "from_global": 1,
+      "to_global": 4,
+      "chapter": 1
+    },
+    {
+      "from_id": 7,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "大使官邸位于长春近郊",
+      "evidence": "在长春的近郊僻静之所选择了一所深宅大院作为大使官邸",
+      "from_global": 7,
+      "to_global": 1,
+      "chapter": 1
+    },
+    {
+      "from_id": 6,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "76号位于上海",
+      "evidence": "他在上海也是诸事缠身...７６号许多事情眼看要停摆",
+      "from_global": 6,
+      "to_global": 2,
+      "chapter": 1
+    },
+    {
+      "from_id": 10,
+      "to_id": 2,
+      "relation_type": "containment",
+      "label": "办公室位于上海",
+      "evidence": "回到办公室...老头子只好在谈判大功告成、即将举行签约仪式之际把他召回了上海。",
+      "from_global": 10,
+      "to_global": 2,
+      "chapter": 1
+    },
+    {
+      "from_id": 10,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从76号办公室出发",
+      "evidence": "华剑雄独自一个人坐在办公桌后面...匆匆的站起身，穿好外衣",
+      "from_global": 10,
+      "to_global": 6,
+      "chapter": 1
+    },
+    {
+      "from_id": 10,
+      "to_id": 9,
+      "relation_type": "remote",
+      "label": "办公室与重庆情报关联",
+      "evidence": "通过萧红传递给重庆方面...按理说，重庆方面知道自己负责警卫",
+      "from_global": 10,
+      "to_global": 9,
+      "chapter": 1
+    },
+    {
+      "from_id": 10,
+      "to_id": 5,
+      "relation_type": "remote",
+      "label": "办公室与东京决策关联",
+      "evidence": "汪主席早已在东京和日本人当面定下大计...华剑雄独自一个人坐在办公桌后面",
+      "from_global": 10,
+      "to_global": 5,
+      "chapter": 1
+    },
+    {
+      "from_id": 3,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "二楼办公室在司令部内",
+      "evidence": "宪兵司令部二楼办公室里",
+      "confidence": "high",
+      "from_global": 10,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "地下刑讯室在通道内",
+      "evidence": "通道两边排列着十余间刑讯室",
+      "confidence": "high",
+      "from_global": 12,
+      "to_global": 14,
+      "chapter": 2
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下刑讯室在司令部内",
+      "evidence": "武田在地下刑讯室里...提到虹口的武田",
+      "confidence": "high",
+      "from_global": 12,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 6,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下通道属于司令部",
+      "evidence": "穿过宪兵司令部花园...下到宽敞的地下通道里",
+      "confidence": "high",
+      "from_global": 14,
+      "to_global": 11,
+      "chapter": 2
+    },
+    {
+      "from_id": 5,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "草坪紧邻花园区域",
+      "evidence": "巨大的花园和草坪...青草繁花之下",
+      "confidence": "high",
+      "from_global": 13,
+      "to_global": 18,
+      "chapter": 2
+    },
+    {
+      "from_id": 8,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "柳月仿与76号相邻",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium",
+      "from_global": 17,
+      "to_global": 18,
+      "chapter": 2
+    },
+    {
+      "from_id": 3,
+      "to_id": 4,
+      "relation_type": "movement",
+      "label": "从办公室前往刑讯室",
+      "evidence": "没找到...武田在地下刑讯室里...华剑雄推开沉重的铁门走了进去",
+      "confidence": "high",
+      "from_global": 10,
+      "to_global": 12,
+      "chapter": 2
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从刑讯室走出至通道",
+      "evidence": "走出闷热得令华剑雄浑身冒汗的刑讯室...走出地下通道",
+      "confidence": "high",
+      "from_global": 12,
+      "to_global": 14,
+      "chapter": 2
+    },
+    {
+      "from_id": 6,
+      "to_id": 9,
+      "relation_type": "movement",
+      "label": "从司令部前往柳月仿",
+      "evidence": "去柳月仿喝上几杯...钻进了他那辆黑色雪佛来",
+      "confidence": "high",
+      "from_global": 14,
+      "to_global": 17,
+      "chapter": 2
+    },
+    {
+      "from_id": 9,
+      "to_id": 2,
+      "relation_type": "remote",
+      "label": "情节往返于两地之间",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium",
+      "from_global": 17,
+      "to_global": 6,
+      "chapter": 2
+    }
+  ],
+  "ambiguities": [
+    {
+      "reason": "仅通过别名/部分名称重叠归并,建议人工确认",
+      "chapterA": 1,
+      "nameA": "办公室",
+      "chapterB": 2,
+      "nameB": "二楼办公室",
+      "overlap": [
+        "办公室"
+      ]
+    },
+    {
+      "reason": "仅通过别名/部分名称重叠归并,建议人工确认",
+      "chapterA": 1,
+      "nameA": "办公室",
+      "chapterB": 2,
+      "nameB": "二楼办公室",
+      "overlap": [
+        "办公室"
+      ]
+    },
+    {
+      "reason": "仅通过别名/部分名称重叠归并,建议人工确认",
+      "chapterA": 2,
+      "nameA": "虹口日本宪兵司令部",
+      "chapterB": 2,
+      "nameB": "虹口",
+      "overlap": [
+        "虹口日本宪兵司令部"
+      ]
+    }
+  ]
+}

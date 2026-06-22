@@ -1,0 +1,125 @@
+{
+  "item_count": 10,
+  "items": [
+    {
+      "id": 1,
+      "name": "烟",
+      "category": "prop",
+      "mentions": [
+        "一支烟"
+      ],
+      "owner": "",
+      "function": "吸烟用",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "椅子",
+      "category": "set",
+      "mentions": [
+        "椅子"
+      ],
+      "owner": "",
+      "function": "坐具",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "自鸣钟",
+      "category": "prop",
+      "mentions": [
+        "墙上的自鸣钟"
+      ],
+      "owner": "",
+      "function": "计时物",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "卷烟纸",
+      "category": "prop",
+      "mentions": [
+        "一叠卷烟纸"
+      ],
+      "owner": "",
+      "function": "包装/辅助物",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "密写笔",
+      "category": "prop",
+      "mentions": [
+        "一只特殊的密写笔"
+      ],
+      "owner": "",
+      "function": "书写工具",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "水果糖",
+      "category": "prop",
+      "mentions": [
+        "一块水果糖"
+      ],
+      "owner": "",
+      "function": "食物/容器内物",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "衣兜",
+      "category": "set",
+      "mentions": [
+        "衣兜"
+      ],
+      "owner": "",
+      "function": "随身容器/衣物部件",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "外衣",
+      "category": "set",
+      "mentions": [
+        "外衣"
+      ],
+      "owner": "",
+      "function": "衣物",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "枪袋",
+      "category": "prop",
+      "mentions": [
+        "枪袋"
+      ],
+      "owner": "",
+      "function": "容器/随身物",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "手枪",
+      "category": "prop",
+      "mentions": [
+        "枪袋里的手枪"
+      ],
+      "owner": "",
+      "function": "武器",
+      "confidence": "high",
+      "note": ""
+    }
+  ]
+}

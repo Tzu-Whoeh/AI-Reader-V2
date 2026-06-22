@@ -1,0 +1,76 @@
+{
+  "relations": [
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "social",
+      "label": "表面朋友实为监视对象",
+      "evidence": "华剑雄对武田彬彬有礼，内心觉得好笑并观察其动静。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "affective",
+      "label": "交情深厚/约定饮酒",
+      "evidence": "两人有约，武田向华剑雄道歉并拍肩邀饮。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "kin",
+      "label": "义父子关系",
+      "evidence": "华剑雄的多年未见的日本籍义父。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "social",
+      "label": "受义父影响获信任",
+      "evidence": "日本义父起到很大作用，使华剑雄受到绝对信任。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "social",
+      "label": "主仆关系",
+      "evidence": "老赵是华剑雄的司机，曾半开玩笑评价。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 5,
+      "relation_type": "event",
+      "label": "刑讯折磨",
+      "evidence": "武田用烙铁压住女人胸脯，使其痛苦不堪。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "attitude",
+      "label": "对华剑雄露出笑容/道歉",
+      "evidence": "武田眼神缓和，对华剑雄露出难看的笑容并道歉。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "觉得武田好笑/虚伪",
+      "evidence": "华剑雄觉得明明是野兽却做出彬彬有礼的样子，很是好笑。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "调侃武田公务繁忙",
+      "evidence": "华剑雄轻飘飘回答，听出或故意忽略武田的客套。",
+      "confidence": "medium"
+    }
+  ]
+}

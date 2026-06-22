@@ -1,0 +1,181 @@
+{
+  "time_expressions": [
+    {
+      "text": "才一天时间",
+      "kind": "duration",
+      "anchor": "离开长春至今"
+    },
+    {
+      "text": "这次",
+      "kind": "relative",
+      "anchor": "去长春之行"
+    },
+    {
+      "text": "也是",
+      "kind": "relative",
+      "anchor": "周老板点名派他"
+    },
+    {
+      "text": "早已",
+      "kind": "relative",
+      "anchor": "汪主席定下大计"
+    },
+    {
+      "text": "整整逗留了一个月",
+      "kind": "duration",
+      "anchor": "华剑雄在长春"
+    },
+    {
+      "text": "到最后几天",
+      "kind": "relative",
+      "anchor": "在华剑雄烦透生活时"
+    },
+    {
+      "text": "离开的当天晚上",
+      "kind": "clock",
+      "anchor": "大使被刺杀"
+    },
+    {
+      "text": "喝过好几次酒",
+      "kind": "relative",
+      "anchor": "大使生前交往"
+    },
+    {
+      "text": "三顾茅庐才请出山",
+      "kind": "relative",
+      "anchor": "大使任职前经历"
+    },
+    {
+      "text": "七天的时间限制",
+      "kind": "duration",
+      "anchor": "华剑雄破案期限"
+    },
+    {
+      "text": "去长春前",
+      "kind": "relative",
+      "anchor": "情报传递时机"
+    },
+    {
+      "text": "到现在为止",
+      "kind": "relative",
+      "anchor": "颜雨关系现状"
+    },
+    {
+      "text": "这次",
+      "kind": "relative",
+      "anchor": "华剑雄去长春时"
+    },
+    {
+      "text": "好几夜",
+      "kind": "duration",
+      "anchor": "在华颜雨处逗留"
+    },
+    {
+      "text": "五点",
+      "kind": "clock",
+      "anchor": "华剑雄看钟时间"
+    }
+  ],
+  "events": [
+    {
+      "desc": "老头子召回华剑雄",
+      "narrative_order": 1,
+      "story_order": 8,
+      "is_flashback": false,
+      "participants": [
+        2,
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄回忆长春之行起因",
+      "narrative_order": 2,
+      "story_order": 1,
+      "is_flashback": true,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "汪主席在东京定大计",
+      "narrative_order": 3,
+      "story_order": 2,
+      "is_flashback": true,
+      "participants": [
+        4
+      ],
+      "storyline": "背景铺垫",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄在长春逗留一月",
+      "narrative_order": 4,
+      "story_order": 3,
+      "is_flashback": true,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄离开长春当晚大使被刺",
+      "narrative_order": 5,
+      "story_order": 4,
+      "is_flashback": true,
+      "participants": [
+        1,
+        5
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄去长春前传递情报",
+      "narrative_order": 6,
+      "story_order": 5,
+      "is_flashback": true,
+      "participants": [
+        1,
+        6
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄在长春与颜雨保持关系并逗留",
+      "narrative_order": 7,
+      "story_order": 6,
+      "is_flashback": true,
+      "participants": [
+        1,
+        8
+      ],
+      "storyline": "情感线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄看钟准备赴约",
+      "narrative_order": 8,
+      "story_order": 9,
+      "is_flashback": false,
+      "participants": [
+        1
+      ],
+      "storyline": "主线叙事",
+      "abs_interval": null,
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "relations": [
+    {
+      "from_id": 2,
+      "to_id": 1,
+      "relation_type": "social",
+      "label": "上级派遣下属",
+      "evidence": "周老板亲自点名派他去的...华剑雄是76号所有人员的负责人。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "attitude",
+      "label": "对上司感到紧张敬畏",
+      "evidence": "每次见老头子他都说不出的紧张，外人看不出来。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 5,
+      "relation_type": "social",
+      "label": "曾共同饮酒的熟人",
+      "evidence": "那个大使和他一起喝过好几次酒...是个清瘦的老家伙。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "event",
+      "label": "通过萧红传递情报",
+      "evidence": "把汪伪要和伪满洲国谈判建交的情报...通过萧红传递给重庆方面。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 8,
+      "relation_type": "affective",
+      "label": "保持肉体关系与爱慕",
+      "evidence": "保持着特殊的关系...不知是基于对华剑雄的爱慕，还是受了什么人的指使。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 8,
+      "to_id": 1,
+      "relation_type": "awareness",
+      "label": "知其表面职务不知秘密使命",
+      "evidence": "只知道华剑雄已经投入到汪伪的76号并身居要职，但并不知道华剑雄的秘密使命。",
+      "confidence": "high"
+    }
+  ]
+}

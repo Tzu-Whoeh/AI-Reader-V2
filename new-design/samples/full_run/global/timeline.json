@@ -1,0 +1,533 @@
+{
+  "global_events": [
+    {
+      "event_id": 1,
+      "chapter": 1,
+      "desc": "老头子召回华剑雄",
+      "narrative_order": 1,
+      "story_order": 8,
+      "is_flashback": false,
+      "global_participants": [
+        2,
+        1
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 2,
+      "chapter": 1,
+      "desc": "华剑雄回忆长春之行起因",
+      "narrative_order": 2,
+      "story_order": 1,
+      "is_flashback": true,
+      "global_participants": [
+        1
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 3,
+      "chapter": 1,
+      "desc": "汪主席在东京定大计",
+      "narrative_order": 3,
+      "story_order": 2,
+      "is_flashback": true,
+      "global_participants": [
+        4
+      ],
+      "abs_interval": null,
+      "storyline": "背景铺垫"
+    },
+    {
+      "event_id": 4,
+      "chapter": 1,
+      "desc": "华剑雄在长春逗留一月",
+      "narrative_order": 4,
+      "story_order": 3,
+      "is_flashback": true,
+      "global_participants": [
+        1
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 5,
+      "chapter": 1,
+      "desc": "华剑雄离开长春当晚大使被刺",
+      "narrative_order": 5,
+      "story_order": 4,
+      "is_flashback": true,
+      "global_participants": [
+        1,
+        5
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 6,
+      "chapter": 1,
+      "desc": "华剑雄去长春前传递情报",
+      "narrative_order": 6,
+      "story_order": 5,
+      "is_flashback": true,
+      "global_participants": [
+        1,
+        6
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 7,
+      "chapter": 1,
+      "desc": "华剑雄在长春与颜雨保持关系并逗留",
+      "narrative_order": 7,
+      "story_order": 6,
+      "is_flashback": true,
+      "global_participants": [
+        1,
+        8
+      ],
+      "abs_interval": null,
+      "storyline": "情感线"
+    },
+    {
+      "event_id": 8,
+      "chapter": 1,
+      "desc": "华剑雄看钟准备赴约",
+      "narrative_order": 8,
+      "story_order": 9,
+      "is_flashback": false,
+      "global_participants": [
+        1
+      ],
+      "abs_interval": null,
+      "storyline": "主线叙事"
+    },
+    {
+      "event_id": 9,
+      "chapter": 2,
+      "desc": "轿车抵达宪兵司令部",
+      "narrative_order": 1,
+      "story_order": 2,
+      "is_flashback": false,
+      "global_participants": [
+        1,
+        9
+      ],
+      "abs_interval": null,
+      "storyline": "华剑雄行动线"
+    },
+    {
+      "event_id": 10,
+      "chapter": 2,
+      "desc": "老赵评价华处长面子大",
+      "narrative_order": 2,
+      "story_order": 3,
+      "is_flashback": false,
+      "global_participants": [
+        1,
+        9,
+        10
+      ],
+      "abs_interval": null,
+      "storyline": "背景介绍线"
+    },
+    {
+      "event_id": 11,
+      "chapter": 2,
+      "desc": "华剑雄得知武田在刑讯室",
+      "narrative_order": 3,
+      "story_order": 4,
+      "is_flashback": false,
+      "global_participants": [
+        1,
+        11
+      ],
+      "abs_interval": null,
+      "storyline": "华剑雄行动线"
+    },
+    {
+      "event_id": 12,
+      "chapter": 2,
+      "desc": "武田刑讯无名女人（进行中）",
+      "narrative_order": 4,
+      "story_order": 5,
+      "is_flashback": false,
+      "global_participants": [
+        11,
+        12
+      ],
+      "abs_interval": null,
+      "storyline": "武田行动线"
+    },
+    {
+      "event_id": 13,
+      "chapter": 2,
+      "desc": "华剑雄回忆昨日约酒送情报",
+      "narrative_order": 5,
+      "story_order": 1,
+      "is_flashback": true,
+      "global_participants": [
+        1,
+        11
+      ],
+      "abs_interval": null,
+      "storyline": "华剑雄行动线"
+    },
+    {
+      "event_id": 14,
+      "chapter": 2,
+      "desc": "武田停止刑讯并道歉",
+      "narrative_order": 6,
+      "story_order": 6,
+      "is_flashback": false,
+      "global_participants": [
+        1,
+        11,
+        12
+      ],
+      "abs_interval": null,
+      "storyline": "武田行动线"
+    },
+    {
+      "event_id": 15,
+      "chapter": 2,
+      "desc": "华剑雄与武田一同离开",
+      "narrative_order": 7,
+      "story_order": 7,
+      "is_flashback": false,
+      "global_participants": [
+        1,
+        11
+      ],
+      "abs_interval": null,
+      "storyline": "华剑雄行动线"
+    }
+  ],
+  "character_timelines": {
+    "2": [
+      {
+        "seq": 1,
+        "event_id": 1,
+        "chapter": 1,
+        "desc": "老头子召回华剑雄",
+        "is_flashback": false
+      }
+    ],
+    "1": [
+      {
+        "seq": 1,
+        "event_id": 2,
+        "chapter": 1,
+        "desc": "华剑雄回忆长春之行起因",
+        "is_flashback": true
+      },
+      {
+        "seq": 2,
+        "event_id": 4,
+        "chapter": 1,
+        "desc": "华剑雄在长春逗留一月",
+        "is_flashback": true
+      },
+      {
+        "seq": 3,
+        "event_id": 5,
+        "chapter": 1,
+        "desc": "华剑雄离开长春当晚大使被刺",
+        "is_flashback": true
+      },
+      {
+        "seq": 4,
+        "event_id": 6,
+        "chapter": 1,
+        "desc": "华剑雄去长春前传递情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 5,
+        "event_id": 7,
+        "chapter": 1,
+        "desc": "华剑雄在长春与颜雨保持关系并逗留",
+        "is_flashback": true
+      },
+      {
+        "seq": 6,
+        "event_id": 1,
+        "chapter": 1,
+        "desc": "老头子召回华剑雄",
+        "is_flashback": false
+      },
+      {
+        "seq": 7,
+        "event_id": 8,
+        "chapter": 1,
+        "desc": "华剑雄看钟准备赴约",
+        "is_flashback": false
+      },
+      {
+        "seq": 8,
+        "event_id": 13,
+        "chapter": 2,
+        "desc": "华剑雄回忆昨日约酒送情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 9,
+        "event_id": 9,
+        "chapter": 2,
+        "desc": "轿车抵达宪兵司令部",
+        "is_flashback": false
+      },
+      {
+        "seq": 10,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      },
+      {
+        "seq": 11,
+        "event_id": 11,
+        "chapter": 2,
+        "desc": "华剑雄得知武田在刑讯室",
+        "is_flashback": false
+      },
+      {
+        "seq": 12,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      },
+      {
+        "seq": 13,
+        "event_id": 15,
+        "chapter": 2,
+        "desc": "华剑雄与武田一同离开",
+        "is_flashback": false
+      }
+    ],
+    "4": [
+      {
+        "seq": 1,
+        "event_id": 3,
+        "chapter": 1,
+        "desc": "汪主席在东京定大计",
+        "is_flashback": true
+      }
+    ],
+    "5": [
+      {
+        "seq": 1,
+        "event_id": 5,
+        "chapter": 1,
+        "desc": "华剑雄离开长春当晚大使被刺",
+        "is_flashback": true
+      }
+    ],
+    "6": [
+      {
+        "seq": 1,
+        "event_id": 6,
+        "chapter": 1,
+        "desc": "华剑雄去长春前传递情报",
+        "is_flashback": true
+      }
+    ],
+    "8": [
+      {
+        "seq": 1,
+        "event_id": 7,
+        "chapter": 1,
+        "desc": "华剑雄在长春与颜雨保持关系并逗留",
+        "is_flashback": true
+      }
+    ],
+    "9": [
+      {
+        "seq": 1,
+        "event_id": 9,
+        "chapter": 2,
+        "desc": "轿车抵达宪兵司令部",
+        "is_flashback": false
+      },
+      {
+        "seq": 2,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      }
+    ],
+    "10": [
+      {
+        "seq": 1,
+        "event_id": 10,
+        "chapter": 2,
+        "desc": "老赵评价华处长面子大",
+        "is_flashback": false
+      }
+    ],
+    "11": [
+      {
+        "seq": 1,
+        "event_id": 13,
+        "chapter": 2,
+        "desc": "华剑雄回忆昨日约酒送情报",
+        "is_flashback": true
+      },
+      {
+        "seq": 2,
+        "event_id": 11,
+        "chapter": 2,
+        "desc": "华剑雄得知武田在刑讯室",
+        "is_flashback": false
+      },
+      {
+        "seq": 3,
+        "event_id": 12,
+        "chapter": 2,
+        "desc": "武田刑讯无名女人（进行中）",
+        "is_flashback": false
+      },
+      {
+        "seq": 4,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      },
+      {
+        "seq": 5,
+        "event_id": 15,
+        "chapter": 2,
+        "desc": "华剑雄与武田一同离开",
+        "is_flashback": false
+      }
+    ],
+    "12": [
+      {
+        "seq": 1,
+        "event_id": 12,
+        "chapter": 2,
+        "desc": "武田刑讯无名女人（进行中）",
+        "is_flashback": false
+      },
+      {
+        "seq": 2,
+        "event_id": 14,
+        "chapter": 2,
+        "desc": "武田停止刑讯并道歉",
+        "is_flashback": false
+      }
+    ]
+  },
+  "sync_points": [
+    {
+      "event_id": 1,
+      "desc": "老头子召回华剑雄",
+      "global_participants": [
+        2,
+        1
+      ],
+      "chapter": 1
+    },
+    {
+      "event_id": 5,
+      "desc": "华剑雄离开长春当晚大使被刺",
+      "global_participants": [
+        1,
+        5
+      ],
+      "chapter": 1
+    },
+    {
+      "event_id": 6,
+      "desc": "华剑雄去长春前传递情报",
+      "global_participants": [
+        1,
+        6
+      ],
+      "chapter": 1
+    },
+    {
+      "event_id": 7,
+      "desc": "华剑雄在长春与颜雨保持关系并逗留",
+      "global_participants": [
+        1,
+        8
+      ],
+      "chapter": 1
+    },
+    {
+      "event_id": 9,
+      "desc": "轿车抵达宪兵司令部",
+      "global_participants": [
+        1,
+        9
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 10,
+      "desc": "老赵评价华处长面子大",
+      "global_participants": [
+        1,
+        9,
+        10
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 11,
+      "desc": "华剑雄得知武田在刑讯室",
+      "global_participants": [
+        1,
+        11
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 12,
+      "desc": "武田刑讯无名女人（进行中）",
+      "global_participants": [
+        11,
+        12
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 13,
+      "desc": "华剑雄回忆昨日约酒送情报",
+      "global_participants": [
+        1,
+        11
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 14,
+      "desc": "武田停止刑讯并道歉",
+      "global_participants": [
+        1,
+        11,
+        12
+      ],
+      "chapter": 2
+    },
+    {
+      "event_id": 15,
+      "desc": "华剑雄与武田一同离开",
+      "global_participants": [
+        1,
+        11
+      ],
+      "chapter": 2
+    }
+  ]
+}

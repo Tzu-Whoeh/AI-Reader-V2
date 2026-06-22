@@ -1,0 +1,300 @@
+{
+  "global_items": [
+    {
+      "global_id": 1,
+      "canonical": "烟",
+      "all_names": [
+        "一支烟",
+        "烟"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 1
+        }
+      ]
+    },
+    {
+      "global_id": 2,
+      "canonical": "椅子",
+      "all_names": [
+        "椅子"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 3,
+      "canonical": "自鸣钟",
+      "all_names": [
+        "墙上的自鸣钟",
+        "自鸣钟"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 4,
+      "canonical": "卷烟纸",
+      "all_names": [
+        "一叠卷烟纸",
+        "卷烟纸"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 5,
+      "canonical": "密写笔",
+      "all_names": [
+        "一只特殊的密写笔",
+        "密写笔"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 6,
+      "canonical": "水果糖",
+      "all_names": [
+        "一块水果糖",
+        "水果糖"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 6
+        }
+      ]
+    },
+    {
+      "global_id": 7,
+      "canonical": "衣兜",
+      "all_names": [
+        "衣兜"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 7
+        }
+      ]
+    },
+    {
+      "global_id": 8,
+      "canonical": "外衣",
+      "all_names": [
+        "外衣"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 8
+        }
+      ]
+    },
+    {
+      "global_id": 9,
+      "canonical": "枪袋",
+      "all_names": [
+        "枪袋"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 9
+        }
+      ]
+    },
+    {
+      "global_id": 10,
+      "canonical": "手枪",
+      "all_names": [
+        "手枪",
+        "枪袋里的手枪"
+      ],
+      "members": [
+        {
+          "chapter": 1,
+          "local_id": 10
+        }
+      ]
+    },
+    {
+      "global_id": 11,
+      "canonical": "雪佛来轿车",
+      "all_names": [
+        "他那辆黑色雪佛来",
+        "雪佛来轿车",
+        "黑色的雪佛来轿车"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 1
+        }
+      ]
+    },
+    {
+      "global_id": 12,
+      "canonical": "三角烙铁",
+      "all_names": [
+        "三角烙铁",
+        "冒着青烟的烙铁",
+        "烧得暗红的三角烙铁",
+        "颜色变得有些暗淡的烙铁"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 2
+        }
+      ]
+    },
+    {
+      "global_id": 13,
+      "canonical": "长条刑凳",
+      "all_names": [
+        "木凳",
+        "长条刑凳"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 3
+        }
+      ]
+    },
+    {
+      "global_id": 14,
+      "canonical": "铁门",
+      "all_names": [
+        "厚重的铁门",
+        "沉重的铁门",
+        "铁门"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 15,
+      "canonical": "碳火盆",
+      "all_names": [
+        "一边的碳火盆",
+        "碳火盆"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 4
+        }
+      ]
+    },
+    {
+      "global_id": 16,
+      "canonical": "表",
+      "all_names": [
+        "手腕看看表",
+        "表"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 5
+        }
+      ]
+    },
+    {
+      "global_id": 17,
+      "canonical": "铁口杯",
+      "all_names": [
+        "桌子上的铁口杯",
+        "铁口杯"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 6
+        }
+      ]
+    },
+    {
+      "global_id": 18,
+      "canonical": "铁钳",
+      "all_names": [
+        "用铁钳夹住",
+        "铁钳"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 7
+        }
+      ]
+    },
+    {
+      "global_id": 19,
+      "canonical": "绳子",
+      "all_names": [
+        "一道道的绳子",
+        "绳子"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 8
+        }
+      ]
+    },
+    {
+      "global_id": 20,
+      "canonical": "衣服",
+      "all_names": [
+        "散落的衣物",
+        "穿好了衣服",
+        "衣服"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 9
+        }
+      ]
+    },
+    {
+      "global_id": 21,
+      "canonical": "桌子",
+      "all_names": [
+        "桌子",
+        "桌子上"
+      ],
+      "members": [
+        {
+          "chapter": 2,
+          "local_id": 10
+        }
+      ]
+    }
+  ],
+  "ambiguities": []
+}

@@ -1,0 +1,108 @@
+{
+  "location_count": 10,
+  "locations": [
+    {
+      "id": 1,
+      "name": "长春",
+      "scale": "city",
+      "mentions": [
+        "长春",
+        "关外"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "上海",
+      "scale": "city",
+      "mentions": [
+        "上海"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "南京政府",
+      "scale": "building",
+      "mentions": [
+        "南京政府"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "伪满洲国",
+      "scale": "city",
+      "mentions": [
+        "伪满洲国",
+        "满洲国"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "东京",
+      "scale": "city",
+      "mentions": [
+        "东京"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "７６号",
+      "scale": "building",
+      "mentions": [
+        "７６号"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "大使官邸",
+      "scale": "building",
+      "mentions": [
+        "深宅大院",
+        "大使官邸"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "金陵大学",
+      "scale": "building",
+      "mentions": [
+        "金陵大学"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "重庆",
+      "scale": "city",
+      "mentions": [
+        "重庆"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "办公室",
+      "scale": "room",
+      "mentions": [
+        "办公室"
+      ],
+      "confidence": "high",
+      "note": ""
+    }
+  ]
+}

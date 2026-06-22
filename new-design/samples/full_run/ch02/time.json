@@ -1,0 +1,119 @@
+{
+  "time_expressions": [
+    {
+      "text": "一下午",
+      "kind": "duration",
+      "anchor": "武田审讯犯人时长"
+    },
+    {
+      "text": "昨天",
+      "kind": "relative",
+      "anchor": "华剑雄约酒时间"
+    },
+    {
+      "text": "今天",
+      "kind": "relative",
+      "anchor": "女人首次受刑日"
+    },
+    {
+      "text": "快黑了",
+      "kind": "clock",
+      "anchor": "华剑雄与武田离开时"
+    }
+  ],
+  "events": [
+    {
+      "desc": "轿车抵达宪兵司令部",
+      "narrative_order": 1,
+      "story_order": 2,
+      "is_flashback": false,
+      "participants": [
+        1,
+        2
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "老赵评价华处长面子大",
+      "narrative_order": 2,
+      "story_order": 3,
+      "is_flashback": false,
+      "participants": [
+        1,
+        2,
+        3
+      ],
+      "storyline": "背景介绍线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄得知武田在刑讯室",
+      "narrative_order": 3,
+      "story_order": 4,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "武田刑讯无名女人（进行中）",
+      "narrative_order": 4,
+      "story_order": 5,
+      "is_flashback": false,
+      "participants": [
+        4,
+        5
+      ],
+      "storyline": "武田行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄回忆昨日约酒送情报",
+      "narrative_order": 5,
+      "story_order": 1,
+      "is_flashback": true,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "武田停止刑讯并道歉",
+      "narrative_order": 6,
+      "story_order": 6,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4,
+        5
+      ],
+      "storyline": "武田行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄与武田一同离开",
+      "narrative_order": 7,
+      "story_order": 7,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    }
+  ]
+}
