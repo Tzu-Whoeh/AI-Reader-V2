@@ -1,0 +1,50 @@
+[
+  {
+    "type": "人物出现未挂事件",
+    "scene": 1,
+    "target": "丁主任",
+    "target_id": 3,
+    "evidence": "丁主任",
+    "hint": "场景1原文出现「丁主任」,但无事件含该人物,可能漏了他参与的事件或漏标 participant"
+  },
+  {
+    "type": "人物出现未挂事件",
+    "scene": 5,
+    "target": "无名女人",
+    "target_id": 5,
+    "evidence": "那女人",
+    "hint": "场景5原文出现「那女人」,但无事件含该人物,可能漏了他参与的事件或漏标 participant"
+  },
+  {
+    "type": "物品漏挂场景",
+    "scene": 5,
+    "target": "雪佛来轿车",
+    "target_id": 1,
+    "evidence": "黑色雪佛来",
+    "hint": "物品「雪佛来轿车」的提及「黑色雪佛来」落在场景5,但其 scene=1 未含该场景"
+  },
+  {
+    "type": "物品漏挂场景",
+    "scene": 3,
+    "target": "三角烙铁",
+    "target_id": 3,
+    "evidence": "烧得暗红的三角烙铁",
+    "hint": "物品「三角烙铁」的提及「烧得暗红的三角烙铁」落在场景3,但其 scene=4 未含该场景"
+  },
+  {
+    "type": "物品漏挂场景",
+    "scene": 4,
+    "target": "碳火盆",
+    "target_id": 4,
+    "evidence": "碳火盆",
+    "hint": "物品「碳火盆」的提及「碳火盆」落在场景4,但其 scene=5 未含该场景"
+  },
+  {
+    "type": "物品漏挂场景",
+    "scene": 1,
+    "target": "手表",
+    "target_id": 5,
+    "evidence": "表",
+    "hint": "物品「手表」的提及「表」落在场景1,但其 scene=4 未含该场景"
+  }
+]
