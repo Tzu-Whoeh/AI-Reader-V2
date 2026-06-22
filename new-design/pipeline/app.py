@@ -24,18 +24,41 @@ import event_pipeline as EP
 # ---- 模型调用(默认直连;平台环境替换此函数,并赋给 EP.call_model)----
 import urllib.request
 MODEL="huihui_ai/Qwen3.6-abliterated:35b"
-def call_model(prompt, temperature=0.12, num_ctx=8192, timeout=300):
+def _safe_json(s):
+    """容忍模型返回被截断的 JSON:先直接解析,失败则尝试补全收尾再解析。"""
+    try: return json.loads(s)
+    except Exception: pass
+    # 截断修复:从末尾去掉不完整片段,补齐括号
+    t=s.strip()
+    # 去掉末尾未闭合的残句
+    for cut in range(len(t),0,-1):
+        frag=t[:cut]
+        bal=frag.count("{")-frag.count("}")
+        barr=frag.count("[")-frag.count("]")
+        if bal>=0 and barr>=0 and (frag.rstrip().endswith(("}","]",'"')) or frag.rstrip().endswith(",")):
+            fixed=frag.rstrip().rstrip(",")+("]"*barr)+("}"*bal)
+            try: return json.loads(fixed)
+            except Exception: continue
+    raise ValueError("JSON irreparably truncated")
+
+def call_model(prompt, temperature=0.12, num_ctx=8192, timeout=300, retries=1):
     body={"model":MODEL,"prompt":prompt,"stream":False,"think":False,"format":"json",
-          "options":{"temperature":temperature,"num_ctx":num_ctx}}
-    req=urllib.request.Request("http://127.0.0.1:11434/api/generate",
-        data=json.dumps(body,ensure_ascii=False).encode(),
-        headers={"Content-Type":"application/json"},method="POST")
-    with urllib.request.urlopen(req,timeout=timeout) as r:
-        return json.loads(json.loads(r.read())["response"])
+          "options":{"temperature":temperature,"num_ctx":num_ctx,"num_predict":4096}}
+    last=None
+    for _ in range(retries+1):
+        req=urllib.request.Request("http://127.0.0.1:11434/api/generate",
+            data=json.dumps(body,ensure_ascii=False).encode(),
+            headers={"Content-Type":"application/json"},method="POST")
+        with urllib.request.urlopen(req,timeout=timeout) as r:
+            resp=json.loads(r.read())["response"]
+        try: return _safe_json(resp)
+        except Exception as e: last=e
+    raise last
 EP.call_model=call_model
 
-PROMPTS="."   # 提示词目录
+PROMPTS=os.path.dirname(os.path.abspath(__file__))  # 提示词默认在本脚本同目录
 def L(fn): return open(os.path.join(PROMPTS,fn),encoding="utf-8").read()
+EP.set_prompts_dir(PROMPTS)  # 让事件管道也用同一提示词目录
 VEH=("车","轿车","雪佛来","汽车")
 
 def read_input(path):

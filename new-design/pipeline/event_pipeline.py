@@ -23,7 +23,14 @@ def call_model(prompt, temperature=0.12, num_ctx=8192, timeout=300):
     with urllib.request.urlopen(req,timeout=timeout) as r:
         return json.loads(json.loads(r.read())["response"])
 
-def _load(fn): return open(fn,encoding="utf-8").read()
+import os as _os
+PROMPTS_DIR=_os.path.dirname(_os.path.abspath(__file__))  # 默认提示词在本模块同目录
+def set_prompts_dir(d): 
+    global PROMPTS_DIR; PROMPTS_DIR=d
+def _load(fn):
+    # fn 可为裸文件名(在 PROMPTS_DIR 找)或绝对/相对路径(直接用)
+    path=fn if _os.path.isabs(fn) or _os.path.exists(fn) else _os.path.join(PROMPTS_DIR,fn)
+    return open(path,encoding="utf-8").read()
 
 def _scene_segment(fulltext, scene):
     """用场景起止锚点切出该场景原文片段。"""
