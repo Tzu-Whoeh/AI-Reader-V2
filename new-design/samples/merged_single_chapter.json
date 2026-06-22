@@ -1,0 +1,388 @@
+{
+  "scenes": [
+    {
+      "index": 1,
+      "title": "抵达宪兵部",
+      "type": "现实叙述",
+      "location": "虹口日本宪兵司令部门口",
+      "summary": "华剑雄乘车到达戒备森严的日本宪兵司令部，司机老赵感叹其受优待。",
+      "start_text": "黑色的雪佛来轿车开到戒备森严的虹口日本宪兵司令部",
+      "end_text": "连丁主任进出日本宪兵司令部都要停车检查的",
+      "location_ref": {
+        "location_id": 1,
+        "matched": "虹口日本宪兵司令部"
+      }
+    },
+    {
+      "index": 2,
+      "title": "回忆受宠原因",
+      "type": "回忆",
+      "location": "未明",
+      "summary": "叙述华剑雄因被日本人精心吸收、安插在76号且有一位日本义父而深受信任的背景。",
+      "start_text": "日本人的确对他们精心吸收和安插在７６号的心腹华剑雄是钟爱有加",
+      "end_text": "使得华剑雄受到绝对的信任"
+    },
+    {
+      "index": 3,
+      "title": "寻找武田与心理活动",
+      "type": "内心独白",
+      "location": "宪兵司令部二楼办公室及花园",
+      "summary": "华剑雄在办公室未找到武田，得知其在地下刑讯室后，庆幸自己昨日约酒躲过一劫并观察局势。",
+      "start_text": "在宪兵司令部二楼办公室里，华剑雄没找到宪兵队长武田勇夫",
+      "end_text": "而且正好可以顺便看看日本人这边有什么动静",
+      "location_ref": {
+        "location_id": 1,
+        "matched": "宪兵司令部"
+      }
+    },
+    {
+      "index": 4,
+      "title": "进入刑讯室观察",
+      "type": "动作",
+      "location": "地下通道及7号刑讯室",
+      "summary": "华剑雄穿过花园下到地下，听到惨叫，径直走进7号房看到武田正在用烙铁拷问一名女子。",
+      "start_text": "穿过宪兵司令部花园的假山，华剑雄下到宽敞的地下通道里",
+      "end_text": "他正在把一把烧得暗红的三角烙铁用力地压在被平直仰卧着绑在长条刑凳上的赤裸女人高耸的胸脯上",
+      "location_ref": {
+        "location_id": 6,
+        "matched": "地下通道"
+      }
+    },
+    {
+      "index": 5,
+      "title": "告别武田离去",
+      "type": "现实叙述",
+      "location": "7号刑讯室及地下通道出口",
+      "summary": "华剑雄与武田寒暄，武田道歉并邀请喝酒，两人大笑走出刑讯室乘车离开。",
+      "start_text": "这时那女人又发出凄惨的尖叫",
+      "end_text": "这时天已经快黑了，在华剑雄的招呼下，武田笨拙地钻进了他那辆黑色雪佛来",
+      "location_ref": {
+        "location_id": 6,
+        "matched": "地下通道"
+      }
+    }
+  ],
+  "characters": [
+    {
+      "id": 1,
+      "name": "华剑雄",
+      "aliases": [
+        "华处长",
+        "剑雄君",
+        "他"
+      ],
+      "confidence": "high",
+      "role": "日本宪兵司令部心腹，武田的友人/下属",
+      "evidence": "文中多次出现'华剑雄'、'华处长'、'剑雄君'及代词'他', 均指同一人。"
+    },
+    {
+      "id": 2,
+      "name": "武田勇夫",
+      "aliases": [
+        "武田",
+        "武田君"
+      ],
+      "confidence": "high",
+      "role": "虹口日本宪兵司令部队长",
+      "evidence": "'武田'、'武田勇夫'、'武田君' 在文中交替使用，指代同一刑讯室中的日本人。"
+    },
+    {
+      "id": 3,
+      "name": "老赵",
+      "aliases": [
+        "司机"
+      ],
+      "confidence": "high",
+      "role": "华剑雄的司机",
+      "evidence": "'司机老赵'明确身份，后文虽未再直呼其名但语境中为同一人。"
+    },
+    {
+      "id": 4,
+      "name": "丁主任",
+      "aliases": [
+        "丁"
+      ],
+      "confidence": "high",
+      "role": "需经日本宪兵司令部检查的官员",
+      "evidence": "'连丁主任进出...都要停车检查', 明确为具体个体人物。"
+    },
+    {
+      "id": 5,
+      "name": "义父",
+      "aliases": [
+        "日本义父"
+      ],
+      "confidence": "medium",
+      "role": "华剑雄的多年未见的日本籍亲属/长辈",
+      "evidence": "'他那个...日本义父', 虽有关联但原文未明说其具名，归为具体个体。"
+    },
+    {
+      "id": 6,
+      "name": "无名女人",
+      "aliases": [
+        "那女人",
+        "犯人"
+      ],
+      "confidence": "high",
+      "role": "被武田勇夫刑讯的赤裸女子",
+      "evidence": "'赤裸女人'、'那女人', 虽无姓名但作为特定个体在场景中出场。"
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "name": "雪佛来轿车",
+      "category": "prop",
+      "mentions": [
+        "黑色的雪佛来轿车",
+        "他那辆黑色雪佛来"
+      ],
+      "owner": "华剑雄",
+      "function": "交通工具，用于接送人员。",
+      "confidence": "high",
+      "note": "首尾呼应，指同一辆车。",
+      "owner_ref": {
+        "character_id": 1,
+        "matched": "华剑雄"
+      }
+    },
+    {
+      "id": 2,
+      "name": "三角烙铁",
+      "category": "prop",
+      "mentions": [
+        "一把烧得暗红的三角烙铁",
+        "那把颜色变得有些暗淡的烙铁",
+        "冒着青烟的烙铁"
+      ],
+      "owner": "武田勇夫",
+      "function": "刑具，用于灼烫犯人。",
+      "confidence": "high",
+      "note": "同一件物品，经历烧红、暗淡、冒烟状态变化后扔进火盆。",
+      "owner_ref": {
+        "character_id": 2,
+        "matched": "武田勇夫"
+      }
+    },
+    {
+      "id": 3,
+      "name": "碳火盆",
+      "category": "set",
+      "mentions": [
+        "一边的碳火盆"
+      ],
+      "owner": "",
+      "function": "陈设，用于盛放炭火以加热或保温刑具。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "长条刑凳",
+      "category": "set",
+      "mentions": [
+        "长条刑凳"
+      ],
+      "owner": "",
+      "function": "陈设/家具，用于固定犯人。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "铁门",
+      "category": "prop",
+      "mentions": [
+        "厚重的铁门"
+      ],
+      "owner": "",
+      "function": "关键道具/建筑构件，此处作为可开合的入口被推开。",
+      "confidence": "high",
+      "note": "文中明确提到'推开沉重的铁门'，视为可移动使用的物品而非固定建筑结构。"
+    },
+    {
+      "id": 6,
+      "name": "表",
+      "category": "prop",
+      "mentions": [
+        "手腕看看表"
+      ],
+      "owner": "武田勇夫",
+      "function": "计时物，用于查看时间。",
+      "confidence": "high",
+      "note": "",
+      "owner_ref": {
+        "character_id": 2,
+        "matched": "武田勇夫"
+      }
+    },
+    {
+      "id": 7,
+      "name": "铁口杯",
+      "category": "prop",
+      "mentions": [
+        "桌子上的铁口杯"
+      ],
+      "owner": "",
+      "function": "容器，用于饮水。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "铁钳",
+      "category": "prop",
+      "mentions": [
+        "铁钳"
+      ],
+      "owner": "",
+      "function": "工具，用于夹持撕扯犯人身体部位。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "绳子",
+      "category": "prop",
+      "mentions": [
+        "一道道的绳子"
+      ],
+      "owner": "",
+      "function": "关键道具，用于捆绑固定犯人。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "衣服",
+      "category": "set",
+      "mentions": [
+        "散落的衣物"
+      ],
+      "owner": "",
+      "function": "服装，犯人受刑时穿着。",
+      "confidence": "high",
+      "note": ""
+    }
+  ],
+  "locations": [
+    {
+      "id": 1,
+      "name": "虹口日本宪兵司令部",
+      "scale": "building",
+      "mentions": [
+        "虹口日本宪兵司令部",
+        "日本宪兵司令部",
+        "宪兵司令部",
+        "宪兵司令部办公大楼"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 2,
+      "name": "７６号",
+      "scale": "building",
+      "mentions": [
+        "７６号"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "二楼办公室",
+      "scale": "room",
+      "mentions": [
+        "宪兵司令部二楼办公室里",
+        "办公室"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "地下刑讯室",
+      "scale": "room",
+      "mentions": [
+        "地下刑讯室里",
+        "刑讯室"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "花园",
+      "scale": "area",
+      "mentions": [
+        "宪兵司令部花园的假山",
+        "巨大花园"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "地下通道",
+      "scale": "area",
+      "mentions": [
+        "宽敞的地下通道里",
+        "地下通道"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "走廊",
+      "scale": "area",
+      "mentions": [
+        "长长的走廊里",
+        "走廊"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "草坪",
+      "scale": "area",
+      "mentions": [
+        "花园和草坪",
+        "青草繁花之下"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "柳月仿",
+      "scale": "building",
+      "mentions": [
+        "柳月仿"
+      ],
+      "confidence": "high",
+      "note": ""
+    }
+  ],
+  "_validation": {
+    "anchors": [
+      {
+        "id": 1,
+        "name": "华剑雄",
+        "key": "aliases",
+        "dropped": [
+          "华老板"
+        ]
+      }
+    ],
+    "xref": []
+  },
+  "counts": {
+    "scenes": 5,
+    "characters": 6,
+    "items": 10,
+    "locations": 9
+  }
+}
