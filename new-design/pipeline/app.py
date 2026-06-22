@@ -16,7 +16,7 @@
   aggregate.py / graph_index.py / gap_scan.py / event_pipeline.py / storage.py
 模型调用:替换 call_model()(默认直连 Ollama)。
 """
-import os, sys, json, glob
+import os, sys, json, glob, re
 import clean_split as CS
 import storage, merge_core, aggregate, graph_index, gap_scan
 import event_pipeline as EP
@@ -104,13 +104,33 @@ def analyze_chapter(text):
     merged["sub_events"]=ev["sub_events"]
     return merged
 
-def run(input_path, out_dir="output"):
-    raw=read_input(input_path)
-    cleaned, rep=CS.clean(raw)
-    chapters=CS.split_chapters(cleaned)
+def load_presplit(dir_path):
+    """目录下每个 chNN.txt 直接当一章(各自清洗,不拼接不重新拆分)。
+    章号从文件名数字提取;无数字则按排序序号。"""
+    chapters=[]
+    files=sorted(f for f in os.listdir(dir_path) if f.endswith(".txt"))
+    for i,f in enumerate(files,1):
+        raw=open(os.path.join(dir_path,f),encoding="utf-8",errors="replace").read()
+        cleaned,_=CS.clean(raw)
+        mobj=re.search(r'(\d+)', f)
+        idx=int(mobj.group(1)) if mobj else i
+        chapters.append({"index":idx,"title":os.path.splitext(f)[0],"text":cleaned.strip()})
+    chapters.sort(key=lambda c:c["index"])
+    return chapters
+
+def run(input_path, out_dir="output", presplit=False):
     store=storage.Store(out_dir)
-    print(f"[清洗] 删除 {rep['dropped_count']} 行噪音")
-    print(f"[拆分] {len(chapters)} 章")
+    if presplit:
+        if not os.path.isdir(input_path):
+            print("[错误] --presplit 需要输入为目录"); return
+        chapters=load_presplit(input_path)
+        print(f"[预拆分模式] 每个 txt 当一章,共 {len(chapters)} 章")
+    else:
+        raw=read_input(input_path)
+        cleaned, rep=CS.clean(raw)
+        chapters=CS.split_chapters(cleaned)
+        print(f"[清洗] 删除 {rep['dropped_count']} 行噪音")
+        print(f"[拆分] {len(chapters)} 章")
 
     for c in chapters:
         ch=c["index"]
@@ -141,7 +161,11 @@ def run(input_path, out_dir="output"):
     return idx
 
 if __name__=="__main__":
-    if len(sys.argv)<2:
-        print("用法: python app.py <文件或目录> [输出目录]"); sys.exit(1)
-    out=sys.argv[2] if len(sys.argv)>2 else "output"
-    run(sys.argv[1], out)
+    args=[a for a in sys.argv[1:] if not a.startswith("--")]
+    presplit="--presplit" in sys.argv
+    if len(args)<1:
+        print("用法: python app.py <文件或目录> [输出目录] [--presplit]")
+        print("  --presplit: 输入目录下每个 .txt 当作一章(用于已拆分的原文)")
+        sys.exit(1)
+    inp=args[0]; out=args[1] if len(args)>1 else "output"
+    run(inp, out, presplit=presplit)
