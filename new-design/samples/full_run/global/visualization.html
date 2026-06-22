@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>叙事档案 · 全局分析</title>
+<style>
+  :root{
+    --paper:#1a1714; --paper2:#221d18; --ink:#e8dcc8; --ink-dim:#9a8f7d;
+    --stamp:#a8332a; --thread:#b8884a; --line:#3a322a; --accent:#6f9b8e;
+    --social:#b8884a; --kin:#a8332a; --affective:#c77b8b; --event:#6f9b8e;
+    --allegiance:#8a6db5; --awareness:#5b8bb0; --attitude:#c0945a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Songti SC","STSong","Noto Serif SC",serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 20% 10%,rgba(168,51,42,.04),transparent 40%),
+                     radial-gradient(circle at 80% 90%,rgba(184,136,74,.04),transparent 40%);}
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 32px 80px}
+  header{border-bottom:2px solid var(--stamp);padding-bottom:24px;margin-bottom:8px;position:relative}
+  .eyebrow{font-size:12px;letter-spacing:.5em;color:var(--stamp);text-transform:uppercase;margin-bottom:12px;
+    font-family:"PingFang SC",sans-serif;font-weight:600}
+  h1{font-size:42px;font-weight:700;letter-spacing:.04em;margin-bottom:6px}
+  .sub{color:var(--ink-dim);font-size:15px;letter-spacing:.1em}
+  .stamp{position:absolute;top:0;right:0;border:2px solid var(--stamp);color:var(--stamp);
+    padding:8px 14px;transform:rotate(-8deg);font-family:"PingFang SC",sans-serif;font-weight:700;
+    font-size:13px;letter-spacing:.2em;opacity:.85}
+  .meta{display:flex;gap:28px;margin:20px 0 32px;flex-wrap:wrap;font-family:"PingFang SC",sans-serif}
+  .meta div{font-size:13px;color:var(--ink-dim)}
+  .meta b{display:block;font-size:26px;color:var(--ink);font-family:serif;font-weight:700}
+  nav{display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--line)}
+  nav button{background:none;border:none;color:var(--ink-dim);padding:12px 20px;cursor:pointer;
+    font-family:"PingFang SC",sans-serif;font-size:14px;letter-spacing:.1em;border-bottom:2px solid transparent;
+    transition:all .2s}
+  nav button:hover{color:var(--ink)}
+  nav button.on{color:var(--stamp);border-bottom-color:var(--stamp)}
+  .view{display:none;animation:fade .4s ease}
+  .view.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  svg{width:100%;display:block}
+  .panel{background:var(--paper2);border:1px solid var(--line);border-radius:2px;padding:8px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:16px 0;font-family:"PingFang SC",sans-serif;font-size:12px;color:var(--ink-dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:14px;height:3px;display:inline-block;border-radius:2px}
+  .node circle{cursor:pointer;transition:r .2s}
+  .node text{font-family:serif;fill:var(--ink);font-size:13px;pointer-events:none}
+  .node:hover circle{stroke:var(--ink);stroke-width:2}
+  .edge-label{fill:var(--ink-dim);font-size:10px;font-family:"PingFang SC",sans-serif}
+  .tl-row{display:flex;align-items:flex-start;gap:0;margin-bottom:2px}
+  .tl-name{width:120px;flex-shrink:0;text-align:right;padding:14px 16px 0 0;font-size:15px;font-weight:700}
+  .tl-track{flex:1;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;border-left:1px solid var(--line);padding-left:18px}
+  .beat{background:var(--paper2);border:1px solid var(--line);border-radius:2px;padding:7px 11px;font-size:12px;
+    font-family:"PingFang SC",sans-serif;position:relative;max-width:200px}
+  .beat .ch{font-size:10px;color:var(--thread);letter-spacing:.1em}
+  .beat.fb{border-style:dashed;border-color:var(--allegiance);opacity:.9}
+  .beat.fb::after{content:"回";position:absolute;top:-7px;right:-7px;background:var(--allegiance);color:#fff;
+    width:16px;height:16px;border-radius:50%;font-size:9px;text-align:center;line-height:16px}
+  .loc-tree{font-family:"PingFang SC",sans-serif}
+  .loc-node{padding:6px 0}
+  .loc-node .nm{font-size:14px}
+  .loc-node .sc{font-size:10px;color:var(--thread);margin-left:8px;letter-spacing:.1em}
+  .sync-item{background:var(--paper2);border-left:3px solid var(--accent);padding:10px 14px;margin-bottom:8px;
+    font-family:"PingFang SC",sans-serif;font-size:13px}
+  .sync-item .who{color:var(--accent);font-size:12px;margin-top:3px}
+  .tip{position:fixed;background:#0d0b09;border:1px solid var(--thread);padding:8px 12px;border-radius:2px;
+    font-size:12px;font-family:"PingFang SC",sans-serif;pointer-events:none;opacity:0;transition:opacity .15s;
+    max-width:240px;z-index:99;color:var(--ink)}
+  h2{font-size:15px;font-family:"PingFang SC",sans-serif;letter-spacing:.2em;color:var(--ink-dim);
+    margin:0 0 14px;font-weight:600;text-transform:uppercase}
+  footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-dim);
+    font-size:12px;font-family:"PingFang SC",sans-serif;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">机密 · 叙事结构卷宗</div>
+    <h1>全局人物·关系·时序</h1>
+    <div class="sub">Narrative Analysis — Cross-Chapter Global View</div>
+    <div class="stamp">已归档</div>
+  </header>
+  <div class="meta" id="meta"></div>
+  <nav>
+    <button class="on" data-v="rel">人物关系网</button>
+    <button data-v="time">个人时间线</button>
+    <button data-v="loc">地点层级</button>
+    <button data-v="sync">同步点</button>
+  </nav>
+  <div class="view on" id="v-rel">
+    <div class="legend" id="rel-legend"></div>
+    <div class="panel"><svg id="graph" height="560"></svg></div>
+  </div>
+  <div class="view" id="v-time">
+    <h2>按全局人物 · 跨章缝合(虚线圈"回"= 闪回)</h2>
+    <div id="timelines"></div>
+  </div>
+  <div class="view" id="v-loc">
+    <h2>空间包含层级(containment)</h2>
+    <div class="panel" style="padding:20px"><div class="loc-tree" id="loctree"></div></div>
+  </div>
+  <div class="view" id="v-sync">
+    <h2>跨人物同步点 · 多人共在事件,时间线在此对齐</h2>
+    <div id="syncs"></div>
+  </div>
+  <footer>本卷宗由 Qwen3.6 五维度提取 + 确定性归并/跨章缝合生成 · 关系信 high、复核 medium、人工终裁</footer>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+const DATA={"characters": [{"id": 1, "name": "华剑雄", "aliases": ["他", "剑雄君", "华处长", "老子"], "chapters": [1, 2]}, {"id": 2, "name": "老头子", "aliases": ["周老板"], "chapters": [1]}, {"id": 3, "name": "柳媚", "aliases": [], "chapters": [1]}, {"id": 4, "name": "汪主席", "aliases": ["汪政府"], "chapters": [1]}, {"id": 5, "name": "大使", "aliases": ["特命全权大使", "老家伙"], "chapters": [1]}, {"id": 6, "name": "萧红", "aliases": [], "chapters": [1]}, {"id": 7, "name": "裴仁基", "aliases": [], "chapters": [1]}, {"id": 8, "name": "颜雨", "aliases": [], "chapters": [1]}, {"id": 9, "name": "老赵", "aliases": ["司机"], "chapters": [2]}, {"id": 10, "name": "丁主任", "aliases": ["丁"], "chapters": [2]}, {"id": 11, "name": "武田勇夫", "aliases": ["武田", "武田君"], "chapters": [2]}, {"id": 12, "name": "无名女人", "aliases": ["那女人"], "chapters": [2]}, {"id": 13, "name": "日本义父", "aliases": ["义父"], "chapters": [2]}], "char_relations": [{"from": 2, "to": 1, "type": "social", "label": "上级派遣下属", "conf": "high", "ch": 1}, {"from": 1, "to": 2, "type": "attitude", "label": "对上司感到紧张敬畏", "conf": "high", "ch": 1}, {"from": 1, "to": 5, "type": "social", "label": "曾共同饮酒的熟人", "conf": "high", "ch": 1}, {"from": 1, "to": 6, "type": "event", "label": "通过萧红传递情报", "conf": "high", "ch": 1}, {"from": 1, "to": 8, "type": "affective", "label": "保持肉体关系与爱慕", "conf": "high", "ch": 1}, {"from": 8, "to": 1, "type": "awareness", "label": "知其表面职务不知秘密使命", "conf": "high", "ch": 1}, {"from": 1, "to": 11, "type": "social", "label": "表面朋友实为监视对象", "conf": "high", "ch": 2}, {"from": 1, "to": 11, "type": "affective", "label": "交情深厚/约定饮酒", "conf": "high", "ch": 2}, {"from": 1, "to": 13, "type": "kin", "label": "义父子关系", "conf": "high", "ch": 2}, {"from": 1, "to": 13, "type": "social", "label": "受义父影响获信任", "conf": "high", "ch": 2}, {"from": 1, "to": 9, "type": "social", "label": "主仆关系", "conf": "high", "ch": 2}, {"from": 11, "to": 12, "type": "event", "label": "刑讯折磨", "conf": "high", "ch": 2}, {"from": 11, "to": 1, "type": "attitude", "label": "对华剑雄露出笑容/道歉", "conf": "high", "ch": 2}, {"from": 1, "to": 11, "type": "attitude", "label": "觉得武田好笑/虚伪", "conf": "high", "ch": 2}, {"from": 1, "to": 11, "type": "attitude", "label": "调侃武田公务繁忙", "conf": "medium", "ch": 2}], "timelines": {"2": [{"seq": 1, "desc": "老头子召回华剑雄", "ch": 1, "fb": false}], "1": [{"seq": 1, "desc": "华剑雄回忆长春之行起因", "ch": 1, "fb": true}, {"seq": 2, "desc": "华剑雄在长春逗留一月", "ch": 1, "fb": true}, {"seq": 3, "desc": "华剑雄离开长春当晚大使被刺", "ch": 1, "fb": true}, {"seq": 4, "desc": "华剑雄去长春前传递情报", "ch": 1, "fb": true}, {"seq": 5, "desc": "华剑雄在长春与颜雨保持关系并逗留", "ch": 1, "fb": true}, {"seq": 6, "desc": "老头子召回华剑雄", "ch": 1, "fb": false}, {"seq": 7, "desc": "华剑雄看钟准备赴约", "ch": 1, "fb": false}, {"seq": 8, "desc": "华剑雄回忆昨日约酒送情报", "ch": 2, "fb": true}, {"seq": 9, "desc": "轿车抵达宪兵司令部", "ch": 2, "fb": false}, {"seq": 10, "desc": "老赵评价华处长面子大", "ch": 2, "fb": false}, {"seq": 11, "desc": "华剑雄得知武田在刑讯室", "ch": 2, "fb": false}, {"seq": 12, "desc": "武田停止刑讯并道歉", "ch": 2, "fb": false}, {"seq": 13, "desc": "华剑雄与武田一同离开", "ch": 2, "fb": false}], "4": [{"seq": 1, "desc": "汪主席在东京定大计", "ch": 1, "fb": true}], "5": [{"seq": 1, "desc": "华剑雄离开长春当晚大使被刺", "ch": 1, "fb": true}], "6": [{"seq": 1, "desc": "华剑雄去长春前传递情报", "ch": 1, "fb": true}], "8": [{"seq": 1, "desc": "华剑雄在长春与颜雨保持关系并逗留", "ch": 1, "fb": true}], "9": [{"seq": 1, "desc": "轿车抵达宪兵司令部", "ch": 2, "fb": false}, {"seq": 2, "desc": "老赵评价华处长面子大", "ch": 2, "fb": false}], "10": [{"seq": 1, "desc": "老赵评价华处长面子大", "ch": 2, "fb": false}], "11": [{"seq": 1, "desc": "华剑雄回忆昨日约酒送情报", "ch": 2, "fb": true}, {"seq": 2, "desc": "华剑雄得知武田在刑讯室", "ch": 2, "fb": false}, {"seq": 3, "desc": "武田刑讯无名女人（进行中）", "ch": 2, "fb": false}, {"seq": 4, "desc": "武田停止刑讯并道歉", "ch": 2, "fb": false}, {"seq": 5, "desc": "华剑雄与武田一同离开", "ch": 2, "fb": false}], "12": [{"seq": 1, "desc": "武田刑讯无名女人（进行中）", "ch": 2, "fb": false}, {"seq": 2, "desc": "武田停止刑讯并道歉", "ch": 2, "fb": false}]}, "locations": [{"id": 1, "name": "长春", "chapters": [1]}, {"id": 2, "name": "上海", "chapters": [1]}, {"id": 3, "name": "南京政府", "chapters": [1]}, {"id": 4, "name": "伪满洲国", "chapters": [1]}, {"id": 5, "name": "东京", "chapters": [1]}, {"id": 6, "name": "７６号", "chapters": [1, 2]}, {"id": 7, "name": "大使官邸", "chapters": [1]}, {"id": 8, "name": "金陵大学", "chapters": [1]}, {"id": 9, "name": "重庆", "chapters": [1]}, {"id": 10, "name": "二楼办公室", "chapters": [1, 2]}, {"id": 11, "name": "虹口日本宪兵司令部", "chapters": [2]}, {"id": 12, "name": "地下刑讯室", "chapters": [2]}, {"id": 13, "name": "花园", "chapters": [2]}, {"id": 14, "name": "地下通道", "chapters": [2]}, {"id": 15, "name": "走廊", "chapters": [2]}, {"id": 16, "name": "草坪", "chapters": [2]}, {"id": 17, "name": "柳月仿", "chapters": [2]}, {"id": 18, "name": "黑色雪佛来", "chapters": [2]}], "loc_relations": [{"from": 10, "to": 6, "type": "containment", "label": "办公室在76号内"}, {"from": 1, "to": 4, "type": "containment", "label": "长春属于伪满洲国"}, {"from": 7, "to": 1, "type": "containment", "label": "大使官邸位于长春近郊"}, {"from": 6, "to": 2, "type": "containment", "label": "76号位于上海"}, {"from": 10, "to": 2, "type": "containment", "label": "办公室位于上海"}, {"from": 10, "to": 6, "type": "movement", "label": "从76号办公室出发"}, {"from": 10, "to": 9, "type": "remote", "label": "办公室与重庆情报关联"}, {"from": 10, "to": 5, "type": "remote", "label": "办公室与东京决策关联"}, {"from": 10, "to": 11, "type": "containment", "label": "二楼办公室在司令部内"}, {"from": 12, "to": 14, "type": "containment", "label": "地下刑讯室在通道内"}, {"from": 12, "to": 11, "type": "containment", "label": "地下刑讯室在司令部内"}, {"from": 14, "to": 11, "type": "containment", "label": "地下通道属于司令部"}, {"from": 13, "to": 18, "type": "adjacency", "label": "草坪紧邻花园区域"}, {"from": 17, "to": 18, "type": "adjacency", "label": "柳月仿与76号相邻"}, {"from": 10, "to": 12, "type": "movement", "label": "从办公室前往刑讯室"}, {"from": 12, "to": 14, "type": "movement", "label": "从刑讯室走出至通道"}, {"from": 14, "to": 17, "type": "movement", "label": "从司令部前往柳月仿"}, {"from": 17, "to": 6, "type": "remote", "label": "情节往返于两地之间"}], "events": [{"id": 1, "desc": "老头子召回华剑雄", "ch": 1, "narr": 1, "story": 8, "fb": false, "parts": [2, 1], "line": "主线叙事"}, {"id": 2, "desc": "华剑雄回忆长春之行起因", "ch": 1, "narr": 2, "story": 1, "fb": true, "parts": [1], "line": "主线叙事"}, {"id": 3, "desc": "汪主席在东京定大计", "ch": 1, "narr": 3, "story": 2, "fb": true, "parts": [4], "line": "背景铺垫"}, {"id": 4, "desc": "华剑雄在长春逗留一月", "ch": 1, "narr": 4, "story": 3, "fb": true, "parts": [1], "line": "主线叙事"}, {"id": 5, "desc": "华剑雄离开长春当晚大使被刺", "ch": 1, "narr": 5, "story": 4, "fb": true, "parts": [1, 5], "line": "主线叙事"}, {"id": 6, "desc": "华剑雄去长春前传递情报", "ch": 1, "narr": 6, "story": 5, "fb": true, "parts": [1, 6], "line": "主线叙事"}, {"id": 7, "desc": "华剑雄在长春与颜雨保持关系并逗留", "ch": 1, "narr": 7, "story": 6, "fb": true, "parts": [1, 8], "line": "情感线"}, {"id": 8, "desc": "华剑雄看钟准备赴约", "ch": 1, "narr": 8, "story": 9, "fb": false, "parts": [1], "line": "主线叙事"}, {"id": 9, "desc": "轿车抵达宪兵司令部", "ch": 2, "narr": 1, "story": 2, "fb": false, "parts": [1, 9], "line": "华剑雄行动线"}, {"id": 10, "desc": "老赵评价华处长面子大", "ch": 2, "narr": 2, "story": 3, "fb": false, "parts": [1, 9, 10], "line": "背景介绍线"}, {"id": 11, "desc": "华剑雄得知武田在刑讯室", "ch": 2, "narr": 3, "story": 4, "fb": false, "parts": [1, 11], "line": "华剑雄行动线"}, {"id": 12, "desc": "武田刑讯无名女人（进行中）", "ch": 2, "narr": 4, "story": 5, "fb": false, "parts": [11, 12], "line": "武田行动线"}, {"id": 13, "desc": "华剑雄回忆昨日约酒送情报", "ch": 2, "narr": 5, "story": 1, "fb": true, "parts": [1, 11], "line": "华剑雄行动线"}, {"id": 14, "desc": "武田停止刑讯并道歉", "ch": 2, "narr": 6, "story": 6, "fb": false, "parts": [1, 11, 12], "line": "武田行动线"}, {"id": 15, "desc": "华剑雄与武田一同离开", "ch": 2, "narr": 7, "story": 7, "fb": false, "parts": [1, 11], "line": "华剑雄行动线"}], "sync": [{"id": 1, "desc": "老头子召回华剑雄", "parts": [2, 1]}, {"id": 5, "desc": "华剑雄离开长春当晚大使被刺", "parts": [1, 5]}, {"id": 6, "desc": "华剑雄去长春前传递情报", "parts": [1, 6]}, {"id": 7, "desc": "华剑雄在长春与颜雨保持关系并逗留", "parts": [1, 8]}, {"id": 9, "desc": "轿车抵达宪兵司令部", "parts": [1, 9]}, {"id": 10, "desc": "老赵评价华处长面子大", "parts": [1, 9, 10]}, {"id": 11, "desc": "华剑雄得知武田在刑讯室", "parts": [1, 11]}, {"id": 12, "desc": "武田刑讯无名女人（进行中）", "parts": [11, 12]}, {"id": 13, "desc": "华剑雄回忆昨日约酒送情报", "parts": [1, 11]}, {"id": 14, "desc": "武田停止刑讯并道歉", "parts": [1, 11, 12]}, {"id": 15, "desc": "华剑雄与武田一同离开", "parts": [1, 11]}]};
+const RT={social:"社会隶属",kin:"亲属",affective:"情感",event:"事件",allegiance:"立场伪装",awareness:"知情度",attitude:"态度"};
+const RC={social:"#b8884a",kin:"#a8332a",affective:"#c77b8b",event:"#6f9b8e",allegiance:"#8a6db5",awareness:"#5b8bb0",attitude:"#c0945a"};
+const cmap={}; DATA.characters.forEach(c=>cmap[c.id]=c.name);
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';}
+function hideTip(){tip.style.opacity=0;}
+
+// meta
+const m=document.getElementById('meta');
+m.innerHTML=[["全局人物",DATA.characters.length],["人物关系",DATA.char_relations.length],
+  ["地点",DATA.locations.length],["事件",DATA.events.length],["同步点",DATA.sync.length]]
+  .map(([k,v])=>`<div><b>${v}</b>${k}</div>`).join('');
+
+// legend
+const usedTypes=[...new Set(DATA.char_relations.map(r=>r.type))];
+document.getElementById('rel-legend').innerHTML=usedTypes.map(t=>
+  `<span><i style="background:${RC[t]}"></i>${RT[t]||t}</span>`).join('');
+
+// ---- 关系网络:简易力导向 ----
+function drawGraph(){
+  const svg=document.getElementById('graph');
+  const W=svg.clientWidth||1100, H=560;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  // 只画有关系的人物
+  const deg={}; DATA.char_relations.forEach(r=>{deg[r.from]=(deg[r.from]||0)+1;deg[r.to]=(deg[r.to]||0)+1;});
+  const nodes=DATA.characters.filter(c=>deg[c.id]).map(c=>({...c,deg:deg[c.id]||0}));
+  const idx={}; nodes.forEach((n,i)=>idx[n.id]=i);
+  // 初始化:圆形布局
+  nodes.forEach((n,i)=>{const a=2*Math.PI*i/nodes.length;n.x=W/2+Math.cos(a)*200;n.y=H/2+Math.sin(a)*180;n.vx=0;n.vy=0;});
+  const links=DATA.char_relations.filter(r=>idx[r.from]!=null&&idx[r.to]!=null);
+  // 力导向迭代
+  for(let it=0;it<300;it++){
+    nodes.forEach(a=>{a.fx=0;a.fy=0;
+      nodes.forEach(b=>{if(a===b)return;let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||1;
+        let f=4200/(d*d);a.fx+=dx/d*f;a.fy+=dy/d*f;});});
+    links.forEach(l=>{let a=nodes[idx[l.from]],b=nodes[idx[l.to]],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;
+      let f=(d-150)*0.02;a.fx+=dx/d*f;a.fy+=dy/d*f;b.fx-=dx/d*f;b.fy-=dy/d*f;});
+    nodes.forEach(n=>{n.x+=Math.max(-8,Math.min(8,n.fx));n.y+=Math.max(-8,Math.min(8,n.fy));
+      n.x=Math.max(60,Math.min(W-60,n.x));n.y=Math.max(40,Math.min(H-40,n.y));});
+  }
+  let h='<defs>';
+  usedTypes.forEach(t=>h+=`<marker id="ar-${t}" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="${RC[t]}"/></marker>`);
+  h+='</defs>';
+  links.forEach(l=>{let a=nodes[idx[l.from]],b=nodes[idx[l.to]];
+    let dash=l.conf==='medium'?'stroke-dasharray="5,4"':'';
+    h+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${RC[l.type]}" stroke-width="${l.conf==='medium'?1.2:1.8}" opacity="0.7" ${dash} marker-end="url(#ar-${l.type})"
+      data-lbl="${l.label} · ${RT[l.type]||l.type}${l.conf==='medium'?' (待确认)':''}"/>`;});
+  nodes.forEach(n=>{let r=8+Math.min(n.deg*2,10);let cross=n.chapters.length>1;
+    h+=`<g class="node" data-id="${n.id}"><circle cx="${n.x}" cy="${n.y}" r="${r}" fill="${cross?'#a8332a':'#2a241d'}" stroke="${cross?'#e8dcc8':'#b8884a'}" stroke-width="1.5"/>
+      <text x="${n.x}" y="${n.y-r-6}" text-anchor="middle">${n.name}</text></g>`;});
+  svg.innerHTML=h;
+  svg.querySelectorAll('line').forEach(L=>{L.addEventListener('mousemove',e=>showTip(e,L.dataset.lbl));L.addEventListener('mouseleave',hideTip);});
+  svg.querySelectorAll('.node').forEach(N=>{const c=DATA.characters.find(x=>x.id==N.dataset.id);
+    N.addEventListener('mousemove',e=>showTip(e,`<b>${c.name}</b><br>别名: ${c.aliases.join('、')||'—'}<br>出现: 第${c.chapters.join('、')}章`));
+    N.addEventListener('mouseleave',hideTip);});
+}
+
+// ---- 时间线 ----
+function drawTimelines(){
+  const box=document.getElementById('timelines');
+  const named=Object.entries(DATA.timelines).map(([id,evs])=>({name:cmap[id]||('#'+id),evs}))
+    .filter(t=>t.evs.length).sort((a,b)=>b.evs.length-a.evs.length);
+  box.innerHTML=named.map(t=>`<div class="tl-row"><div class="tl-name">${t.name}</div>
+    <div class="tl-track">${t.evs.map(e=>`<div class="beat ${e.fb?'fb':''}"><div class="ch">第${e.ch}章 · ${e.seq}</div>${e.desc}</div>`).join('')}</div></div>`).join('');
+}
+
+// ---- 地点层级(containment 构树) ----
+function drawLocTree(){
+  const cont=DATA.loc_relations.filter(r=>r.type==='containment');
+  const parent={}; cont.forEach(r=>parent[r.from]=r.to);  // from 在 to 内
+  const lname={}; DATA.locations.forEach(l=>lname[l.id]=l);
+  const children={}; cont.forEach(r=>{(children[r.to]=children[r.to]||[]).push(r.from);});
+  const roots=DATA.locations.filter(l=>!parent[l.id]);
+  function render(l,depth){
+    let h=`<div class="loc-node" style="margin-left:${depth*22}px"><span class="nm">${depth>0?'└ ':''}${l.name}</span><span class="sc">第${l.chapters.join('、')}章</span></div>`;
+    (children[l.id]||[]).forEach(cid=>{if(lname[cid])h+=render(lname[cid],depth+1);});
+    return h;
+  }
+  document.getElementById('loctree').innerHTML=roots.map(r=>render(r,0)).join('')||'<div style="color:var(--ink-dim)">无包含关系数据</div>';
+}
+
+// ---- 同步点 ----
+function drawSync(){
+  document.getElementById('syncs').innerHTML=DATA.sync.map(s=>
+    `<div class="sync-item">${s.desc}<div class="who">同步 → ${s.parts.map(p=>cmap[p]||('#'+p)).join(' · ')}</div></div>`).join('');
+}
+
+// nav
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');document.getElementById('v-'+b.dataset.v).classList.add('on');
+  if(b.dataset.v==='rel')drawGraph();
+}));
+drawGraph();drawTimelines();drawLocTree();drawSync();
+window.addEventListener('resize',()=>{if(document.getElementById('v-rel').classList.contains('on'))drawGraph();});
+</script>
+</body>
+</html>

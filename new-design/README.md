@@ -21,7 +21,11 @@ new-design/
 │   ├── orchestrator.py        总编排:跑五维度 + 单章归并
 │   ├── merge_core.py          章节内归并 + 跨维度 id 解析 + 锚点校验
 │   ├── cross_chapter.py       跨章:全局实体归一 + 个人时间线缝合 + 同步点
-│   └── entity_normalize.py    脏人名归一(符号/错字/繁简/重名防误合)
+│   ├── entity_normalize.py    脏人名归一(符号/错字/繁简/重名防误合)
+│   ├── storage.py             三层产物落盘 + 路径契约
+│   └── aggregate.py           跨章按维度聚合,每维度一个全局文件
+├── samples/full_run/          完整三层产物样例(见下)
+│   └── global/visualization.html  全局可视化(浏览器打开)
 ├── docs/                      各维度详细说明
 └── samples/                   真实运行结果样例
 ```
@@ -60,6 +64,29 @@ cd pipeline
 # 默认直连 Ollama 127.0.0.1:11434;经平台调用时替换 orchestrator.py 的 call_model()
 python3 orchestrator.py 你的文本.txt > result.json
 ```
+
+
+## 三层产物结构
+
+每次完整运行产出三层文件(见 `samples/full_run/`):
+
+1. **原始 pass 层** `chNN/{dimension}_{pass}.json` — 每章每维度每个提示词的原始输出,单独存盘、可追溯。如 `ch01/character_pass2.json`(人物关系)、`ch01/item_pass1.json`(物品抽取)。
+2. **章节归一层** `chNN/_merged.json` — 该章六个 pass 跨维度合并:挂关系(character_relations / location_relations / 物品 part_of+set_group)、跨维度 id 引用(物品 owner→人物、场景 location→地点)、三道校验。
+3. **全局分维度层** `global/{dimension}.json` — 跨章归一后,每个维度一个全局文件:
+   - `characters.json` 全局人物表 + 跨章关系(局部 id 映射为全局 id)+ 个人时间线 + 歧义报告
+   - `items.json` / `locations.json`(含 containment 等关系)/ `timeline.json`(事件 + 同步点)/ `scenes.json`
+   - `_index.json` 顶层索引(章节清单、各全局文件、统计、歧义计数)
+
+落盘契约见 `pipeline/storage.py`,跨章聚合见 `pipeline/aggregate.py`。
+
+## 全局可视化
+
+`samples/full_run/global/visualization.html` — 单文件、数据内嵌,浏览器直接打开。档案卷宗风格,四个视图:
+
+- **人物关系网**:力导向图,跨章人物高亮为枢纽节点,边按七类关系着色、带方向,medium 关系虚线;悬停看关系标签与人物别名。
+- **个人时间线**:每个全局人物一行,事件卡片按"第N章·序号"跨章缝合排列,闪回卡片虚线框 + "回"角标。
+- **地点层级**:containment 关系构成的空间包含树。
+- **同步点**:多人共在事件,各人物时间线在此对齐。
 
 ## 已知局限
 
