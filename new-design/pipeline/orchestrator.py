@@ -54,12 +54,15 @@ def analyze(text):
         lambda c:f'  id={c["id"]} name="{c["name"]}" role="{c.get("role","")}"')
     chars_p1["relations"]=char_rel   # 人物关系挂在顶层
 
-    # 3) 物品(2 pass)
-    items_p1,item_rel=run_theme_2pass(text,
-        "物品分析_Pass1_抽取共指分类.txt","物品分析_Pass2_关系标注.txt",
-        "{ITEMLIST}","items",
-        lambda it:f'  id={it["id"]} name="{it["name"]}" category={it["category"]}')
-    # 合并物品关系(part_of/set_group)到条目
+    # 3) 物品(2 pass);Pass1 注入场景清单以便定位物品所在场景
+    scenelist="\n".join(f'  index={s.get("index")} title="{s.get("title","")}" '
+                         f'start="{(s.get("start_text") or "")[:15]}" end="{(s.get("end_text") or "")[:15]}"'
+                         for s in scenes.get("scenes",[]))
+    items_p1=call_model(load("物品分析_Pass1_抽取共指分类.txt")
+                        .replace("{SCENELIST}",scenelist).replace("{TEXT}",text))
+    item_rel=call_model(load("物品分析_Pass2_关系标注.txt")
+                        .replace("{ITEMLIST}","\n".join(f'  id={it["id"]} name="{it["name"]}" category={it["category"]}' for it in items_p1["items"]))
+                        .replace("{TEXT}",text)).get("relations",[])
     relmap={r["id"]:r for r in item_rel}
     for it in items_p1["items"]:
         r=relmap.get(it["id"],{}); it["part_of"]=r.get("part_of"); it["set_group"]=r.get("set_group","")

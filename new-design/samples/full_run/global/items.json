@@ -2,10 +2,10 @@
   "global_items": [
     {
       "global_id": 1,
-      "canonical": "烟",
+      "canonical": "使节团",
       "all_names": [
-        "一支烟",
-        "烟"
+        "使节团",
+        "南京政府派去长春使节团"
       ],
       "members": [
         {
@@ -16,9 +16,11 @@
     },
     {
       "global_id": 2,
-      "canonical": "椅子",
+      "canonical": "大使官邸",
       "all_names": [
-        "椅子"
+        "大使官邸",
+        "深宅大院",
+        "这所官邸"
       ],
       "members": [
         {
@@ -29,10 +31,10 @@
     },
     {
       "global_id": 3,
-      "canonical": "自鸣钟",
+      "canonical": "烟",
       "all_names": [
-        "墙上的自鸣钟",
-        "自鸣钟"
+        "一支烟",
+        "烟"
       ],
       "members": [
         {
@@ -43,10 +45,9 @@
     },
     {
       "global_id": 4,
-      "canonical": "卷烟纸",
+      "canonical": "椅子",
       "all_names": [
-        "一叠卷烟纸",
-        "卷烟纸"
+        "椅子"
       ],
       "members": [
         {
@@ -57,10 +58,9 @@
     },
     {
       "global_id": 5,
-      "canonical": "密写笔",
+      "canonical": "办公桌",
       "all_names": [
-        "一只特殊的密写笔",
-        "密写笔"
+        "办公桌"
       ],
       "members": [
         {
@@ -71,10 +71,10 @@
     },
     {
       "global_id": 6,
-      "canonical": "水果糖",
+      "canonical": "自鸣钟",
       "all_names": [
-        "一块水果糖",
-        "水果糖"
+        "墙上的自鸣钟",
+        "自鸣钟"
       ],
       "members": [
         {
@@ -85,9 +85,10 @@
     },
     {
       "global_id": 7,
-      "canonical": "衣兜",
+      "canonical": "密写笔",
       "all_names": [
-        "衣兜"
+        "密写笔",
+        "特殊的密写笔"
       ],
       "members": [
         {
@@ -98,9 +99,10 @@
     },
     {
       "global_id": 8,
-      "canonical": "外衣",
+      "canonical": "水果糖",
       "all_names": [
-        "外衣"
+        "一块水果糖",
+        "水果糖"
       ],
       "members": [
         {
@@ -111,9 +113,9 @@
     },
     {
       "global_id": 9,
-      "canonical": "枪袋",
+      "canonical": "外衣",
       "all_names": [
-        "枪袋"
+        "外衣"
       ],
       "members": [
         {
@@ -140,9 +142,9 @@
       "global_id": 11,
       "canonical": "雪佛来轿车",
       "all_names": [
-        "他那辆黑色雪佛来",
         "雪佛来轿车",
-        "黑色的雪佛来轿车"
+        "黑色的雪佛来轿车",
+        "黑色雪佛来"
       ],
       "members": [
         {
@@ -153,12 +155,9 @@
     },
     {
       "global_id": 12,
-      "canonical": "三角烙铁",
+      "canonical": "长条刑凳",
       "all_names": [
-        "三角烙铁",
-        "冒着青烟的烙铁",
-        "烧得暗红的三角烙铁",
-        "颜色变得有些暗淡的烙铁"
+        "长条刑凳"
       ],
       "members": [
         {
@@ -169,10 +168,12 @@
     },
     {
       "global_id": 13,
-      "canonical": "长条刑凳",
+      "canonical": "三角烙铁",
       "all_names": [
-        "木凳",
-        "长条刑凳"
+        "三角烙铁",
+        "冒着青烟的烙铁",
+        "烧得暗红的三角烙铁",
+        "颜色变得有些暗淡的烙铁"
       ],
       "members": [
         {
@@ -183,24 +184,8 @@
     },
     {
       "global_id": 14,
-      "canonical": "铁门",
-      "all_names": [
-        "厚重的铁门",
-        "沉重的铁门",
-        "铁门"
-      ],
-      "members": [
-        {
-          "chapter": 2,
-          "local_id": 4
-        }
-      ]
-    },
-    {
-      "global_id": 15,
       "canonical": "碳火盆",
       "all_names": [
-        "一边的碳火盆",
         "碳火盆"
       ],
       "members": [
@@ -211,10 +196,10 @@
       ]
     },
     {
-      "global_id": 16,
-      "canonical": "表",
+      "global_id": 15,
+      "canonical": "手表",
       "all_names": [
-        "手腕看看表",
+        "手表",
         "表"
       ],
       "members": [
@@ -225,10 +210,9 @@
       ]
     },
     {
-      "global_id": 17,
+      "global_id": 16,
       "canonical": "铁口杯",
       "all_names": [
-        "桌子上的铁口杯",
         "铁口杯"
       ],
       "members": [
@@ -239,10 +223,9 @@
       ]
     },
     {
-      "global_id": 18,
+      "global_id": 17,
       "canonical": "铁钳",
       "all_names": [
-        "用铁钳夹住",
         "铁钳"
       ],
       "members": [
@@ -253,7 +236,7 @@
       ]
     },
     {
-      "global_id": 19,
+      "global_id": 18,
       "canonical": "绳子",
       "all_names": [
         "一道道的绳子",
@@ -267,12 +250,11 @@
       ]
     },
     {
-      "global_id": 20,
-      "canonical": "衣服",
+      "global_id": 19,
+      "canonical": "衣物",
       "all_names": [
         "散落的衣物",
-        "穿好了衣服",
-        "衣服"
+        "衣物"
       ],
       "members": [
         {
@@ -282,11 +264,10 @@
       ]
     },
     {
-      "global_id": 21,
-      "canonical": "桌子",
+      "global_id": 20,
+      "canonical": "衣服",
       "all_names": [
-        "桌子",
-        "桌子上"
+        "衣服"
       ],
       "members": [
         {
@@ -296,5 +277,167 @@
       ]
     }
   ],
+  "item_locations": {
+    "1": [
+      {
+        "chapter": 1,
+        "location_id": 1,
+        "location_name": "长春",
+        "via_scene": 2
+      }
+    ],
+    "2": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 3
+      }
+    ],
+    "3": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 1
+      }
+    ],
+    "4": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 1
+      }
+    ],
+    "5": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 1
+      }
+    ],
+    "6": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 5
+      }
+    ],
+    "7": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 5
+      }
+    ],
+    "8": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 5
+      }
+    ],
+    "9": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 5
+      }
+    ],
+    "10": [
+      {
+        "chapter": 1,
+        "location_id": 10,
+        "location_name": "办公室",
+        "via_scene": 5
+      }
+    ],
+    "11": [
+      {
+        "chapter": 2,
+        "location_id": 1,
+        "location_name": "虹口日本宪兵司令部",
+        "via_scene": 1
+      }
+    ],
+    "12": [
+      {
+        "chapter": 2,
+        "location_id": 1,
+        "location_name": "虹口日本宪兵司令部",
+        "via_scene": 3
+      }
+    ],
+    "13": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "14": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 5
+      }
+    ],
+    "15": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "16": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "17": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "18": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "19": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 4
+      }
+    ],
+    "20": [
+      {
+        "chapter": 2,
+        "location_id": 4,
+        "location_name": "地下刑讯室",
+        "via_scene": 5
+      }
+    ]
+  },
   "ambiguities": []
 }

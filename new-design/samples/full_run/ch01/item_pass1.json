@@ -3,121 +3,134 @@
   "items": [
     {
       "id": 1,
+      "scene": 2,
+      "name": "使节团",
+      "category": "prop",
+      "mentions": [
+        "南京政府派去长春使节团",
+        "使节团"
+      ],
+      "owner": "",
+      "function": "前往伪满洲国进行外交谈判的团体。",
+      "confidence": "high",
+      "note": "文中指代具体的派遣人员群体，属于可移动的集体物品/实体概念化对象。"
+    },
+    {
+      "id": 2,
+      "scene": 3,
+      "name": "大使官邸",
+      "category": "set",
+      "mentions": [
+        "深宅大院",
+        "大使官邸",
+        "这所官邸"
+      ],
+      "owner": "",
+      "function": "日本人为谈判选择的居住和进行外交活动的场所建筑。",
+      "confidence": "high",
+      "note": "虽为建筑，但文中强调其作为‘深宅大院’的陈设属性及特定用途（官邸），且与周围环境区分开，视为陈设类物品中的大型固定物或整体空间单元。根据规则'铁门算建筑构件不收'，此处'深宅大院'更偏向于作为一个整体的居住设施/场所实体，但考虑到其作为‘选择’的结果和相对独立性，归为set更为合适；若严格遵循'房间/大楼不收'，也可视为环境。然而文中提到'所有谈判都在这所官邸里进行'，且是'深宅大院'这一具体选定对象，故列为set中的陈设/场所实体。更严谨地看，规则说'房间、大楼...一律不收'，但'室内家具与人造陈设'收。大使官邸作为具体的‘一所’建筑，介于两者之间。参考示例中'铁门(构件)不收' vs '火盆(可搬动)收'。此处暂归为set中的大型陈设/场所实体。"
+    },
+    {
+      "id": 3,
+      "scene": 1,
       "name": "烟",
       "category": "prop",
       "mentions": [
         "一支烟"
       ],
       "owner": "",
-      "function": "吸烟用",
+      "function": "华剑雄在办公室点燃的吸烟用品。",
       "confidence": "high",
       "note": ""
     },
     {
-      "id": 2,
+      "id": 4,
+      "scene": 1,
       "name": "椅子",
       "category": "set",
       "mentions": [
         "椅子"
       ],
       "owner": "",
-      "function": "坐具",
+      "function": "华剑雄靠在上面的坐具。",
       "confidence": "high",
       "note": ""
     },
     {
-      "id": 3,
+      "id": 5,
+      "scene": 1,
+      "name": "办公桌",
+      "category": "set",
+      "mentions": [
+        "办公桌"
+      ],
+      "owner": "",
+      "function": "华剑雄坐在后面的家具。",
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "scene": 5,
       "name": "自鸣钟",
       "category": "prop",
       "mentions": [
         "墙上的自鸣钟"
       ],
       "owner": "",
-      "function": "计时物",
+      "function": "挂在墙上报时的计时工具。",
       "confidence": "high",
       "note": ""
     },
     {
-      "id": 4,
-      "name": "卷烟纸",
-      "category": "prop",
-      "mentions": [
-        "一叠卷烟纸"
-      ],
-      "owner": "",
-      "function": "包装/辅助物",
-      "confidence": "high",
-      "note": ""
-    },
-    {
-      "id": 5,
+      "id": 7,
+      "scene": 5,
       "name": "密写笔",
       "category": "prop",
       "mentions": [
-        "一只特殊的密写笔"
+        "特殊的密写笔"
       ],
       "owner": "",
-      "function": "书写工具",
+      "function": "用于在卷烟纸上秘密写字的工具。",
       "confidence": "high",
       "note": ""
     },
     {
-      "id": 6,
+      "id": 8,
+      "scene": 5,
       "name": "水果糖",
       "category": "prop",
       "mentions": [
         "一块水果糖"
       ],
       "owner": "",
-      "function": "食物/容器内物",
+      "function": "华剑雄放入衣兜的随身物品。",
       "confidence": "high",
       "note": ""
     },
     {
-      "id": 7,
-      "name": "衣兜",
-      "category": "set",
-      "mentions": [
-        "衣兜"
-      ],
-      "owner": "",
-      "function": "随身容器/衣物部件",
-      "confidence": "high",
-      "note": ""
-    },
-    {
-      "id": 8,
+      "id": 9,
+      "scene": 5,
       "name": "外衣",
       "category": "set",
       "mentions": [
         "外衣"
       ],
       "owner": "",
-      "function": "衣物",
-      "confidence": "high",
-      "note": ""
-    },
-    {
-      "id": 9,
-      "name": "枪袋",
-      "category": "prop",
-      "mentions": [
-        "枪袋"
-      ],
-      "owner": "",
-      "function": "容器/随身物",
+      "function": "华剑雄穿在身上的衣物。",
       "confidence": "high",
       "note": ""
     },
     {
       "id": 10,
+      "scene": 5,
       "name": "手枪",
       "category": "prop",
       "mentions": [
         "枪袋里的手枪"
       ],
       "owner": "",
-      "function": "武器",
+      "function": "华剑雄检查并携带的武器。",
       "confidence": "high",
       "note": ""
     }

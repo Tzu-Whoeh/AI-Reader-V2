@@ -41,8 +41,29 @@ def aggregate(store):
         "ambiguities":cross["ambiguities"]["characters"],
     }
 
-    # ---- 全局物品文档 ----
-    items_doc={"global_items":cross["global_items"],"ambiguities":cross["ambiguities"]["items"]}
+    # ---- 全局物品文档(附各章实例的位置:物品→场景→地点) ----
+    # 收集每章每物品的 location_refs,挂到全局物品的 members 上
+    loc2glob_item={}
+    for g in cross["global_items"]:
+        for m in g["members"]: loc2glob_item[(m["chapter"],m["local_id"])]=g["global_id"]
+    item_locations={}  # global_item_id -> [{chapter, location_id, location_name, via_scene}]
+    # 需要章节地点名:用各章 _merged 的 locations
+    for ci,ch in enumerate(chapters):
+        chap_no=ch["_chapter"]
+        locname={l["id"]:l["name"] for l in ch.get("locations",[])}
+        # 重新从该章 merged 读 items(含 location_refs)
+        m=store.load_chapter_merged(chap_no)
+        ln={l["id"]:l["name"] for l in m.get("locations",[])}
+        for it in m.get("items",[]):
+            gid=loc2glob_item.get((chap_no,it["id"]))
+            if gid is None: continue
+            for ref in it.get("location_refs",[]):
+                item_locations.setdefault(gid,[]).append({
+                    "chapter":chap_no,"location_id":ref["location_id"],
+                    "location_name":ln.get(ref["location_id"],""),"via_scene":ref["via_scene"]})
+    items_doc={"global_items":cross["global_items"],
+               "item_locations":item_locations,
+               "ambiguities":cross["ambiguities"]["items"]}
     # ---- 全局地点文档 ----
     loc2glob_loc={}
     for g in cross["global_locations"]:

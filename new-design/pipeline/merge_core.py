@@ -37,6 +37,29 @@ def resolve(value, idx):
     return (None,None)
 
 # ---------- 主归并 ----------
+
+def resolve_item_locations(items, scenes):
+    """物品 scene 字段 -> 场景 location_ref -> 物品 location_ref(确定性推导)。
+    scene 可为 int 或 list。物品可经过多地点。"""
+    scene_loc={}  # scene index -> location_id
+    for sc in scenes:
+        idx=sc.get("index")
+        ref=sc.get("location_ref")
+        if idx is not None and ref:
+            scene_loc[idx]=ref["location_id"]
+    for it in items:
+        sv=it.get("scene")
+        if sv is None: 
+            it["location_refs"]=[]; continue
+        scenes_of=sv if isinstance(sv,list) else [sv]
+        locs=[]
+        for s in scenes_of:
+            lid=scene_loc.get(s)
+            if lid is not None and lid not in [l["location_id"] for l in locs]:
+                locs.append({"location_id":lid,"via_scene":s})
+        it["location_refs"]=locs
+    return items
+
 def merge(text, scenes, characters, items, locations):
     out={"scenes":scenes.get("scenes",[]),
          "characters":characters.get("characters",[]),
@@ -69,5 +92,6 @@ def merge(text, scenes, characters, items, locations):
         elif sc.get("location") and sc.get("location")!="未明":
             out["_validation"]["xref"].append({"type":"scene.location未匹配","scene":sc.get("title"),"location":sc["location"]})
 
+    resolve_item_locations(out["items"], out["scenes"])
     out["counts"]={k:len(out[k]) for k in("scenes","characters","items","locations")}
     return out
