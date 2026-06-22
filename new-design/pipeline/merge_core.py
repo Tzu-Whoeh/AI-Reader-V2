@@ -60,12 +60,35 @@ def resolve_item_locations(items, scenes):
         it["location_refs"]=locs
     return items
 
+_THINK_MARKERS=["修正","思考","让我","重新审视","重新扫描","判定为","不收录","让我们","应排除","candidate","*修正*","\n"]
+def sanitize_items(items):
+    """剔除模型抽风产生的脏物品:字段污染(思考写进name)、id重复、错误container关系。"""
+    report=[]; seen=set(); clean=[]
+    for it in items:
+        name=it.get("name","")
+        # 1) name 污染:超长或含思考标志词
+        if len(name)>20 or any(m in name for m in _THINK_MARKERS):
+            report.append({"reason":"name污染/超长","id":it.get("id"),"head":name[:25]}); continue
+        # 2) mentions 清洗
+        it["mentions"]=[m for m in it.get("mentions",[]) if isinstance(m,str) and len(m)<=20
+                        and not any(k in m for k in _THINK_MARKERS)]
+        # 3) 错误 container 关系(穿戴/随身/医疗类不该是被容器装的部件)
+        po=it.get("part_of")
+        if po and po.get("relation")=="container" and any(w in name for w in ["绷带","衣","表","烟","枪","酒"]):
+            it["part_of"]=None
+        # 4) id 去重(去污染后再去重,保留先出现的干净条目)
+        if it.get("id") in seen:
+            report.append({"reason":"id重复","id":it.get("id"),"name":name}); continue
+        seen.add(it.get("id")); clean.append(it)
+    return clean, report
+
 def merge(text, scenes, characters, items, locations):
+    items_clean, item_report=sanitize_items(items.get("items",[]))
     out={"scenes":scenes.get("scenes",[]),
          "characters":characters.get("characters",[]),
-         "items":items.get("items",[]),
+         "items":items_clean,
          "locations":locations.get("locations",[]),
-         "_validation":{"anchors":[], "xref":[]}}
+         "_validation":{"anchors":[], "xref":[], "item_sanitize":item_report}}
 
     # 锚点校验各维度
     out["_validation"]["anchors"]+=anchor_clean(out["characters"], text, "name", ["aliases"])
