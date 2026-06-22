@@ -8,7 +8,7 @@
   (b) 物品锚点校验: 子事件 items 必须出现在其 anchor_text 句内, 否则剔除
 
 call_model() 默认直连 Ollama; 经平台调用时替换该函数。
-依赖: 同目录提示词文件 事件分析_Pass1_章节父事件.txt / 事件分析_Pass2_场景子事件.txt
+依赖: 同目录提示词文件 06_event_pass1_parent.txt / 06_event_pass2_sub.txt
 """
 import json, urllib.request
 
@@ -40,7 +40,7 @@ def _scene_segment(fulltext, scene):
     return fulltext[st:en]
 
 def extract_parent_events(fulltext, scenes, characters,
-                          prompt_file="事件分析_Pass1_章节父事件.txt"):
+                          prompt_file="06_event_pass1_parent.txt"):
     """章节级父事件: 看全章, participants 从人物候选选。"""
     scene_list="\n".join(f'  {s["index"]}: {s.get("title","")}' for s in scenes)
     char_cand="\n".join(f'  {c["id"]}: {c["name"]}' for c in characters)
@@ -49,7 +49,7 @@ def extract_parent_events(fulltext, scenes, characters,
     return call_model(p).get("events",[])
 
 def extract_sub_events(fulltext, scenes, parents, characters, items,
-                       prompt_file="事件分析_Pass2_场景子事件.txt"):
+                       prompt_file="06_event_pass2_sub.txt"):
     """逐场景子事件 + 两道校验。返回 {scene_index: [sub_event,...]}。"""
     char_cand="\n".join(f'  {c["id"]}: {c["name"]}' for c in characters)
     item_cand="\n".join(f'  {it["id"]}: {it["name"]}' for it in items)
