@@ -16,14 +16,17 @@ new-design/
 │   ├── 02_character_pass1_recognition.txt / 02_character_pass2_relations.txt
 │   ├── 03_item_pass1_extraction.txt / 03_item_pass2_relations.txt
 │   ├── 04_location_pass1_recognition.txt / 04_location_pass2_relations.txt
-│   └── 05_time_analysis.txt
+│   ├── 05_time_analysis.txt
+│   ├── 06_event_pass1_parent.txt    章节级父事件(骨架,participants准)
+│   └── 06_event_pass2_sub.txt       场景级子事件(细节,挂父)
 ├── pipeline/                  归并与跨章代码
 │   ├── orchestrator.py        总编排:跑五维度 + 单章归并
 │   ├── merge_core.py          章节内归并 + 跨维度 id 解析 + 锚点校验
 │   ├── cross_chapter.py       跨章:全局实体归一 + 个人时间线缝合 + 同步点
 │   ├── entity_normalize.py    脏人名归一(符号/错字/繁简/重名防误合)
 │   ├── storage.py             三层产物落盘 + 路径契约
-│   └── aggregate.py           跨章按维度聚合,每维度一个全局文件
+│   ├── aggregate.py           跨章按维度聚合,每维度一个全局文件
+│   └── event_pipeline.py      两层事件抽取 + 两道校验 + 事件→地点推导
 ├── samples/full_run/          完整三层产物样例(见下)
 │   └── global/visualization.html  全局可视化(浏览器打开)
 ├── docs/                      各维度详细说明
@@ -39,6 +42,7 @@ new-design/
 | 物品 | 抽取 + 共指 + prop/set 分类 + owner | part_of(部件/容器)+ set_group(成套) |
 | 地点 | 识别 + 共指 + 尺度分类(city/building/area/room) | containment/adjacency/movement/remote |
 | 时间 | 时间表达式 + 双时间轴事件 | 叙述序/故事序 + 闪回 + participants + 绝对间隔 |
+| 事件 | 两层:章节父事件(骨架) + 场景子事件(细节) | 中枢:连接人物/场景/地点/物品/时间 |
 
 ## 三层架构
 
@@ -65,6 +69,18 @@ cd pipeline
 python3 orchestrator.py 你的文本.txt > result.json
 ```
 
+
+
+## 事件中枢(两层模型)
+
+事件是连接全部维度的中枢:一条事件 = 谁(人物)、哪一幕(场景)、何地(地点)、何时(时间)、用什么(物品)。采用两层抽取:
+
+- **父事件(章节级)**:看全章抽骨架事件,participants 指代准确,带 scene_ref + anchor_text + story_order + is_flashback。
+- **子事件(场景级)**:逐场景补细节动作,挂到父事件,从候选清单选 participants/items。
+
+两道确定性校验(`pipeline/event_pipeline.py`):施事者承前省略时从父事件继承;子事件物品必须出现在其 anchor_text 句内,否则锚点剔除。事件→地点经 scene_ref→场景 location 推导。
+
+设计推演见 `docs/07_event_hub_blueprint.md`,样例见 `samples/full_run/chNN/events_twolayer.json`。
 
 ## 三层产物结构
 
