@@ -41,7 +41,7 @@ def _safe_json(s):
             except Exception: continue
     raise ValueError("JSON irreparably truncated")
 
-def call_model(prompt, temperature=0.12, num_ctx=8192, timeout=300, retries=1):
+def call_model(prompt, temperature=0.12, num_ctx=49152, timeout=300, retries=1):
     body={"model":MODEL,"prompt":prompt,"stream":False,"think":False,"format":"json",
           "options":{"temperature":temperature,"num_ctx":num_ctx,"num_predict":4096}}
     last=None
@@ -138,16 +138,11 @@ def run(input_path, out_dir="output", presplit=False):
         merged_path=os.path.join(cdir,"_merged.json")
         if os.path.exists(merged_path):
             print(f"[ch{ch:02d}] 已存在,跳过(断点续跑)"); continue
-        # 长章二次切块(此处仅保存切块信息;逐块分析+块内合并可按需扩展)
-        chunks=CS.chunk_long_chapter(c["text"])
+        # num_ctx=49152 可容纳整章(实测31k字≈21k token),整章处理保证指代/共指完整
         try:
-            if len(chunks)==1:
-                merged=analyze_chapter(c["text"])
-            else:
-                # 长章:逐块分析后合并(简化:取首块为主,其余块事件并入。生产可做块级实体归一)
-                print(f"[ch{ch:02d}] 长章,{len(chunks)}块,逐块处理")
-                merged=analyze_chapter(chunks[0])
-                # NOTE: 多块的跨块章节内归一可复用 cross_chapter 思路,此处留接口
+            if len(c["text"])>40000:  # 超长极端章(>40k字)才警告,仍尝试整章
+                print(f"[ch{ch:02d}] 超长章({len(c['text'])}字),可能逼近上下文上限")
+            merged=analyze_chapter(c["text"])
             merged["_title"]=c["title"]
             store.save_chapter_merged(ch, merged)
             print(f"[ch{ch:02d}] ✓ 「{c['title']}」 场景{len(merged.get('scenes',[]))} 人物{len(merged.get('characters',[]))} 事件{len(merged.get('parent_events',[]))}")
