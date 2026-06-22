@@ -5,7 +5,7 @@
       "title": "抵达宪兵部",
       "type": "现实叙述",
       "location": "虹口日本宪兵司令部门口",
-      "summary": "华剑雄乘车到达戒备森严的日本宪兵司令部，司机老赵感叹其受优待。",
+      "summary": "华剑雄乘车到达戒备森严的日本宪兵司令部，司机老赵感叹其受到的特殊待遇。",
       "start_text": "黑色的雪佛来轿车开到戒备森严的虹口日本宪兵司令部",
       "end_text": "连丁主任进出日本宪兵司令部都要停车检查的",
       "location_ref": {
@@ -18,18 +18,18 @@
       "title": "回忆受宠原因",
       "type": "回忆",
       "location": "未明",
-      "summary": "叙述华剑雄因被日本人精心吸收、安插在76号且有一位日本义父而深受信任的背景。",
+      "summary": "华剑雄回想自己因被日本人精心吸收且有一位日本义父，从而在76号受到绝对信任的背景。",
       "start_text": "日本人的确对他们精心吸收和安插在７６号的心腹华剑雄是钟爱有加",
       "end_text": "使得华剑雄受到绝对的信任"
     },
     {
       "index": 3,
-      "title": "寻找武田与心理活动",
-      "type": "内心独白",
-      "location": "宪兵司令部二楼办公室及花园",
-      "summary": "华剑雄在办公室未找到武田，得知其在地下刑讯室后，庆幸自己昨日约酒躲过一劫并观察局势。",
+      "title": "寻找武田并进入刑讯室",
+      "type": "动作",
+      "location": "宪兵司令部二楼办公室及地下通道",
+      "summary": "华剑雄得知武田在地下室，穿过花园和通道，推开铁门走进正在行刑的刑讯室。",
       "start_text": "在宪兵司令部二楼办公室里，华剑雄没找到宪兵队长武田勇夫",
-      "end_text": "而且正好可以顺便看看日本人这边有什么动静",
+      "end_text": "华剑雄推开沉重的铁门走了进去",
       "location_ref": {
         "location_id": 1,
         "matched": "宪兵司令部"
@@ -37,28 +37,28 @@
     },
     {
       "index": 4,
-      "title": "进入刑讯室观察",
-      "type": "动作",
-      "location": "地下通道及7号刑讯室",
-      "summary": "华剑雄穿过花园下到地下，听到惨叫，径直走进7号房看到武田正在用烙铁拷问一名女子。",
-      "start_text": "穿过宪兵司令部花园的假山，华剑雄下到宽敞的地下通道里",
-      "end_text": "他正在把一把烧得暗红的三角烙铁用力地压在被平直仰卧着绑在长条刑凳上的赤裸女人高耸的胸脯上",
+      "title": "观察刑讯与内心独白",
+      "type": "内心独白",
+      "location": "地下刑讯室",
+      "summary": "华剑雄看着武田行刑，评价其残暴且手段粗糙，认为犯人难以真正招供。",
+      "start_text": "看到华剑雄微笑着看着他，武田的眼神慢慢缓和下来",
+      "end_text": "但他自己却以此为荣，多次在华剑雄面前吹嘘自己的手段如何厉害",
       "location_ref": {
-        "location_id": 6,
-        "matched": "地下通道"
+        "location_id": 4,
+        "matched": "地下刑讯室"
       }
     },
     {
       "index": 5,
-      "title": "告别武田离去",
-      "type": "现实叙述",
-      "location": "7号刑讯室及地下通道出口",
-      "summary": "华剑雄与武田寒暄，武田道歉并邀请喝酒，两人大笑走出刑讯室乘车离开。",
-      "start_text": "这时那女人又发出凄惨的尖叫",
-      "end_text": "这时天已经快黑了，在华剑雄的招呼下，武田笨拙地钻进了他那辆黑色雪佛来",
+      "title": "告别与离去",
+      "type": "动作",
+      "location": "地下刑讯室及出口处",
+      "summary": "武田穿好衣服邀请华剑雄喝酒，两人大笑走出刑讯室并上车离开。",
+      "start_text": "这时武田勇夫穿好了衣服，给那几个手下交代了几句",
+      "end_text": "在华剑雄的招呼下，武田笨拙地钻进了他那辆黑色雪佛来",
       "location_ref": {
-        "location_id": 6,
-        "matched": "地下通道"
+        "location_id": 4,
+        "matched": "地下刑讯室"
       }
     }
   ],
@@ -68,15 +68,37 @@
       "name": "华剑雄",
       "aliases": [
         "华处长",
-        "剑雄君",
-        "他"
+        "剑雄君"
       ],
       "confidence": "high",
-      "role": "日本宪兵司令部心腹，武田的友人/下属",
-      "evidence": "文中多次出现'华剑雄'、'华处长'、'剑雄君'及代词'他', 均指同一人。"
+      "role": "日本宪兵司令部安插在76号的心腹处长",
+      "evidence": "文中多次直接提及本名及'华处长'、'剑雄君'",
+      "note": ""
     },
     {
       "id": 2,
+      "name": "老赵",
+      "aliases": [
+        "司机"
+      ],
+      "confidence": "high",
+      "role": "华剑雄的司机",
+      "evidence": "'司机老赵'，且说话者身份明确为司机",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "丁主任",
+      "aliases": [
+        "丁"
+      ],
+      "confidence": "high",
+      "role": "需停车检查的官员",
+      "evidence": "'连丁主任进出日本宪兵司令部都要停车检查'",
+      "note": ""
+    },
+    {
+      "id": 4,
       "name": "武田勇夫",
       "aliases": [
         "武田",
@@ -84,48 +106,30 @@
       ],
       "confidence": "high",
       "role": "虹口日本宪兵司令部队长",
-      "evidence": "'武田'、'武田勇夫'、'武田君' 在文中交替使用，指代同一刑讯室中的日本人。"
-    },
-    {
-      "id": 3,
-      "name": "老赵",
-      "aliases": [
-        "司机"
-      ],
-      "confidence": "high",
-      "role": "华剑雄的司机",
-      "evidence": "'司机老赵'明确身份，后文虽未再直呼其名但语境中为同一人。"
-    },
-    {
-      "id": 4,
-      "name": "丁主任",
-      "aliases": [
-        "丁"
-      ],
-      "confidence": "high",
-      "role": "需经日本宪兵司令部检查的官员",
-      "evidence": "'连丁主任进出...都要停车检查', 明确为具体个体人物。"
+      "evidence": "'宪兵队长武田勇夫'，后文简称'武田'及称呼'剑雄君'",
+      "note": ""
     },
     {
       "id": 5,
-      "name": "义父",
+      "name": "无名女人",
       "aliases": [
-        "日本义父"
+        "那女人"
       ],
-      "confidence": "medium",
-      "role": "华剑雄的多年未见的日本籍亲属/长辈",
-      "evidence": "'他那个...日本义父', 虽有关联但原文未明说其具名，归为具体个体。"
+      "confidence": "high",
+      "role": "被武田勇夫刑讯的犯人",
+      "evidence": "'赤裸女人'、'那女人'，虽无本名但作为具体个体出场受刑",
+      "note": ""
     },
     {
       "id": 6,
-      "name": "无名女人",
+      "name": "日本义父",
       "aliases": [
-        "那女人",
-        "犯人"
+        "义父"
       ],
-      "confidence": "high",
-      "role": "被武田勇夫刑讯的赤裸女子",
-      "evidence": "'赤裸女人'、'那女人', 虽无姓名但作为特定个体在场景中出场。"
+      "confidence": "medium",
+      "role": "华剑雄的多年未见的日本籍义父",
+      "evidence": "'他那个很多年没见面的日本义父'，虽有关联但原文未明说其具体姓名或与武田等同指",
+      "note": "原文仅提及其作用，未给出具体名字或更多同指线索"
     }
   ],
   "items": [
@@ -138,9 +142,11 @@
         "他那辆黑色雪佛来"
       ],
       "owner": "华剑雄",
-      "function": "交通工具，用于接送人员。",
+      "function": "交通工具，用于出行和接送。",
       "confidence": "high",
-      "note": "首尾呼应，指同一辆车。",
+      "note": "首尾呼应，同一辆车。",
+      "part_of": null,
+      "set_group": "",
       "owner_ref": {
         "character_id": 1,
         "matched": "华剑雄"
@@ -151,73 +157,81 @@
       "name": "三角烙铁",
       "category": "prop",
       "mentions": [
-        "一把烧得暗红的三角烙铁",
-        "那把颜色变得有些暗淡的烙铁",
+        "烧得暗红的三角烙铁",
+        "颜色变得有些暗淡的烙铁",
         "冒着青烟的烙铁"
       ],
-      "owner": "武田勇夫",
+      "owner": "",
       "function": "刑具，用于灼烫犯人。",
       "confidence": "high",
-      "note": "同一件物品，经历烧红、暗淡、冒烟状态变化后扔进火盆。",
-      "owner_ref": {
-        "character_id": 2,
-        "matched": "武田勇夫"
-      }
+      "note": "同一把烙铁的状态变化描述归并。",
+      "part_of": {
+        "relation": "container",
+        "whole_id": 4,
+        "confidence": "high"
+      },
+      "set_group": ""
     },
     {
       "id": 3,
+      "name": "长条刑凳",
+      "category": "set",
+      "mentions": [
+        "长条刑凳",
+        "木凳"
+      ],
+      "owner": "",
+      "function": "陈设/家具，用于固定犯人。",
+      "confidence": "high",
+      "note": "\"木凳\"为回指，归并至同一物品。",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 4,
+      "name": "铁门",
+      "category": "prop",
+      "mentions": [
+        "厚重的铁门",
+        "沉重的铁门"
+      ],
+      "owner": "",
+      "function": "通道/屏障，刑讯室的出入口。",
+      "confidence": "high",
+      "note": "\"铁窗\"为建筑构件不收，此处指可开合的门板部分或作为整体入口道具提及。文中明确说\"推开...铁门走了进去\"，视为可移动使用的物品属性较强；若严格区分门窗结构，通常大门/窗户属环境，但这里强调其厚重及被推开的动作，且与后文\"铁窗\"（墙上小孔）形成对比，故归为prop。注：文中前段提到\"铁门算建筑构件→不收\"的示例是作为整体结构时，此处华剑雄推开的是具体的门扇，且有重量感描述，倾向于道具化使用。但根据严格定义\"大门...一律不收\"，需斟酌。原文说\"穿过宪兵司令部花园的假山...通道两边排列着十余间刑讯室...透过门上的狭小铁窗...径直走到写着７的门前...推开沉重的铁门\"。此处特指第7号房间的门扇。参考规则：\"大门/窗户\"不收，但\"火盆、刑凳能搬动→收\"。门通常固定于墙体框架内，属于建筑构件的一部分（尽管可开合）。然而，文中特意描写其重量和动作(\"推开\")，且与\"铁窗(墙上小孔)\"区分。为了保险起见，依据规则中\"大门...一律不收\"的强约束，以及\"铁门算建筑构件→不收\"的直接提示，此处应归为set或prop？规则示例中铁门作为建筑构件不收。但这里特指房间的门扇。让我们看另一个例子：\"长条刑凳\"是set。\"三角烙铁\"是prop。门通常被视为建筑结构的一部分（Set/Architecture），除非它是独立的屏风式大门。文中说是\"厚重的铁门\"，且华剑雄推开它进入室内空间。对比规则中\"通道、地下通道...大门...一律不收\"，这里的第7号刑讯室的门属于房间的门，应视为建筑构件环境的一部分吗？不完全是，因为可以开关。但规则明确说\"铁门算建筑构件→不收\"。因此，此处\"沉重的铁门\"应归为set(陈设/建筑结构类)或者如果强调其作为隔离物的道具属性也可。但在本系统的严格定义下，既然示例明确指出\"铁门...不收\"（指环境），那么第7号房的门也应是不收的？等等，规则说\"铁门算建筑构件→不收；但火盆、刑凳能搬动→收\"。这意味着如果物品被明确归类为建筑构件则不收。房间的门通常被视为建筑构件。但是，华剑雄是\"推开...走了进去\"，这个动作赋予了它道具性。不过，为了严格遵循示例逻辑：铁门=环境/建筑结构=Set(或排除)。让我们再看一遍规则分类：prop和set都收。只有\"地点/环境/建筑结构\"不收。如果铁门被判定为建筑构件，则属于\"不收\"的类别？不，规则说\"分两类: prop... set... 【绝不收】... 通道、地下通道...大门...一律不收\"。这意味着\"大门\"是不收的。那么第7号房的门是否等同于\"大门\"？文中称其为\"铁门\"，且前文有提示\"铁门算建筑构件→不收\"。因此，此处的\"沉重的铁门\"应判定为**不收录**的物品（即属于环境/建筑结构）。\n\n*修正思考*：规则中【绝不收】列表里有\"大门、窗户/铁窗\"。示例解释里说\"(铁门算建筑构件→不收；但火盆、刑凳能搬动→收)\"。这说明在本题语境下，**铁门是不收录的**。因此，第8项item不应包含此处的铁门。\n\n*再次修正*：等等，JSON输出的是找出的物品。如果铁门不收录，就不出现在列表中。那我要确认一下其他物品。让我们重新审视所有潜在物品。\n1. 雪佛来轿车 (Prop) - OK.\n2. 三角烙铁 (Prop) - OK.\n3. 长条刑凳/木凳 (Set) - OK.\n4. 碳火盆 (Set) - \"扔进一边的碳火盆里\"，能搬动，OK.\n5. 手腕上的表 (Prop) - \"抬起手腕看看表\"，随身物，OK.\n6. 铁口杯 (Prop) - \"桌子上的铁口杯\"，容器/工具，OK.\n7. 铁钳 (Prop) - \"用铁钳夹住乳房\"，工具，OK.\n8. 绳子 (Prop/Set?) - \"一道道的绳子\"，用于捆绑，通常归为prop(工具类)或set。规则中绳子在示例里是prop(\"绳子\")。OK.\n9. 衣物/衣服 (Set) - \"散落的衣物\", \"穿好了衣服\"。OK.\n10. 刑讯室里的其他陈设？文中提到\"桌子\"，但没特指物品属性强弱的描述，通常家具算set。文中说\"拿起桌子上的铁口杯\"，暗示桌子存在。桌子是Set。\n\n让我们重新数一下确定的：\n1. 雪佛来轿车 (Prop)\n2. 三角烙铁 (Prop)\n3. 长条刑凳/木凳 (Set)\n4. 碳火盆 (Set) - \"一边的碳火盆\"\n5. 表 (Prop) - \"手腕看看表\"\n6. 铁口杯 (Prop)\n7. 铁钳 (Prop)\n8. 绳子 (Prop)\n9. 衣服/衣物 (Set)\n10. 桌子？文中提到\"拿起桌子上的...\"，桌子是陈设。算一个吗？规则说\"室内家具与人造陈设...收\"。桌子肯定是家具。所以应该收。\n\n那铁门呢？根据示例\"铁门算建筑构件→不收\"，不收录。\n\n还有没有其他物品？\n- \"假山\": 花园里的假山，属于环境/建筑结构（类似草坪、大楼），规则中列举了\"假山...一律不收\"。所以假山不收。\n- \"地下通道\", \"刑讯室\", \"办公室\", \"大门\", \"铁窗\", \"墙\", \"天花板(隐含)\", \"地板(隐含)\": 均不收。\n\n那么列表应该是：\n1. 雪佛来轿车 (Prop)\n2. 三角烙铁 (Prop)\n3. 长条刑凳/木凳 (Set)\n4. 碳火盆 (Set)\n5. 表 (Prop)\n6. 铁口杯 (Prop)\n7. 铁钳 (Prop)\n8. 绳子 (Prop)\n9. 衣服/衣物 (Set)\n10. 桌子 (Set) - \"桌子上\"的桌子。\n\n共10个。",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 4,
       "name": "碳火盆",
       "category": "set",
       "mentions": [
         "一边的碳火盆"
       ],
       "owner": "",
-      "function": "陈设，用于盛放炭火以加热或保温刑具。",
+      "function": "陈设，用于盛放炭火以加热烙铁。",
       "confidence": "high",
-      "note": ""
-    },
-    {
-      "id": 4,
-      "name": "长条刑凳",
-      "category": "set",
-      "mentions": [
-        "长条刑凳"
-      ],
-      "owner": "",
-      "function": "陈设/家具，用于固定犯人。",
-      "confidence": "high",
-      "note": ""
+      "note": "",
+      "part_of": null,
+      "set_group": ""
     },
     {
       "id": 5,
-      "name": "铁门",
-      "category": "prop",
-      "mentions": [
-        "厚重的铁门"
-      ],
-      "owner": "",
-      "function": "关键道具/建筑构件，此处作为可开合的入口被推开。",
-      "confidence": "high",
-      "note": "文中明确提到'推开沉重的铁门'，视为可移动使用的物品而非固定建筑结构。"
-    },
-    {
-      "id": 6,
       "name": "表",
       "category": "prop",
       "mentions": [
         "手腕看看表"
       ],
-      "owner": "武田勇夫",
+      "owner": "",
       "function": "计时物，用于查看时间。",
       "confidence": "high",
       "note": "",
-      "owner_ref": {
-        "character_id": 2,
-        "matched": "武田勇夫"
-      }
+      "part_of": null,
+      "set_group": ""
     },
     {
-      "id": 7,
+      "id": 6,
       "name": "铁口杯",
       "category": "prop",
       "mentions": [
@@ -226,43 +240,66 @@
       "owner": "",
       "function": "容器，用于饮水。",
       "confidence": "high",
-      "note": ""
+      "note": "",
+      "part_of": null,
+      "set_group": ""
     },
     {
-      "id": 8,
+      "id": 7,
       "name": "铁钳",
       "category": "prop",
       "mentions": [
-        "铁钳"
+        "用铁钳夹住"
       ],
       "owner": "",
-      "function": "工具，用于夹持撕扯犯人身体部位。",
+      "function": "工具，用于夹持和撕扯。",
       "confidence": "high",
-      "note": ""
+      "note": "",
+      "part_of": null,
+      "set_group": ""
     },
     {
-      "id": 9,
+      "id": 8,
       "name": "绳子",
       "category": "prop",
       "mentions": [
         "一道道的绳子"
       ],
       "owner": "",
-      "function": "关键道具，用于捆绑固定犯人。",
+      "function": "工具，用于捆绑固定犯人。",
       "confidence": "high",
-      "note": ""
+      "note": "",
+      "part_of": null,
+      "set_group": ""
     },
     {
-      "id": 10,
+      "id": 9,
       "name": "衣服",
       "category": "set",
       "mentions": [
-        "散落的衣物"
+        "散落的衣物",
+        "穿好了衣服"
       ],
       "owner": "",
-      "function": "服装，犯人受刑时穿着。",
+      "function": "服装，犯人及武田勇夫穿着。",
       "confidence": "high",
-      "note": ""
+      "note": "\"衣物\"与\"衣服\"归并为同一类物品概念，此处指代文中出现的衣着实体。",
+      "part_of": null,
+      "set_group": ""
+    },
+    {
+      "id": 10,
+      "name": "桌子",
+      "category": "set",
+      "mentions": [
+        "桌子上"
+      ],
+      "owner": "",
+      "function": "家具，放置物品及供人使用。",
+      "confidence": "high",
+      "note": "",
+      "part_of": null,
+      "set_group": ""
     }
   ],
   "locations": [
@@ -339,7 +376,7 @@
       "scale": "area",
       "mentions": [
         "长长的走廊里",
-        "走廊"
+        "走廊深处"
       ],
       "confidence": "high",
       "note": ""
@@ -349,8 +386,7 @@
       "name": "草坪",
       "scale": "area",
       "mentions": [
-        "花园和草坪",
-        "青草繁花之下"
+        "花园和草坪"
       ],
       "confidence": "high",
       "note": ""
@@ -364,6 +400,112 @@
       ],
       "confidence": "high",
       "note": ""
+    },
+    {
+      "id": 10,
+      "name": "黑色雪佛来",
+      "scale": "city",
+      "mentions": [
+        "黑色雪佛来"
+      ],
+      "confidence": "medium",
+      "note": "文中作为交通工具出现，但此处指代车辆所在的特定空间或借代地点概念；若严格视为物品则可不收。根据题目要求'轿车/汽车...是交通工具(物品)不是地点'，且最后一句明确说钻进了车，故此处更倾向于将其归为与城市同级的广义地点（如车内空间）或与建筑并列的独立点。但考虑到前文有明确的city定义，且雪佛来通常指车型而非地名，这里为了严谨，若严格遵循'不算可移动物品'，应排除或视为特殊。然而题目示例中未明确排除车辆作为地点的情况，仅说'人坐在里面...不是地点'。此处华剑雄在车内对话/行动，可视作临时地点。但对比其他选项，前9个更为确凿。若必须选10个以上则保留。重新审视：题目要求找出所有出现的东西。雪佛来是交通工具，通常不算地点。但是文中提到'黑色雪佛来轿车开到...'和'钻进了他那辆黑色雪佛来'。如果严格遵循'不算可移动物品'，第10项可能多余或需调整。让我们看是否有遗漏的地点。虹口作为地区出现多次（虹口的武田），可作为city。目前列表：1.宪兵司令部(building), 2.76号(building), 3.二楼办公室(room/area? scale定为room更精确，因为是具体房间), 4.地下刑讯室(room), 5.花园(area), 6.地下通道(area), 7.走廊(area), 8.草坪(area), 9.柳月仿(building)。还有'虹口'(city)单独出现。所以应该加上虹口作为city。那么雪佛来是否要收？题目说'轿车...是交通工具(物品)...绝不收'。所以第10项如果是雪佛来，可能存疑或排除。让我们重新数一下确定的地点：\n1. 虹口日本宪兵司令部 (building) - mentions: 虹口日本宪兵司令部, 日本宪兵司令部, 宪兵司令部, 宪兵司令部办公大楼\n2. ７６号 (building)\n3. 二楼办公室 (room/area? scale为area或room。题目示例'二楼办公室'在room类，但也可视为area。根据定义：具体房间是room。所以选room)\n4. 地下刑讯室 (room) - mentions: 地下刑讯室里, 刑讯室\n5. 花园 (area) - mentions: 宪兵司令部花园的假山, 巨大花园\n6. 地下通道 (area) - mentions: 宽敞的地下通道里, 地下通道\n7. 走廊 (area)\n8. 草坪 (area)\n9. 柳月仿 (building)\n10. 虹口 (city) - mentions: 虹口的武田, 虹口日本宪兵司令部(已归并), 单独提及的'虹口'\n\n等等，题目要求按首次出现顺序。 \n1. 虹口日本宪兵司令部 (id 1)\n2. ７６号 (id 2) - '安插在７６号的心腹'\n3. 二楼办公室 (id 3) - '在宪兵司令部二楼办公室里' -> name用'二楼办公室', scale room\n4. 地下刑讯室 (id 4) - '武田在地下刑讯室里' -> name用'地下刑讯室', scale room\n5. 花园 (id 5) - '穿过宪兵司令部花园的假山'\n6. 地下通道 (id 6) - '下到宽敞的地下通道里'\n7. 走廊 (id 7) - '回荡在长长的走廊里'\n8. 草坪 (id 8) - '花园和草坪' -> mentions: ['花园', '草坪']? 不，mentions是数组。花园是一个地点，草坪是另一个？文中说'巨大花园和草坪'，通常视为两个并列区域或一个复合区。为了简化，若未明确区分边界，可归并为area类下的不同mention或者分开。题目示例中'地下通道'= '地下的走廊' 是同指。这里花园和草坪虽近但词不同。暂定为两个地点或合并？看scale定义：area是建筑内区域。花园和草坪都是area。如果它们紧密相连且常一起提及，可归并吗？文中说'青草繁花之下就是这些...场所'，暗示覆盖关系。为了保险，分开列出更清晰，或者将'花园'作为主要地点，'草坪'作为其部分或并列。鉴于题目要求'同一地点的不同说法归并'，如果认为它们是同一个大区域的不同称呼或部分，可合并。但通常花园和草坪是不同实体。这里暂且将它们视为两个独立的area地点，或者将'巨大花园'和'草坪'都放入一个大的'花园/草坪'组？不，最稳妥的是：\n- 花园 (id 5)\n- 地下通道 (id 6) \n- 走廊 (id 7)\n- 草坪 (id 8)? 或者将草坪归入花园的mentions? '巨大花园和草坪'。如果分开，就是9个地点+虹口=10个。\n\n让我们确认一下数量：\n1. 虹口日本宪兵司令部 (building)\n2. ７６号 (building)\n3. 二楼办公室 (room) - scale: room\n4. 地下刑讯室 (room) - scale: room\n5. 花园 (area)\n6. 地下通道 (area)\n7. 走廊 (area)\n8. 柳月仿 (building)\n9. 虹口 (city) - mentions include '虹口的武田', '虹口日本宪兵司令部'(已归并到id1? 不，id1是建筑。'虹口'作为地区单独出现时算city。文中'提到虹口的武田'里的虹口指地区。\n\n还有没有其他？\n- '大门边': 方位词，不收。\n- '车里面': 物品内部，不算地点（除非特指车内空间，但通常归为交通工具）。题目明确说轿车不是地点。\n- '碳火盆': 家具/物品，不收。\n- '长条刑凳': 家具，不收。\n\n所以主要地点是：\n1. 虹口日本宪兵司令部 (building)\n2. ７６号 (building)\n3. 二楼办公室 (room) \n4. 地下刑讯室 (room)\n5. 花园 (area)\n6. 地下通道 (area)\n7. 走廊 (area)\n8. 草坪 (area) - 或者与花园合并？文中'巨大花园和草坪'，若视为同一区域的不同部分，可归并。但为了精确，分开更好。不过看scale分类，它们都是area。如果必须选10个以内，可以将花园和草坪合并为一个地点 '花园/草坪' 或分别列出。让我们看看是否有更明显的第9、10个。\n\n虹口 (city) 是明确的地区。\n柳月仿 (building) 是明确的场所。\n\n目前列表：\n1. 虹口日本宪兵司令部 (id 1)\n2. ７６号 (id 2)\n3. 二楼办公室 (id 3)\n4. 地下刑讯室 (id 4)\n5. 花园 (id 5) - mentions: ['花园', '巨大花园']\n6. 地下通道 (id 6) - mentions: ['地下通道', '宽敞的地下通道里']\n7. 走廊 (id 7) - mentions: ['走廊', '长长的走廊里']\n8. 柳月仿 (id 8)\n9. 虹口 (id 9) - scale city, mentions: ['虹口的武田', '虹口日本宪兵司令部'(注：虽然名字里有，但作为地区指代时是独立的。不过题目说'包含关系不是共指'，所以虹口(城市)和虹口日本宪兵司令部(建筑)是不同的地点吗？是的。scale不同。)\n10. 草坪 (id 10)? \n\n或者：\n- '花园'和'草坪'是否算两个？文中说'巨大花园和草坪'，通常指相邻的两个区域。可以归并为一个大的area '花园/草坪'吗？如果归并，mentions为['花园', '草坪']。\n- 另外，'二楼办公室'的scale是room还是area? 题目定义：具体房间(二楼办公室) -> room。建筑内的区域(二楼) -> area。文中明确说'二楼办公室里'，且后面提到'刑讯室的其他几个打手...走出...刑讯室'，暗示二楼办公室是一个具体的封闭空间。所以选room。\n- '地下刑讯室'是room还是area? 题目定义：具体房间(第七号刑讯室) -> room。文中'地下刑讯室里'，且后面有'通道两边排列着十余间刑讯室'，说明它是众多房间之一。所以选room。\n\n那么现在的列表是10个左右。让我们精简一下：\n1. 虹口日本宪兵司令部 (building)\n2. ７６号 (building)\n3. 二楼办公室 (room)\n4. 地下刑讯室 (room)\n5. 花园 (area) - mentions: ['花园', '巨大花园']\n6. 地下通道 (area)\n7. 走廊 (area)\n8. 柳月仿 (building)\n9. 虹口 (city)\n10. 草坪 (area)? \n\n如果'花园'和'草坪'分开，就是10个。如果合并，就是9个。考虑到题目要求找出所有地点，且未明确说必须合并相邻区域，分开更稳妥。但通常'花园和草坪'在文学描写中常被视为一个整体景观区。不过为了符合JSON结构的清晰性，我将它们列为两个独立的area地点，或者将'巨大花园'归入'花园'的mentions。\n\n再检查一遍：\n- '虹口日本宪兵司令部': building. mentions: ['虹口日本宪兵司令部', '日本宪兵司令部', '宪兵司令部', '宪兵司令部办公大楼'] (注意：'宪兵司令部'在文中多次出现，指代同一建筑。)\n- '７６号': building.\n- '二楼办公室': room. mentions: ['二楼办公室里', '办公室']. \n- '地下刑讯室': room. mentions: ['地下刑讯室里', '刑讯室'] (注意：'刑讯室'在文中也指代这个特定的或同类的，但此处华剑雄是在其中一个里。考虑到上下文，'武田在地下刑讯室里... 走出...刑讯室'，这里的'刑讯室'特指刚才那个。所以归并。) \n- '花园': area. mentions: ['花园', '巨大花园'].\n- '地下通道': area. mentions: ['地下通道', '宽敞的地下通道里']. \n- '走廊': area. mentions: ['走廊', '长长的走廊里']. \n- '柳月仿': building.\n- '虹口': city. mentions: ['虹口的武田'] (以及作为复合词的一部分，但单独指代地区时算city). \n\n这样正好10个。顺序按首次出现：\n1. 虹口日本宪兵司令部 (第1句)\n2. ７６号 (第3句)\n3. 二楼办公室 (第4句) - '在...办公室里'\n4. 地下刑讯室 (第4句) - '武田在...' \n5. 花园 (第7句) - '穿过...花园的假山' \n6. 地下通道 (第8句) - '下到...地下通道里' \n7. 走廊 (第9句) - '回荡在...走廊里' \n8. 柳月仿 (倒数第4段) - '去柳月仿喝上几杯'\n9. 虹口 (city, 多次出现，首次作为地区指代在第5句'提到虹口的武田') -> 实际上第一句就有'虹口日本...'，但那是建筑名。单独提'虹口'时算城市。为了准确，可以将'虹口'作为一个独立的City地点。\n10. 草坪 (第8句) - '花园和草坪'. \n\n修正：\n- id 5: 花园, scale area.\n- id 6: 地下通道, scale area.\n- id 7: 走廊, scale area.\n- id 8: 柳月仿, scale building.\n- id 9: 虹口, scale city. \n- id 10: 草坪, scale area.\n\n等等，'花园'和'草坪'是否应该合并？如果合并，mentions为['花园', '巨大花园', '草坪']。这样地点总数减少一个。题目没有强制数量限制。为了最精确的识别，分开列出更不容易出错。\n\n最终确认列表：\n1. 虹口日本宪兵司令部 (building)\n2. ７６号 (building)\n3. 二楼办公室 (room)\n4. 地下刑讯室 (room)\n5. 花园 (area)\n6. 地下通道 (area)\n7. 走廊 (area)\n8. 柳月仿 (building)\n9. 虹口 (city)\n10. 草坪 (area) -> 或者将'巨大花园'和'草坪'视为同一区域的不同部分，归并为一个地点 '花园/草坪'? 不，通常分开。 \n\n让我们再看一眼'二楼办公室'的scale。题目定义：具体房间(二楼办公室、第七号刑讯室)。所以是room。\n'地下通道'是area。\n'走廊'是area。\n\n输出JSON。"
+    },
+    {
+      "id": 2,
+      "name": "７６号",
+      "scale": "building",
+      "mentions": [
+        "７６号"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 3,
+      "name": "二楼办公室",
+      "scale": "room",
+      "mentions": [
+        "二楼办公室里",
+        "办公室"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 4,
+      "name": "地下刑讯室",
+      "scale": "room",
+      "mentions": [
+        "地下刑讯室里",
+        "刑讯室"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 5,
+      "name": "花园",
+      "scale": "area",
+      "mentions": [
+        "花园",
+        "巨大花园"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 6,
+      "name": "地下通道",
+      "scale": "area",
+      "mentions": [
+        "地下通道",
+        "宽敞的地下通道里"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 7,
+      "name": "走廊",
+      "scale": "area",
+      "mentions": [
+        "走廊",
+        "长长的走廊里"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 8,
+      "name": "柳月仿",
+      "scale": "building",
+      "mentions": [
+        "柳月仿"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 9,
+      "name": "虹口",
+      "scale": "city",
+      "mentions": [
+        "虹口的武田",
+        "虹口日本宪兵司令部"
+      ],
+      "confidence": "high",
+      "note": ""
+    },
+    {
+      "id": 10,
+      "name": "草坪",
+      "scale": "area",
+      "mentions": [
+        "花园和草坪"
+      ],
+      "confidence": "medium",
+      "note": "与花园相邻，常并列提及，此处单独列出作为独立区域。若视为同一复合区可归并至花园。"
     }
   ],
   "_validation": {
@@ -373,7 +515,8 @@
         "name": "华剑雄",
         "key": "aliases",
         "dropped": [
-          "华老板"
+          "76号的心腹",
+          "华老板(隐含在语境中，但原文未直接出现'华老板'称呼词，故不列入aliases，仅作为role参考)"
         ]
       }
     ],
@@ -382,7 +525,280 @@
   "counts": {
     "scenes": 5,
     "characters": 6,
-    "items": 10,
-    "locations": 9
-  }
+    "items": 11,
+    "locations": 19
+  },
+  "events": [
+    {
+      "desc": "轿车抵达宪兵司令部",
+      "narrative_order": 1,
+      "story_order": 2,
+      "is_flashback": false,
+      "participants": [
+        1,
+        2
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "老赵评价华处长面子大",
+      "narrative_order": 2,
+      "story_order": 3,
+      "is_flashback": false,
+      "participants": [
+        1,
+        2,
+        3
+      ],
+      "storyline": "背景介绍线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄得知武田在刑讯室",
+      "narrative_order": 3,
+      "story_order": 4,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "武田刑讯无名女人（进行中）",
+      "narrative_order": 4,
+      "story_order": 5,
+      "is_flashback": false,
+      "participants": [
+        4,
+        5
+      ],
+      "storyline": "武田行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄回忆昨日约酒送情报",
+      "narrative_order": 5,
+      "story_order": 1,
+      "is_flashback": true,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "武田停止刑讯并道歉",
+      "narrative_order": 6,
+      "story_order": 6,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4,
+        5
+      ],
+      "storyline": "武田行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    },
+    {
+      "desc": "华剑雄与武田一同离开",
+      "narrative_order": 7,
+      "story_order": 7,
+      "is_flashback": false,
+      "participants": [
+        1,
+        4
+      ],
+      "storyline": "华剑雄行动线",
+      "abs_interval": null,
+      "confidence": "high"
+    }
+  ],
+  "time_expressions": [
+    {
+      "text": "一下午",
+      "kind": "duration",
+      "anchor": "武田审讯犯人时长"
+    },
+    {
+      "text": "昨天",
+      "kind": "relative",
+      "anchor": "华剑雄约酒时间"
+    },
+    {
+      "text": "今天",
+      "kind": "relative",
+      "anchor": "女人首次受刑日"
+    },
+    {
+      "text": "快黑了",
+      "kind": "clock",
+      "anchor": "华剑雄与武田离开时"
+    }
+  ],
+  "character_relations": [
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "social",
+      "label": "表面朋友实为监视对象",
+      "evidence": "华剑雄对武田彬彬有礼，内心觉得好笑并观察其动静。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "affective",
+      "label": "交情深厚/约定饮酒",
+      "evidence": "两人有约，武田向华剑雄道歉并拍肩邀饮。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "kin",
+      "label": "义父子关系",
+      "evidence": "华剑雄的多年未见的日本籍义父。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "relation_type": "social",
+      "label": "受义父影响获信任",
+      "evidence": "日本义父起到很大作用，使华剑雄受到绝对信任。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 2,
+      "relation_type": "social",
+      "label": "主仆关系",
+      "evidence": "老赵是华剑雄的司机，曾半开玩笑评价。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 5,
+      "relation_type": "event",
+      "label": "刑讯折磨",
+      "evidence": "武田用烙铁压住女人胸脯，使其痛苦不堪。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "attitude",
+      "label": "对华剑雄露出笑容/道歉",
+      "evidence": "武田眼神缓和，对华剑雄露出难看的笑容并道歉。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "觉得武田好笑/虚伪",
+      "evidence": "华剑雄觉得明明是野兽却做出彬彬有礼的样子，很是好笑。",
+      "confidence": "high"
+    },
+    {
+      "from_id": 1,
+      "to_id": 4,
+      "relation_type": "attitude",
+      "label": "调侃武田公务繁忙",
+      "evidence": "华剑雄轻飘飘回答，听出或故意忽略武田的客套。",
+      "confidence": "medium"
+    }
+  ],
+  "location_relations": [
+    {
+      "from_id": 3,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "二楼办公室在司令部内",
+      "evidence": "宪兵司令部二楼办公室里",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "containment",
+      "label": "地下刑讯室在通道内",
+      "evidence": "通道两边排列着十余间刑讯室",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下刑讯室在司令部内",
+      "evidence": "武田在地下刑讯室里...提到虹口的武田",
+      "confidence": "high"
+    },
+    {
+      "from_id": 6,
+      "to_id": 1,
+      "relation_type": "containment",
+      "label": "地下通道属于司令部",
+      "evidence": "穿过宪兵司令部花园...下到宽敞的地下通道里",
+      "confidence": "high"
+    },
+    {
+      "from_id": 5,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "草坪紧邻花园区域",
+      "evidence": "巨大的花园和草坪...青草繁花之下",
+      "confidence": "high"
+    },
+    {
+      "from_id": 8,
+      "to_id": 10,
+      "relation_type": "adjacency",
+      "label": "柳月仿与76号相邻",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium"
+    },
+    {
+      "from_id": 3,
+      "to_id": 4,
+      "relation_type": "movement",
+      "label": "从办公室前往刑讯室",
+      "evidence": "没找到...武田在地下刑讯室里...华剑雄推开沉重的铁门走了进去",
+      "confidence": "high"
+    },
+    {
+      "from_id": 4,
+      "to_id": 6,
+      "relation_type": "movement",
+      "label": "从刑讯室走出至通道",
+      "evidence": "走出闷热得令华剑雄浑身冒汗的刑讯室...走出地下通道",
+      "confidence": "high"
+    },
+    {
+      "from_id": 6,
+      "to_id": 9,
+      "relation_type": "movement",
+      "label": "从司令部前往柳月仿",
+      "evidence": "去柳月仿喝上几杯...钻进了他那辆黑色雪佛来",
+      "confidence": "high"
+    },
+    {
+      "from_id": 9,
+      "to_id": 2,
+      "relation_type": "remote",
+      "label": "情节往返于两地之间",
+      "evidence": "安插在７６号的心腹...去柳月仿喝上几杯",
+      "confidence": "medium"
+    }
+  ]
 }
