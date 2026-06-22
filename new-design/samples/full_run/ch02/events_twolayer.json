@@ -1,0 +1,428 @@
+{
+  "parent_events": [
+    {
+      "desc": "华剑雄抵达宪兵部",
+      "anchor_text": "黑色的雪佛来轿车开到戒备森严的虹口日本宪兵司令部。",
+      "scene_ref": 1,
+      "participants": [
+        1,
+        2
+      ],
+      "agent": 1,
+      "story_order": 1,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 1
+      }
+    },
+    {
+      "desc": "华剑雄得知武田在刑讯",
+      "anchor_text": "办公室的人告诉他，武田在地下刑讯室里审讯犯人已经一下午了。",
+      "scene_ref": 1,
+      "participants": [
+        1,
+        4
+      ],
+      "agent": null,
+      "story_order": 2,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 1
+      }
+    },
+    {
+      "desc": "华剑雄进入刑讯室",
+      "anchor_text": "华剑雄推开沉重的铁门走了进去。",
+      "scene_ref": 3,
+      "participants": [
+        1,
+        4,
+        5
+      ],
+      "agent": 1,
+      "story_order": 3,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 1
+      }
+    },
+    {
+      "desc": "武田向华剑雄道歉",
+      "anchor_text": "恼恨的对华剑雄说道：「这该死的女人，浪费我一下午的时间。」",
+      "scene_ref": 4,
+      "participants": [
+        1,
+        4
+      ],
+      "agent": 4,
+      "story_order": 4,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 4
+      }
+    },
+    {
+      "desc": "武田邀华剑雄饮酒",
+      "anchor_text": "「走，剑雄君，我们去柳月仿喝上几杯。」",
+      "scene_ref": 5,
+      "participants": [
+        1,
+        4
+      ],
+      "agent": 4,
+      "story_order": 5,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 4
+      }
+    }
+  ],
+  "sub_events": {
+    "1": [
+      {
+        "desc": "雪佛来轿车开到宪兵部",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [
+          1
+        ],
+        "agent": null,
+        "anchor_text": "黑色的雪佛来轿车开到戒备森严的虹口日本宪兵司令部"
+      },
+      {
+        "desc": "华剑雄在车内无表情",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "车里面无表情的华剑雄"
+      },
+      {
+        "desc": "日本兵看车牌放行",
+        "parent": 0,
+        "participants": [
+          6
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "大门边站岗的日本兵只是看了看车牌和车里面无表情的华剑雄就予以放行通过"
+      },
+      {
+        "desc": "老赵说日本人给面子",
+        "parent": 1,
+        "participants": [
+          2
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "司机老赵都曾经半开玩笑的说：「日本人可真给华处长面子啊"
+      }
+    ],
+    "2": [
+      {
+        "desc": "日本人钟爱华剑雄",
+        "parent": null,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "日本人的确对他们精心吸收和安插在７６号的心腹华剑雄是钟爱有加"
+      },
+      {
+        "desc": "华剑雄知道被钟爱",
+        "parent": null,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "华剑雄自己也知道这点"
+      },
+      {
+        "desc": "日本义父起作用",
+        "parent": null,
+        "participants": [
+          6
+        ],
+        "items": [],
+        "agent": 6,
+        "anchor_text": "另外他那个很多年没见面的日本义父也起到了很大的作用"
+      },
+      {
+        "desc": "华剑雄受绝对信任",
+        "parent": null,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "使得华剑雄受到绝对的信任"
+      }
+    ],
+    "3": [
+      {
+        "desc": "武田压三角烙铁",
+        "parent": 2,
+        "participants": [
+          4
+        ],
+        "items": [
+          3
+        ],
+        "agent": 4,
+        "anchor_text": "把一把烧得暗红的三角烙铁用力地压"
+      },
+      {
+        "desc": "华剑雄推门进入",
+        "parent": 2,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "推开沉重的铁门走了进去"
+      }
+    ],
+    "4": [
+      {
+        "desc": "扔烙铁进火盆",
+        "parent": 3,
+        "participants": [
+          4
+        ],
+        "items": [
+          3,
+          4
+        ],
+        "agent": 4,
+        "anchor_text": "把手中还冒着青烟的烙铁扔进一边的碳火盆里"
+      },
+      {
+        "desc": "擦胸前汗珠",
+        "parent": 3,
+        "participants": [
+          4
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "用手擦擦胸前的汗珠"
+      },
+      {
+        "desc": "对华剑雄说话",
+        "parent": 3,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "恼恨的对华剑雄说道"
+      },
+      {
+        "desc": "对华剑雄笑",
+        "parent": 3,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "对着华剑雄露出难看的笑容"
+      },
+      {
+        "desc": "看手腕上的表",
+        "parent": 3,
+        "participants": [
+          4
+        ],
+        "items": [
+          5
+        ],
+        "agent": 4,
+        "anchor_text": "他抬起手腕看看表"
+      },
+      {
+        "desc": "向华剑雄道歉",
+        "parent": 3,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "然后说道：「真对不起，剑雄君，耽误了和你的约定。」"
+      },
+      {
+        "desc": "华剑雄回答",
+        "parent": 3,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "「武田君何必如此多礼，你是公务繁忙嘛。」华剑雄轻飘飘地回答"
+      },
+      {
+        "desc": "拿铁口杯喝水",
+        "parent": 3,
+        "participants": [
+          4
+        ],
+        "items": [
+          6
+        ],
+        "agent": 4,
+        "anchor_text": "拿起桌子上的铁口杯大口地喝了起来"
+      },
+      {
+        "desc": "女人发出尖叫",
+        "parent": null,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": 5,
+        "anchor_text": "这时那女人又发出凄惨的尖叫"
+      },
+      {
+        "desc": "日本人夹扯乳房",
+        "parent": null,
+        "participants": [
+          6,
+          5
+        ],
+        "items": [
+          7
+        ],
+        "agent": 6,
+        "anchor_text": "被另外几个日本人用铁钳夹住乳房撕扯着"
+      },
+      {
+        "desc": "女人挣扎哭嚎",
+        "parent": null,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": 5,
+        "anchor_text": "那女人痛苦地惨叫着哭嚎着，拼命地挣扎着"
+      },
+      {
+        "desc": "绳子固定身体",
+        "parent": null,
+        "participants": [
+          5
+        ],
+        "items": [
+          8
+        ],
+        "agent": 6,
+        "anchor_text": "她的身体被一道道的绳子牢牢地固定在木凳上"
+      },
+      {
+        "desc": "衣物散落表明初刑",
+        "parent": null,
+        "participants": [],
+        "items": [
+          9
+        ],
+        "agent": 1,
+        "anchor_text": "散落的衣物表明这女人今天是第一次受刑"
+      }
+    ],
+    "5": [
+      {
+        "desc": "武田穿好衣服",
+        "parent": 4,
+        "participants": [
+          4
+        ],
+        "items": [
+          10
+        ],
+        "agent": 4,
+        "anchor_text": "这时武田勇夫穿好了衣服"
+      },
+      {
+        "desc": "武田交代手下",
+        "parent": 4,
+        "participants": [
+          4
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "给那几个手下交代了几句"
+      },
+      {
+        "desc": "武田拍华剑雄肩膀",
+        "parent": 4,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "就拍着华剑雄的肩膀说道"
+      },
+      {
+        "desc": "武田邀饮酒",
+        "parent": 4,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "「走，剑雄君，我们去柳月仿喝上几杯。」"
+      },
+      {
+        "desc": "华剑雄欣然同意",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "华剑雄也装出欣然同意的样子笑道"
+      },
+      {
+        "desc": "两人大笑",
+        "parent": 4,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "说着两人大笑起来"
+      },
+      {
+        "desc": "走出刑讯室",
+        "parent": 4,
+        "participants": [
+          4,
+          1
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "走出闷热得令华剑雄浑身冒汗的刑讯室"
+      },
+      {
+        "desc": "武田钻进轿车",
+        "parent": 4,
+        "participants": [
+          4
+        ],
+        "items": [],
+        "agent": 4,
+        "anchor_text": "武田笨拙地钻进了他那辆"
+      }
+    ]
+  }
+}

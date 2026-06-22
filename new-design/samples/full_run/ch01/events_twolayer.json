@@ -1,0 +1,355 @@
+{
+  "parent_events": [
+    {
+      "desc": "华剑雄归家回忆长春事",
+      "anchor_text": "回到办公室，没看到柳媚的踪影。华剑雄独自一个人坐在办公桌后面点起一支烟，把头靠在椅子上回想起这次长春之行的种种情形。",
+      "scene_ref": 1,
+      "participants": [
+        1,
+        2,
+        3
+      ],
+      "agent": 1,
+      "story_order": 1,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 10
+      }
+    },
+    {
+      "desc": "大使在长春被刺杀",
+      "anchor_text": "谁想到怕什么就来什么，就在他离开的当天晚上，最重要的警卫目标特命全权大使居然被人刺杀了。",
+      "scene_ref": 2,
+      "participants": [
+        5,
+        1
+      ],
+      "agent": null,
+      "story_order": 3,
+      "is_flashback": true,
+      "location_ref": {
+        "location_id": 1
+      }
+    },
+    {
+      "desc": "华剑雄分析刺杀局势",
+      "anchor_text": "问题是变故一出，耽误了建交事宜，日本人恼羞成怒，汪伪也担待不起。谁要是触了这个霉头，搞不好也要跟着倒霉的。",
+      "scene_ref": 3,
+      "participants": [
+        1,
+        4,
+        5
+      ],
+      "agent": 1,
+      "story_order": 2,
+      "is_flashback": true,
+      "location_ref": {
+        "location_id": 10
+      }
+    },
+    {
+      "desc": "华剑雄决心查明凶手",
+      "anchor_text": "不过恨归还是要弄清情况。摸黑走夜路毕竟是最危险的事，何况性命攸关。",
+      "scene_ref": 3,
+      "participants": [
+        1
+      ],
+      "agent": 1,
+      "story_order": 4,
+      "is_flashback": true,
+      "location_ref": {
+        "location_id": 10
+      }
+    },
+    {
+      "desc": "华剑雄准备出门行动",
+      "anchor_text": "「咚咚……」墙上的自鸣钟响了起来，看看时间已经已经五点了，华剑雄蓦然想起今晚的约会，赶紧坐下来，从一叠卷烟纸上顺手撕下一张，从贴身的口袋里掏出一只特殊的密写笔，仔细地写了一个小纸条。",
+      "scene_ref": 5,
+      "participants": [
+        1
+      ],
+      "agent": 1,
+      "story_order": 4,
+      "is_flashback": false,
+      "location_ref": {
+        "location_id": 10
+      }
+    }
+  ],
+  "sub_events": {
+    "1": [
+      {
+        "desc": "感觉到背心被汗水湿透",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "华剑雄才感觉到背心凉飕飕的全被汗水湿透了"
+      },
+      {
+        "desc": "独自坐在办公桌后面",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [
+          5
+        ],
+        "agent": 1,
+        "anchor_text": "华剑雄独自一个人坐在办公桌后面"
+      },
+      {
+        "desc": "点起一支烟",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [
+          3
+        ],
+        "agent": 1,
+        "anchor_text": "点起一支烟"
+      },
+      {
+        "desc": "把头靠在椅子上",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [
+          4
+        ],
+        "agent": 1,
+        "anchor_text": "把头靠在椅子上"
+      },
+      {
+        "desc": "回想起长春之行的情形",
+        "parent": 0,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "回想起这次长春之行的种种情形"
+      }
+    ],
+    "2": [
+      {
+        "desc": "周老板点名派华剑雄去长春",
+        "parent": null,
+        "participants": [],
+        "items": [],
+        "agent": null,
+        "anchor_text": "去长春也是周老板亲自点名派他去的"
+      },
+      {
+        "desc": "抽调大批干员保障使节团安全",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "同时还抽调了大批干员。他们的任务就是要保证南京政府派去长春使节团的安全"
+      },
+      {
+        "desc": "大使官邸内举行谈判",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "所有谈判都在这所官邸里进行"
+      },
+      {
+        "desc": "76号特务警卫大使官邸",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "他们的任务就是直接警卫大使官邸"
+      },
+      {
+        "desc": "华剑雄负责76号人员",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "华剑雄就是周老板点名派去的７６号所有人员的负责人"
+      },
+      {
+        "desc": "老头子召回华剑雄",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "所以老头子只好在谈判大功告成、即将举行签约仪式之际把他召回了上海"
+      },
+      {
+        "desc": "大使被刺杀",
+        "parent": 1,
+        "participants": [
+          5
+        ],
+        "items": [],
+        "agent": null,
+        "anchor_text": "最重要的警卫目标特命全权大使居然被人刺杀了"
+      }
+    ],
+    "3": [
+      {
+        "desc": "分析刺杀局势",
+        "parent": 2,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "华剑雄觉得这件事情有点棘手。"
+      },
+      {
+        "desc": "数可能势力",
+        "parent": 2,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "不过，掰着手指头数一数有可能要刺杀汪伪使节的势力真是不少。"
+      },
+      {
+        "desc": "想到军统麻烦",
+        "parent": 2,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "「如果是军统在当地人干的就有点麻烦了，说不定到时牵出一大票军统的人来。」华剑雄想到。"
+      },
+      {
+        "desc": "决心查明凶手",
+        "parent": 3,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "他对审讯犯人很有信心，尤其是个小女生。"
+      }
+    ],
+    "4": [
+      {
+        "desc": "华剑雄心中发狠",
+        "parent": null,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "华剑雄心中暗暗发狠"
+      },
+      {
+        "desc": "华剑雄把握保存自己",
+        "parent": null,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "就把握住一条：毕竟潜伏在７６号首要的还是保存自己"
+      },
+      {
+        "desc": "华剑雄弄清情况",
+        "parent": null,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "不过恨归恨，还是要弄清情况"
+      }
+    ],
+    "5": [
+      {
+        "desc": "华剑雄撕卷烟纸",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [
+          3
+        ],
+        "agent": 1,
+        "anchor_text": "从一叠卷烟纸上顺手撕下一张"
+      },
+      {
+        "desc": "华剑雄用密写笔写字",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [
+          7
+        ],
+        "agent": 1,
+        "anchor_text": "从贴身的口袋里掏出一只特殊的密写笔，仔细地写了一个小纸条"
+      },
+      {
+        "desc": "华剑雄拿水果糖",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [
+          8
+        ],
+        "agent": 1,
+        "anchor_text": "从抽屉里拿出一块水果糖"
+      },
+      {
+        "desc": "华剑雄放糖入衣兜",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [],
+        "agent": 1,
+        "anchor_text": "把水果糖放进衣兜"
+      },
+      {
+        "desc": "华剑雄穿外衣",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [
+          9
+        ],
+        "agent": 1,
+        "anchor_text": "匆匆的站起身，穿好外衣"
+      },
+      {
+        "desc": "华剑雄检查手枪",
+        "parent": 4,
+        "participants": [
+          1
+        ],
+        "items": [
+          10
+        ],
+        "agent": 1,
+        "anchor_text": "又检查了一下枪袋里的手枪"
+      }
+    ]
+  }
+}
