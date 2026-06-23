@@ -34,10 +34,10 @@ mentions 里放"物品本身的名词短语"，可带描述定语，但:
 - 不要输出任何形如"注:""修正思考""让我检查""重新扫描"的内容。每个字段只放最终结论。
 - id 严格唯一,从1递增,不重复。
 
-【字段】id(从1开始的整数编号，唯一) / scene(该物品出现的场景序号,见下) / name(最稳定称呼，去临时状态定语) / category(prop|set) / mentions(数组) / owner / function(一句话) / confidence(high|medium) / note。
+【字段】id(从1开始的整数编号，唯一) / scene(该物品出现的场景序号,见下) / name(最稳定称呼，去临时状态定语) / category(prop|set) / is_container(true|false:该物能否容纳或藏匿别的物——口袋/箱/包/糖纸包/衣服内衬=true,烙铁/绳/家具=false;默认false) / mentions(数组) / owner / function(一句话) / confidence(high|medium) / note。
 
 【输出格式】只输出一个 JSON 对象，首字符 {，末字符 }。禁止 markdown、禁止前后缀。JSON 结构符号一律 ASCII 半角；中文全角标点只能在字段文字内容里。
-结构:{"item_count":整数,"items":[{"id":1,"scene":1,"name":"","category":"prop","mentions":[""],"owner":"","function":"","confidence":"high","note":""}]}
+结构:{"item_count":整数,"items":[{"id":1,"scene":1,"name":"","category":"prop","is_container":false,"mentions":[""],"owner":"","function":"","confidence":"high","note":""}]}
 
 【约束】只依据文本，按首次出现顺序排列。
 
