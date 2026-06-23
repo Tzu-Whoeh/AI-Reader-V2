@@ -117,3 +117,46 @@ temperature 场景 0.15 / 其余 0.12;`app.py` 整章 `num_ctx=49152`,`event_pip
 - 默认直连 Ollama `127.0.0.1:11434`;线上经 ops 平台 / 隧道调用时替换 `call_model()`。
 - 可视化 `server.py` 纯标准库,可独立起在任意有 output/ 与原文的机器上。
 - 改部署/服务配置前报计划等批准(L4 自治档:改 server 配置属"先告诉用户等 OK"类)。
+
+## 10. 时间线系统(场景级,跨章缝合的核心)
+
+`cross_chapter.py` 的时间线缝合经一轮重构,**时间轴主干 = 场景,事件挂在场景下**。
+设计依据:场景拆分是成熟稳定骨架(§5),而事件 story_order 易标错;同时性/闪回天然是场景级的。
+事件 story_order 只在所属场景内有意义,**不承担跨章主干排序**。
+
+### 10.1 cross_chapter.run 输出
+`global_{characters,items,locations}`(并查集归一) + `global_scenes`(全局场景,取代旧 global_events) +
+`character_timelines`(人物线=其出现场景的子集投影) + `sync_points`(共享场景) +
+`concurrency_links`(跨章同时性连接) + `ambiguities`(含 timeline:abs校验+同时性歧义)。
+
+### 10.2 三个跨章对齐机制
+- **共享参与者锚**:求全局场景总序,人物线 = 总序的子集投影。共享场景在多人物线 global_seq 自动一致,
+  无需事后对齐。基准键 (章,场景index);闪回场景靠共享人物锚到更早主线场景后,无锚退基准键。
+- **闪回归位**(场景级):`_scene_flashback` 判定 —— 场景 type/title 含"往事/回忆/闪回/倒叙/回放",
+  或下挂事件多数 is_flashback。判出的闪回场景按锚归位,不停在叙述位置。
+- **跨章同时性锚**(两段式,见 10.3):平行蒙太奇("就在A在某地的时候,B在别处")常跨章、无共同人物,
+  靠此机制连接。
+
+### 10.3 跨章同时性:两段式 marker 触发 + 复核
+平行同时句常跨章,且双方无共同人物,共享参与者锚连不上。机制:
+- **pass1(06 事件抽取)**:`is_concurrency_marker` 字段。遇"就在…的时候/与此同时"平行引入句,
+  标 marker(anchor=逐字那句,scene_ref=它引入的本章场景)。
+  **只标"此刻双方并行"的同时**;"得知/回忆过去"(看报知昨晚遇刺)不是 marker,属 abs_interval。
+- **触发**:`event_pipeline.extract_time_refs` 仅在存在 marker 时跑;无 marker 不跑(正叙章不触发)。
+- **pass2(08 time_ref,复核+抽取)**:对每个 marker 调 08。08 先复核是不是真同时:
+  是 → 抽 names/places/local_scene_ref;不是 → 返回空。**pass2 是最终关卡,纠正 pass1 宽触发**。
+- **cross_chapter 匹配**:time_ref.names(为主)+places(加分) 匹配其他章场景;唯一最高分→锚;
+  并列且同地点同人物簇→锚簇内最后(scene_index 最大);否则报歧义。本章场景靠 local_scene_ref 定位。
+- 原则:pass1 不必完美(召回不稳无妨),pass2 复核兜底 —— 专治 abliterated 模型在无同时性章的过度触发/幻觉。
+
+### 10.4 abs_interval:校验而非硬锚
+本类(民国谍战)文本绝对时间稀少(实测 abs 产出~18% 且全为相对短语"昨晚/一个多月前",零日期钟点)。
+故 abs **不作绝对时间硬锚**,只作一致性校验:`check_abs_consistency` 用有限方向词表(过去/未来)判断,
+某场景首事件 abs 方向与场景顺序矛盾 → 报歧义(进 ambiguities,**不改排序**)。
+
+### 10.5 改时间线的纪律
+- 排序/缝合保持**纯确定性**,不引二次模型调用。
+- 同时性/指代在**源头标注**(06 marker、08 的 local_scene_ref),不在下游靠文本相似度猜。
+- 无法可靠判定的 → 进 ambiguities 交人工,不硬锚/硬排。
+- 研究档与演进(含弯路)沉淀在 `research/timeline_sync/`(DESIGN.md / doc4_rerun.md /
+  regression_and_abs_check.md / scene_level_timeline.md / cross_chapter_concurrency.md)。
