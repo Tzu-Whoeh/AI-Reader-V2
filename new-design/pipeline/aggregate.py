@@ -82,6 +82,7 @@ def aggregate(store):
     timeline_doc={"global_scenes":cross["global_scenes"],
                   "character_timelines":cross["character_timelines"],
                   "sync_points":cross["sync_points"],
+                  "concurrency_links":cross.get("concurrency_links",[]),
                   "ambiguities":cross["ambiguities"].get("timeline",[])}
     # ---- 全局场景文档(各章场景顺序拼接) ----
     scenes_doc={"chapters":[{"chapter":ch["_chapter"],"scenes":ch["scenes"]} for ch in chapters]}

@@ -123,9 +123,33 @@ def resolve_event_locations(parents, scenes):
         e["location_ref"]={"location_id":lid} if lid is not None else None
     return parents
 
+def extract_time_refs(fulltext, scenes, parents, prompt_file="08_time_ref.txt"):
+    """跨章同时性(两段式):
+    pass1(06)已标出 is_concurrency_marker=true 的事件(疑似平行同时引入句);
+    本函数对每个 marker 调 08 复核——确认是真"双方此刻并行"才抽 names/places/local_scene_ref,
+    否则(得知/回忆过去)返回空,由 pass2 纠正 pass1 的宽触发。无 marker 则完全不跑。"""
+    markers=[e for e in parents if e.get("is_concurrency_marker")]
+    if not markers: return []
+    scene_list="\n".join(f'  {s["index"]}: {s.get("title","")}' for s in scenes)
+    tpl=_load(prompt_file)
+    out=[]
+    for mk in markers:
+        anchor=mk.get("anchor_text","")
+        p=(tpl.replace("{SCENE_LIST}",scene_list)
+              .replace("{MARKER}",anchor).replace("{TEXT}",fulltext))
+        try:
+            trs=call_model(p).get("time_refs",[])
+        except Exception:
+            trs=[]
+        for tr in trs:
+            tr.setdefault("local_scene_ref", mk.get("scene_ref"))
+            out.append(tr)
+    return out
+
 def analyze_events(fulltext, scenes, characters, items):
-    """完整两层事件抽取 + 校验 + 位置推导。"""
+    """完整两层事件抽取 + 校验 + 位置推导 + 跨章同时性(marker 触发的 time_ref)。"""
     parents=extract_parent_events(fulltext, scenes, characters)
     subs=extract_sub_events(fulltext, scenes, parents, characters, items)
     resolve_event_locations(parents, scenes)
-    return {"parent_events":parents, "sub_events":subs}
+    time_refs=extract_time_refs(fulltext, scenes, parents)
+    return {"parent_events":parents, "sub_events":subs, "time_refs":time_refs}

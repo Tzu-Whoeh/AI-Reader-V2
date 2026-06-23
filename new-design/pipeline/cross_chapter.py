@@ -167,6 +167,72 @@ def stitch_timelines(chapters, char_global, loc_global=None):
             prev=[s for s in mainline if base_key(s)<=base_key(fb) and s["scene_uid"] in pos]
             pos[fb["scene_uid"]]=(pos[prev[-1]["scene_uid"]]+0.5) if prev else -1.0
 
+    # ---- 3. 跨章同时性锚(time_ref):场景级 ----
+    # B 章 time_ref 复述另一时刻 → 用 names(为主)+places(加分) 匹配【其他章场景】;
+    #   命中唯一最高分场景 → 把本章对应场景(local_anchor 所属场景)锚到该场景旁。
+    #   并列且构成"同地点同人物簇"→ 锚簇内最后(scene_index 最大);否则报歧义。
+    def scene_names(sc):
+        s=set()
+        for g in sc["global_participants"]: s|=gid_names.get(g,set())
+        return s
+    def find_local_scene(ch_no, tr):
+        # 优先用 time_ref.local_scene_ref(模型在源头标的本章同时场景编号)
+        ref=tr.get("local_scene_ref")
+        if ref is not None:
+            for s in global_scenes:
+                if s["chapter"]==ch_no and s["scene_index"]==ref: return s
+        # 回退:local_anchor 文本匹配场景内事件/标题
+        la=tr.get("local_anchor")
+        if la:
+            for s in [s for s in global_scenes if s["chapter"]==ch_no]:
+                for e in s["events"]:
+                    at=e.get("anchor_text") or ""; d=e.get("desc") or ""
+                    if la in at or at in la or la in d or d in la: return s
+                if la in (s.get("title") or ""): return s
+        return None
+    conc_amb=[]; conc_links=[]
+    for ch_idx,ch in enumerate(chapters):
+        ch_no=ch_idx+1
+        for tr in ch.get("time_refs",[]):
+            names=set(n for n in tr.get("names",[]) if n)
+            places=set(p for p in tr.get("places",[]) if p)
+            if not names and not places: continue
+            local_sc=find_local_scene(ch_no, tr)
+            scored=[]
+            for s in global_scenes:
+                if s["chapter"]==ch_no: continue
+                nh=len(names & scene_names(s))
+                ph=1 if (places and s.get("location_name") and
+                         any(p in s["location_name"] or s["location_name"] in p for p in places)) else 0
+                if nh>0: scored.append((nh+ph,nh,ph,s))
+            if not scored:
+                conc_amb.append({"type":"time_ref_no_match","chapter":ch_no,
+                    "anchor":tr.get("anchor"),"names":sorted(names),"places":sorted(places),
+                    "note":"其他章未找到名字交集的场景,无法跨章锚定"}); continue
+            scored.sort(key=lambda x:(-x[0],-x[1],x[3]["scene_uid"]))
+            top=scored[0][0]; tied=[s[3] for s in scored if s[0]==top]
+            if len(tied)>1:
+                same_chap=len(set(t["chapter"] for t in tied))==1
+                locs=set(t.get("location_name") for t in tied)
+                place_shared=len(locs)==1 and None not in locs
+                name_sets=[scene_names(t) for t in tied]
+                char_shared=bool(set.intersection(*name_sets)) if all(name_sets) else False
+                if same_chap and place_shared and char_shared:
+                    matched=sorted(tied,key=lambda t:(t["scene_index"] or -1,t["scene_uid"]))[-1]
+                else:
+                    conc_amb.append({"type":"time_ref_ambiguous","chapter":ch_no,
+                        "anchor":tr.get("anchor"),"names":sorted(names),
+                        "candidates":[t["title"] for t in tied],
+                        "note":"多个跨章场景并列且不构成同地点同人物簇,无法确定指向"}); continue
+            else:
+                matched=tied[0]
+            conc_links.append({"local_anchor":tr.get("local_anchor"),
+                "local_scene":(local_sc["title"] if local_sc else None),
+                "matched_scene":matched["title"],"matched_chapter":matched["chapter"],
+                "names":sorted(names),"places":sorted(places),"cluster_size":len(tied)})
+            if local_sc is not None and not (set(local_sc["global_participants"]) & set(matched["global_participants"])):
+                pos[local_sc["scene_uid"]]=pos[matched["scene_uid"]]+0.0001
+
     # ---- 4. 场景全局序 + 人物线(场景序子集投影) ----
     total=sorted(global_scenes, key=lambda s:(pos[s["scene_uid"]], s["scene_uid"]))
     for rank,s in enumerate(total,1): s["global_seq"]=rank
@@ -189,7 +255,7 @@ def stitch_timelines(chapters, char_global, loc_global=None):
                          "global_participants":s["global_participants"],
                          "chapter":s["chapter"],"global_seq":s["global_seq"],
                          "positions":{g:gseq_in_line.get((g,s["scene_uid"])) for g in s["global_participants"]}})
-    return total, timelines, sync
+    return total, timelines, sync, conc_amb, conc_links
 
 # abs_interval 方向词表(场景级:看场景首事件 abs 与场景顺序)
 _ABS_PAST=("昨晚","昨日","昨天","前天","之前","以前","早前","早年","当年","过去",
@@ -226,10 +292,11 @@ def run(chapters):
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
     item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
     loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions")
-    global_scenes, timelines, sync = stitch_timelines(chapters, char_global, loc_global)
-    timeline_amb = check_abs_consistency(global_scenes, timelines)
+    global_scenes, timelines, sync, conc_amb, conc_links = stitch_timelines(chapters, char_global, loc_global)
+    timeline_amb = check_abs_consistency(global_scenes, timelines) + conc_amb
     return {
         "global_characters":char_global,"global_items":item_global,"global_locations":loc_global,
         "global_scenes":global_scenes,"character_timelines":timelines,"sync_points":sync,
+        "concurrency_links":conc_links,
         "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb,
                        "timeline":timeline_amb}}
