@@ -103,6 +103,12 @@ evs_sorted = sorted(evs, key=lambda x: (x["chapter"], x["story_order"] or 0))
 有字面绝对时间的事件,理论上应作最硬锚(高于叙述序与同步点)。
 本轮不纳入第一阶段,避免一次引入过多变量;留作 §5 阶段三,届时需定义 abs_interval 的可比格式与缺失回退。
 
+> **更正(多章回归后)**:实跑证明本类文本 abs_interval 产出率仅 ~18% 且全为相对短语(昨晚/一个多月前),
+> 零绝对时间戳 —— 这类叙事本就靠相对时序词推进,绝对日期天然稀少。
+> 「abs_interval 作绝对时间硬锚」**在本类文本上不成立**(相对短语不构成可排序的绝对时间轴)。
+> 阶段三改为 **abs_interval 一致性校验**:方向与 story_order 矛盾时报歧义,不动排序。
+> 详见 regression_and_abs_check.md。
+
 ## 5. 实施路线(分阶段,每阶段独立 PR + 样本验证)
 
 - **阶段一(低风险,可先做)**:修排序键 + agent 兜底 + 同步点 positions 回填。
@@ -111,7 +117,7 @@ evs_sorted = sorted(evs, key=lambda x: (x["chapter"], x["story_order"] or 0))
   - C:取参与者并入 agent。
   - 仅改 `cross_chapter.py`,纯确定性,不动 prompt。
 - **阶段二(独立立项)**:同时性锚走路 B —— 加 `concurrent_with`,改父事件 prompt,`samples/` 验证。
-- **阶段三(独立立项)**:引入 abs_interval 作绝对时间硬锚(D3)。
+- **阶段三(独立立项)**:~~引入 abs_interval 作绝对时间硬锚~~ → 更正为 abs_interval 一致性校验(方向矛盾报歧义,不动排序),见 regression_and_abs_check.md。
 
 ## 6. 验证基准
 

@@ -163,12 +163,49 @@ def stitch_timelines(chapters, char_global):
 
     return global_events, timelines, sync
 
+# abs_interval 方向词表(确定性、有限覆盖;判不出方向的留空不报,宁漏勿误)
+_ABS_PAST=("昨晚","昨日","昨天","前天","之前","以前","早前","早年","当年","过去",
+           "月前","年前","天前","周前","星期前","小时前","分钟前","前夕")
+_ABS_FUTURE=("之后","此后","后来","次日","翌日","隔日","将要","即将","稍后","随后")
+def _abs_direction(s):
+    """返回 'past'/'future'/None。past=该事件故事时间早于上一事件。"""
+    s=s or ""
+    if any(w in s for w in _ABS_PAST): return "past"
+    if any(w in s for w in _ABS_FUTURE): return "future"
+    return None  # "今天""当场""一个月"等无方向词:不判
+
+def check_abs_consistency(global_events, timelines):
+    """确定性校验:同一人物线上,若某事件 abs_interval 方向与 story_order 排出的相邻顺序矛盾,报歧义。
+    不修改排序,只产出 ambiguities 供人工确认。范围限于方向词表能判定者。"""
+    by_id={ev["event_id"]:ev for ev in global_events}
+    amb=[]
+    seen=set()  # 去重(同一事件可能在多条线上重复触发)
+    for gp,tl in timelines.items():
+        # tl 已按 global_seq 升序(总序子集投影)
+        for i in range(1,len(tl)):
+            cur=by_id.get(tl[i]["event_id"]); prev=by_id.get(tl[i-1]["event_id"])
+            if not cur or not prev: continue
+            d=_abs_direction(cur.get("abs_interval"))
+            if d=="past":
+                # cur 排在 prev 之后(global_seq 更大),但 abs 说 cur 更早 → 矛盾
+                key=(cur["event_id"],prev["event_id"])
+                if key in seen: continue
+                seen.add(key)
+                amb.append({"type":"abs_vs_story_order",
+                    "event_id":cur["event_id"],"event_desc":cur["desc"],
+                    "abs_interval":cur.get("abs_interval"),
+                    "prev_event_id":prev["event_id"],"prev_desc":prev["desc"],
+                    "note":"abs_interval 指向更早,但 story_order 将其排在 prev 之后,请人工确认时序"})
+    return amb
+
 def run(chapters):
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
     item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
     loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions")
     global_events, timelines, sync = stitch_timelines(chapters, char_global)
+    timeline_amb = check_abs_consistency(global_events, timelines)
     return {
         "global_characters":char_global,"global_items":item_global,"global_locations":loc_global,
         "global_events":global_events,"character_timelines":timelines,"sync_points":sync,
-        "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb}}
+        "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb,
+                       "timeline":timeline_amb}}
