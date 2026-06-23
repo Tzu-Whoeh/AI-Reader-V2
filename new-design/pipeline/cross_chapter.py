@@ -77,31 +77,89 @@ def stitch_timelines(chapters, char_global):
     for ch_idx,ch in enumerate(chapters):
         for e in ch.get("events",[]):
             eid+=1
-            gparts=[loc2glob.get((ch_idx+1,p)) for p in e.get("participants",[])]
-            gparts=[p for p in gparts if p]
+            # 参与者 = participants ∪ {agent}(C 兜底:模型偶尔只填 agent 漏填 participants)
+            raw_parts=list(e.get("participants",[]))
+            ag=e.get("agent")
+            if ag is not None and ag not in raw_parts: raw_parts.append(ag)
+            gparts=[loc2glob.get((ch_idx+1,p)) for p in raw_parts]
+            # 去重保序 + 去空
+            seen=set(); gp_clean=[]
+            for p in gparts:
+                if p and p not in seen: seen.add(p); gp_clean.append(p)
             global_events.append({
                 "event_id":eid,"chapter":ch_idx+1,"desc":e["desc"],
                 "narrative_order":e.get("narrative_order"),"story_order":e.get("story_order"),
                 "is_flashback":e.get("is_flashback",False),
-                "global_participants":gparts,"abs_interval":e.get("abs_interval"),
+                "global_participants":gp_clean,"abs_interval":e.get("abs_interval"),
                 "storyline":e.get("storyline","")})
 
-    # 每个全局人物的时间线: 跨章, 先按章节, 章内按 story_order
+    # ---- 全局事件总序(人物线 = 总序的子集投影,共享事件 seq 一致自动满足)----
+    # 设计(见 research/timeline_sync/DESIGN.md):
+    #   基准键 (chapter, story_order):无共享参与者且跨章不可比时,按章节兜底,同章保留 story_order。
+    #   闪回归位:闪回事件若有"锚"(与某更早主线事件共享参与者)→ 紧跟锚事件;
+    #            无锚的孤立闪回 → 退回基准键(不硬猜,符合纪律)。
+    #   冲突时锚优先于 story_order(本轮决策:同步点为准)。
+
+    by_id={ev["event_id"]:ev for ev in global_events}
+    def base_key(ev):  # 基准:章节先后兜底,同章按 story_order
+        return (ev["chapter"], ev["story_order"] if ev["story_order"] is not None else 0)
+
+    # 主线 = 非闪回事件,按基准键定序;闪回事件先单独拎出
+    mainline=sorted([ev for ev in global_events if not ev["is_flashback"]], key=base_key)
+    flashbacks=[ev for ev in global_events if ev["is_flashback"]]
+
+    # 给主线事件分配整数序位(留间隙,供闪回插入)
+    pos={}  # event_id -> float 序位
+    for i,ev in enumerate(mainline): pos[ev["event_id"]]=float(i)*1000.0
+
+    # 闪回归位:找"锚" = 与该闪回共享参与者、且 base_key 更早的主线事件中最晚的一个
+    #   紧跟其后插入(锚位 + 小增量);story_order 决定多个挂同一锚的闪回之间的相对序。
+    for fb in sorted(flashbacks, key=base_key):
+        fb_parts=set(fb["global_participants"])
+        anchor=None
+        for ev in mainline:
+            if ev["event_id"] not in pos: continue
+            if fb_parts & set(ev["global_participants"]) and base_key(ev)<=base_key(fb):
+                anchor=ev  # 取满足条件里最晚的(mainline 已升序,持续覆盖)
+        if anchor is not None:
+            # 锚后插入,以 story_order 排同锚多闪回
+            so=fb["story_order"] if fb["story_order"] is not None else 0
+            pos[fb["event_id"]]=pos[anchor["event_id"]]+1.0+so*0.001
+        else:
+            # 无锚孤立闪回:退回基准键(转成可比序位,排在对应章节主线附近)
+            ck,so=base_key(fb)
+            # 找基准键 <= fb 的最后一个主线事件,排其后;都没有则排最前
+            prev=[ev for ev in mainline if base_key(ev)<=base_key(fb) and ev["event_id"] in pos]
+            pos[fb["event_id"]]=(pos[prev[-1]["event_id"]]+0.5) if prev else -1.0
+
+    # 全局总序:按序位排序(并列时 event_id 稳定兜底)
+    total_order=sorted(global_events, key=lambda ev:(pos[ev["event_id"]], ev["event_id"]))
+    for rank,ev in enumerate(total_order,1): ev["global_seq"]=rank
+
+    # 人物线 = 总序的子集投影(seq 取全局秩在该人物事件内的相对名次)
     per_char=defaultdict(list)
-    for ev in global_events:
+    for ev in total_order:  # 已按总序
         for gp in ev["global_participants"]:
             per_char[gp].append(ev)
     timelines={}
+    glob_seq={}  # (global_id, event_id) -> 个人线内 seq,供 sync positions 回填
     for gp,evs in per_char.items():
-        evs_sorted=sorted(evs,key=lambda x:(x["chapter"],x["story_order"] or 0))
-        timelines[gp]=[{"seq":i+1,"event_id":e["event_id"],"chapter":e["chapter"],
-                        "desc":e["desc"],"is_flashback":e["is_flashback"]}
-                       for i,e in enumerate(evs_sorted)]
+        timelines[gp]=[]
+        for i,e in enumerate(evs,1):  # evs 已是总序子集,天然有序
+            timelines[gp].append({"seq":i,"event_id":e["event_id"],"chapter":e["chapter"],
+                                  "global_seq":e["global_seq"],
+                                  "desc":e["desc"],"is_flashback":e["is_flashback"]})
+            glob_seq[(gp,e["event_id"])]=i
 
-    # 同步点: 被>=2个全局人物共享的事件
-    sync=[{"event_id":ev["event_id"],"desc":ev["desc"],
-           "global_participants":ev["global_participants"],"chapter":ev["chapter"]}
-          for ev in global_events if len(ev["global_participants"])>=2]
+    # 同步点: 被>=2个全局人物共享的事件 + 回填 positions(各参与者个人线内 seq)
+    sync=[]
+    for ev in total_order:
+        if len(ev["global_participants"])>=2:
+            sync.append({"event_id":ev["event_id"],"desc":ev["desc"],
+                         "global_participants":ev["global_participants"],
+                         "chapter":ev["chapter"],"global_seq":ev["global_seq"],
+                         "positions":{gp:glob_seq.get((gp,ev["event_id"]))
+                                      for gp in ev["global_participants"]}})
 
     return global_events, timelines, sync
 
