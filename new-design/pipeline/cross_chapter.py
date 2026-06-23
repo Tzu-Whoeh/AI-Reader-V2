@@ -34,20 +34,41 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
         return x
     def union(a,b): parent[find(a)]=find(b)
 
+    # 倒排索引替代 O(n^2) 两两比较:name -> 拥有该 name 的节点下标。
+    # 只有"共享至少一个名字"的节点对才可能 union,这些对恰好由倒排桶精确枚举,
+    # 不多不少 —— 输出与两两比较完全等价(union 结果只取决于"哪些对共享名字")。
+    # 复杂度从 O(n^2) 降到 O(n + Σ 桶内对数);现实语料里绝大多数名字桶很小。
+    name2nodes=defaultdict(list)
+    for idx,nd in enumerate(nodes):
+        for nm in nd["names"]:
+            name2nodes[nm].append(idx)
+
+    # 收集所有"共享名字"的无序节点对(去重),并记录它们共享的名字集合。
+    # 用 dict 累积同一对在多个名字桶里出现的交集,行为对齐原始 inter=names&names。
+    pair_overlap={}
+    for nm, idxs in name2nodes.items():
+        if len(idxs)<2: continue
+        for a in range(len(idxs)):
+            for b in range(a+1,len(idxs)):
+                i,j=idxs[a],idxs[b]
+                if i>j: i,j=j,i
+                pair_overlap.setdefault((i,j),set()).add(nm)
+
     ambiguities=[]
-    for i in range(len(nodes)):
-        for j in range(i+1,len(nodes)):
-            inter=nodes[i]["names"] & nodes[j]["names"]
-            if inter:
-                # 判断置信: 是否有"主名"级别的交集(任一方的第一个名/最长名相同)
-                exact = nodes[i]["raw"].get(name_key)==nodes[j]["raw"].get(name_key)
-                union(i,j)
-                if not exact:
-                    ambiguities.append({
-                        "reason":"仅通过别名/部分名称重叠归并,建议人工确认",
-                        "chapterA":nodes[i]["chapter"],"nameA":nodes[i]["raw"].get(name_key),
-                        "chapterB":nodes[j]["chapter"],"nameB":nodes[j]["raw"].get(name_key),
-                        "overlap":list(inter)})
+    # 按 (i,j) 升序遍历,精确复现原 for i: for j>i 的处理与 ambiguity 记录顺序。
+    # overlap 直接用两节点 name 集合的交集(与原实现逐字一致,而非累加器),
+    # 保证 overlap 列表内部顺序也与原输出 byte 级相同。
+    for (i,j) in sorted(pair_overlap.keys()):
+        inter=nodes[i]["names"] & nodes[j]["names"]
+        # 判断置信: 是否有"主名"级别的交集(任一方的第一个名/最长名相同)
+        exact = nodes[i]["raw"].get(name_key)==nodes[j]["raw"].get(name_key)
+        union(i,j)
+        if not exact:
+            ambiguities.append({
+                "reason":"仅通过别名/部分名称重叠归并,建议人工确认",
+                "chapterA":nodes[i]["chapter"],"nameA":nodes[i]["raw"].get(name_key),
+                "chapterB":nodes[j]["chapter"],"nameB":nodes[j]["raw"].get(name_key),
+                "overlap":list(inter)})
 
     groups=defaultdict(list)
     for i,n in enumerate(nodes): groups[find(i)].append(n)
