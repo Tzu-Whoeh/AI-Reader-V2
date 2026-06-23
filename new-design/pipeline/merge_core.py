@@ -65,6 +65,7 @@ def sanitize_items(items):
     """剔除模型抽风产生的脏物品:字段污染(思考写进name)、id重复、错误container关系。"""
     report=[]; seen=set(); clean=[]
     id2name={it.get("id"):it.get("name","") for it in items}  # 供container语义校验查whole名
+    id2obj={it.get("id"):it for it in items}                   # 供container标志位校验查whole的is_container
     for it in items:
         name=it.get("name","")
         # 1) name 污染:超长或含思考标志词
@@ -73,15 +74,14 @@ def sanitize_items(items):
         # 2) mentions 清洗
         it["mentions"]=[m for m in it.get("mentions",[]) if isinstance(m,str) and len(m)<=20
                         and not any(k in m for k in _THINK_MARKERS)]
-        # 3) 错误 container 关系:语义校验 —— container 的 whole 必须真是容器(非场所)
+        # 3) 错误 container 关系:纯标志位校验 —— container 的 whole 必须被模型(Pass1)
+        #    标为 is_container=True。判断"某物能否容纳别的物"交给读过原文的模型,
+        #    代码只查标志位(不再维护 PLACE_WORDS/CONTAINER_WORDS 词表)。
         po=it.get("part_of")
         if po and po.get("relation")=="container":
-            whole=id2name.get(po.get("whole_id"),"")
-            PLACE_WORDS=["间","房","室","厅","院","所","场","馆"]
-            CONTAINER_WORDS=["包","袋","箱","盒","桶","杯","瓶","壶","柜","抽屉","口袋","篮","筐","匣","罐","缸","兜"]
-            is_container = (not any(p in whole for p in PLACE_WORDS)) and any(c in whole for c in CONTAINER_WORDS)
-            if not is_container:
-                it["part_of"]=None  # whole 不是容器 → container 关系不成立
+            whole=id2obj.get(po.get("whole_id"))
+            if not (whole and whole.get("is_container") is True):
+                it["part_of"]=None  # whole 未被模型标为容器 → container 关系不成立
         # 4) id 去重(去污染后再去重,保留先出现的干净条目)
         if it.get("id") in seen:
             report.append({"reason":"id重复","id":it.get("id"),"name":name}); continue
