@@ -79,7 +79,7 @@ def aggregate(store):
                    "relations":global_loc_relations,
                    "ambiguities":cross["ambiguities"]["locations"]}
     # ---- 全局时间线文档 ----
-    timeline_doc={"global_events":cross["global_events"],
+    timeline_doc={"global_scenes":cross["global_scenes"],
                   "character_timelines":cross["character_timelines"],
                   "sync_points":cross["sync_points"],
                   "ambiguities":cross["ambiguities"].get("timeline",[])}
@@ -100,7 +100,7 @@ def aggregate(store):
             "global_characters":len(cross["global_characters"]),
             "global_items":len(cross["global_items"]),
             "global_locations":len(cross["global_locations"]),
-            "global_events":len(cross["global_events"]),
+            "global_scenes":len(cross["global_scenes"]),
             "sync_points":len(cross["sync_points"]),
         },
         "ambiguities":{k:len(v) for k,v in cross["ambiguities"].items()},

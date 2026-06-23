@@ -63,149 +63,173 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
             "members":[{"chapter":m["chapter"],"local_id":m["local_id"]} for m in members]})
     return global_list, ambiguities
 
-def stitch_timelines(chapters, char_global):
-    """按全局人物分线,跨章缝合事件(故事顺序),并找同步点。"""
-    # 局部人物id -> 全局id 映射
-    loc2glob={}
+# ============================================================================
+# 场景级时间轴(重构):时间轴主干 = 场景;事件作为场景下挂的一组。
+#   理由(见 research/timeline_sync):场景拆分是成熟稳定的骨架;同时性/闪回天然是
+#   场景级的;事件 story_order 屡屡标错,不宜承担跨章主干排序。
+#   事件仍保留,挂在所属场景下,其 story_order 只在场景内有意义。
+# ============================================================================
+
+def _scene_flashback(scene, evs):
+    """场景是否闪回:优先看场景 type(往事/回忆/闪回);否则看挂的事件多数 is_flashback。"""
+    t=(scene.get("type") or "")+(scene.get("title") or "")
+    if any(k in t for k in ("往事","回忆","闪回","倒叙","回放")): return True
+    if evs:
+        fb=sum(1 for e in evs if e.get("is_flashback"))
+        return fb*2>len(evs)  # 多数事件闪回 → 场景闪回
+    return False
+
+def stitch_timelines(chapters, char_global, loc_global=None):
+    """场景级缝合:跨章场景排成全局时间轴,事件挂在场景下,人物线=人物出现的场景序投影。
+    loc_global: 全局地点(供 time_ref.places 跨章匹配 + 场景地点归一)。"""
+    loc_global=loc_global or []
+    cloc2glob={}  # (章,章内人物id)->全局人物id
     for g in char_global:
-        for m in g["members"]:
-            loc2glob[(m["chapter"],m["local_id"])]=g["global_id"]
+        for m in g["members"]: cloc2glob[(m["chapter"],m["local_id"])]=g["global_id"]
+    lloc2glob={}  # (章,章内地点id)->全局地点id
+    for g in loc_global:
+        for m in g["members"]: lloc2glob[(m["chapter"],m["local_id"])]=g["global_id"]
+    gid_names={g["global_id"]:set(g["all_names"]) for g in char_global}
+    locname_by_global={g["global_id"]:g["canonical"] for g in loc_global}
 
-    # 收集全局事件: (chapter, event) 展开,participants 映射到全局人物
-    global_events=[]
-    eid=0
+    # ---- 1. 收集全局场景 + 把事件挂到场景下 ----
+    global_scenes=[]; sid=0
     for ch_idx,ch in enumerate(chapters):
+        ch_no=ch_idx+1
+        scenes=ch.get("scenes",[])
+        # 该章事件按 scene_ref 分组
+        ev_by_scene=defaultdict(list)
         for e in ch.get("events",[]):
-            eid+=1
-            # 参与者 = participants ∪ {agent}(C 兜底:模型偶尔只填 agent 漏填 participants)
-            raw_parts=list(e.get("participants",[]))
-            ag=e.get("agent")
-            if ag is not None and ag not in raw_parts: raw_parts.append(ag)
-            gparts=[loc2glob.get((ch_idx+1,p)) for p in raw_parts]
-            # 去重保序 + 去空
-            seen=set(); gp_clean=[]
-            for p in gparts:
-                if p and p not in seen: seen.add(p); gp_clean.append(p)
-            global_events.append({
-                "event_id":eid,"chapter":ch_idx+1,"desc":e["desc"],
-                "narrative_order":e.get("narrative_order"),"story_order":e.get("story_order"),
-                "is_flashback":e.get("is_flashback",False),
-                "global_participants":gp_clean,"abs_interval":e.get("abs_interval"),
-                "storyline":e.get("storyline","")})
+            ev_by_scene[e.get("scene_ref")].append(e)
+        for s in scenes:
+            sid+=1
+            s_idx=s.get("index")
+            evs=ev_by_scene.get(s_idx,[])
+            # 场景参与人物 = 场景内所有事件 participants∪agent 的全局并集
+            gp=set()
+            for e in evs:
+                rp=list(e.get("participants",[])); ag=e.get("agent")
+                if ag is not None and ag not in rp: rp.append(ag)
+                for p in rp:
+                    g=cloc2glob.get((ch_no,p))
+                    if g: gp.add(g)
+            # 场景地点(全局):优先场景 location_ref,否则由事件 location_ref 推
+            gloc=None
+            lr=s.get("location_ref")
+            if lr and lr.get("location_id") is not None:
+                gloc=lloc2glob.get((ch_no,lr["location_id"]))
+            if gloc is None:
+                for e in evs:
+                    elr=e.get("location_ref")
+                    if elr and elr.get("location_id") is not None:
+                        gloc=lloc2glob.get((ch_no,elr["location_id"])); 
+                        if gloc: break
+            # 事件挂场景下(保留 story_order 供场景内排序)
+            hung=[]
+            for e in evs:
+                rp=list(e.get("participants",[])); ag=e.get("agent")
+                if ag is not None and ag not in rp: rp.append(ag)
+                ep=[]
+                seen=set()
+                for p in rp:
+                    g=cloc2glob.get((ch_no,p))
+                    if g and g not in seen: seen.add(g); ep.append(g)
+                hung.append({"desc":e.get("desc"),"story_order":e.get("story_order"),
+                             "is_flashback":e.get("is_flashback",False),
+                             "abs_interval":e.get("abs_interval"),
+                             "global_participants":ep,"anchor_text":e.get("anchor_text","")})
+            # 场景内事件按 story_order 排
+            hung.sort(key=lambda x:(x["story_order"] if x["story_order"] is not None else 0))
+            global_scenes.append({
+                "scene_uid":sid,"chapter":ch_no,"scene_index":s_idx,
+                "title":s.get("title",""),"type":s.get("type",""),
+                "location_global":gloc,"location_name":locname_by_global.get(gloc),
+                "global_participants":sorted(gp),
+                "is_flashback":_scene_flashback(s,evs),
+                "events":hung})
 
-    # ---- 全局事件总序(人物线 = 总序的子集投影,共享事件 seq 一致自动满足)----
-    # 设计(见 research/timeline_sync/DESIGN.md):
-    #   基准键 (chapter, story_order):无共享参与者且跨章不可比时,按章节兜底,同章保留 story_order。
-    #   闪回归位:闪回事件若有"锚"(与某更早主线事件共享参与者)→ 紧跟锚事件;
-    #            无锚的孤立闪回 → 退回基准键(不硬猜,符合纪律)。
-    #   冲突时锚优先于 story_order(本轮决策:同步点为准)。
-
-    by_id={ev["event_id"]:ev for ev in global_events}
-    def base_key(ev):  # 基准:章节先后兜底,同章按 story_order
-        return (ev["chapter"], ev["story_order"] if ev["story_order"] is not None else 0)
-
-    # 主线 = 非闪回事件,按基准键定序;闪回事件先单独拎出
-    mainline=sorted([ev for ev in global_events if not ev["is_flashback"]], key=base_key)
-    flashbacks=[ev for ev in global_events if ev["is_flashback"]]
-
-    # 给主线事件分配整数序位(留间隙,供闪回插入)
-    pos={}  # event_id -> float 序位
-    for i,ev in enumerate(mainline): pos[ev["event_id"]]=float(i)*1000.0
-
-    # 闪回归位:找"锚" = 与该闪回共享参与者、且 base_key 更早的主线事件中最晚的一个
-    #   紧跟其后插入(锚位 + 小增量);story_order 决定多个挂同一锚的闪回之间的相对序。
-    for fb in sorted(flashbacks, key=base_key):
-        fb_parts=set(fb["global_participants"])
-        anchor=None
-        for ev in mainline:
-            if ev["event_id"] not in pos: continue
-            if fb_parts & set(ev["global_participants"]) and base_key(ev)<=base_key(fb):
-                anchor=ev  # 取满足条件里最晚的(mainline 已升序,持续覆盖)
+    # ---- 2. 场景级全局总序 ----
+    # 基准键(章,场景index):章内按场景顺序,跨章按章顺序。闪回场景靠锚归位。
+    def base_key(sc): return (sc["chapter"], sc["scene_index"] if sc["scene_index"] is not None else 0)
+    mainline=sorted([s for s in global_scenes if not s["is_flashback"]], key=base_key)
+    flash=[s for s in global_scenes if s["is_flashback"]]
+    pos={}
+    for i,s in enumerate(mainline): pos[s["scene_uid"]]=float(i)*1000.0
+    # 闪回场景:与更早主线场景共享人物→锚其后;否则退基准键
+    for fb in sorted(flash if False else flash, key=base_key):
+        fbp=set(fb["global_participants"]); anchor=None
+        for s in mainline:
+            if s["scene_uid"] not in pos: continue
+            if fbp & set(s["global_participants"]) and base_key(s)<=base_key(fb): anchor=s
         if anchor is not None:
-            # 锚后插入,以 story_order 排同锚多闪回
-            so=fb["story_order"] if fb["story_order"] is not None else 0
-            pos[fb["event_id"]]=pos[anchor["event_id"]]+1.0+so*0.001
+            pos[fb["scene_uid"]]=pos[anchor["scene_uid"]]+1.0
         else:
-            # 无锚孤立闪回:退回基准键(转成可比序位,排在对应章节主线附近)
-            ck,so=base_key(fb)
-            # 找基准键 <= fb 的最后一个主线事件,排其后;都没有则排最前
-            prev=[ev for ev in mainline if base_key(ev)<=base_key(fb) and ev["event_id"] in pos]
-            pos[fb["event_id"]]=(pos[prev[-1]["event_id"]]+0.5) if prev else -1.0
+            prev=[s for s in mainline if base_key(s)<=base_key(fb) and s["scene_uid"] in pos]
+            pos[fb["scene_uid"]]=(pos[prev[-1]["scene_uid"]]+0.5) if prev else -1.0
 
-    # 全局总序:按序位排序(并列时 event_id 稳定兜底)
-    total_order=sorted(global_events, key=lambda ev:(pos[ev["event_id"]], ev["event_id"]))
-    for rank,ev in enumerate(total_order,1): ev["global_seq"]=rank
-
-    # 人物线 = 总序的子集投影(seq 取全局秩在该人物事件内的相对名次)
+    # ---- 4. 场景全局序 + 人物线(场景序子集投影) ----
+    total=sorted(global_scenes, key=lambda s:(pos[s["scene_uid"]], s["scene_uid"]))
+    for rank,s in enumerate(total,1): s["global_seq"]=rank
     per_char=defaultdict(list)
-    for ev in total_order:  # 已按总序
-        for gp in ev["global_participants"]:
-            per_char[gp].append(ev)
-    timelines={}
-    glob_seq={}  # (global_id, event_id) -> 个人线内 seq,供 sync positions 回填
-    for gp,evs in per_char.items():
-        timelines[gp]=[]
-        for i,e in enumerate(evs,1):  # evs 已是总序子集,天然有序
-            timelines[gp].append({"seq":i,"event_id":e["event_id"],"chapter":e["chapter"],
-                                  "global_seq":e["global_seq"],
-                                  "desc":e["desc"],"is_flashback":e["is_flashback"]})
-            glob_seq[(gp,e["event_id"])]=i
-
-    # 同步点: 被>=2个全局人物共享的事件 + 回填 positions(各参与者个人线内 seq)
+    for s in total:
+        for g in s["global_participants"]: per_char[g].append(s)
+    timelines={}; gseq_in_line={}
+    for g,scs in per_char.items():
+        timelines[g]=[]
+        for i,s in enumerate(scs,1):
+            timelines[g].append({"seq":i,"scene_uid":s["scene_uid"],"chapter":s["chapter"],
+                                 "global_seq":s["global_seq"],"title":s["title"],
+                                 "is_flashback":s["is_flashback"]})
+            gseq_in_line[(g,s["scene_uid"])]=i
+    # 同步点:被>=2全局人物共享的场景
     sync=[]
-    for ev in total_order:
-        if len(ev["global_participants"])>=2:
-            sync.append({"event_id":ev["event_id"],"desc":ev["desc"],
-                         "global_participants":ev["global_participants"],
-                         "chapter":ev["chapter"],"global_seq":ev["global_seq"],
-                         "positions":{gp:glob_seq.get((gp,ev["event_id"]))
-                                      for gp in ev["global_participants"]}})
+    for s in total:
+        if len(s["global_participants"])>=2:
+            sync.append({"scene_uid":s["scene_uid"],"title":s["title"],
+                         "global_participants":s["global_participants"],
+                         "chapter":s["chapter"],"global_seq":s["global_seq"],
+                         "positions":{g:gseq_in_line.get((g,s["scene_uid"])) for g in s["global_participants"]}})
+    return total, timelines, sync
 
-    return global_events, timelines, sync
-
-# abs_interval 方向词表(确定性、有限覆盖;判不出方向的留空不报,宁漏勿误)
+# abs_interval 方向词表(场景级:看场景首事件 abs 与场景顺序)
 _ABS_PAST=("昨晚","昨日","昨天","前天","之前","以前","早前","早年","当年","过去",
            "月前","年前","天前","周前","星期前","小时前","分钟前","前夕")
 _ABS_FUTURE=("之后","此后","后来","次日","翌日","隔日","将要","即将","稍后","随后")
 def _abs_direction(s):
-    """返回 'past'/'future'/None。past=该事件故事时间早于上一事件。"""
     s=s or ""
     if any(w in s for w in _ABS_PAST): return "past"
     if any(w in s for w in _ABS_FUTURE): return "future"
-    return None  # "今天""当场""一个月"等无方向词:不判
+    return None
 
-def check_abs_consistency(global_events, timelines):
-    """确定性校验:同一人物线上,若某事件 abs_interval 方向与 story_order 排出的相邻顺序矛盾,报歧义。
-    不修改排序,只产出 ambiguities 供人工确认。范围限于方向词表能判定者。"""
-    by_id={ev["event_id"]:ev for ev in global_events}
-    amb=[]
-    seen=set()  # 去重(同一事件可能在多条线上重复触发)
-    for gp,tl in timelines.items():
-        # tl 已按 global_seq 升序(总序子集投影)
+def check_abs_consistency(global_scenes, timelines):
+    """场景级 abs 校验:同一人物线上,若某场景首事件 abs 方向与场景顺序矛盾,报歧义。"""
+    by_uid={s["scene_uid"]:s for s in global_scenes}
+    def scene_abs(s):  # 取场景第一个事件的 abs_interval 作场景级时间锚
+        return s["events"][0]["abs_interval"] if s.get("events") else None
+    amb=[]; seen=set()
+    for g,tl in timelines.items():
         for i in range(1,len(tl)):
-            cur=by_id.get(tl[i]["event_id"]); prev=by_id.get(tl[i-1]["event_id"])
+            cur=by_uid.get(tl[i]["scene_uid"]); prev=by_uid.get(tl[i-1]["scene_uid"])
             if not cur or not prev: continue
-            d=_abs_direction(cur.get("abs_interval"))
-            if d=="past":
-                # cur 排在 prev 之后(global_seq 更大),但 abs 说 cur 更早 → 矛盾
-                key=(cur["event_id"],prev["event_id"])
+            if _abs_direction(scene_abs(cur))=="past":
+                key=(cur["scene_uid"],prev["scene_uid"])
                 if key in seen: continue
                 seen.add(key)
-                amb.append({"type":"abs_vs_story_order",
-                    "event_id":cur["event_id"],"event_desc":cur["desc"],
-                    "abs_interval":cur.get("abs_interval"),
-                    "prev_event_id":prev["event_id"],"prev_desc":prev["desc"],
-                    "note":"abs_interval 指向更早,但 story_order 将其排在 prev 之后,请人工确认时序"})
+                amb.append({"type":"abs_vs_scene_order",
+                    "scene_uid":cur["scene_uid"],"scene_title":cur["title"],
+                    "abs_interval":scene_abs(cur),
+                    "prev_scene_uid":prev["scene_uid"],"prev_title":prev["title"],
+                    "note":"场景 abs_interval 指向更早,但场景顺序将其排在 prev 之后,请人工确认"})
     return amb
 
 def run(chapters):
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
     item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
     loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions")
-    global_events, timelines, sync = stitch_timelines(chapters, char_global)
-    timeline_amb = check_abs_consistency(global_events, timelines)
+    global_scenes, timelines, sync = stitch_timelines(chapters, char_global, loc_global)
+    timeline_amb = check_abs_consistency(global_scenes, timelines)
     return {
         "global_characters":char_global,"global_items":item_global,"global_locations":loc_global,
-        "global_events":global_events,"character_timelines":timelines,"sync_points":sync,
+        "global_scenes":global_scenes,"character_timelines":timelines,"sync_points":sync,
         "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb,
                        "timeline":timeline_amb}}
