@@ -23,7 +23,15 @@ import event_pipeline as EP
 
 # ---- 模型调用(默认直连;平台环境替换此函数,并赋给 EP.call_model)----
 import urllib.request
-MODEL="huihui_ai/Qwen3.6-abliterated:35b"
+# 按任务适配模型:抽取类(识别/共指/关系)用 35b,容量优势;
+# 判断类(场景边界判断)用 27b,实测在场景拆分上比 35b 更稳(见 AGENT.md「场景拆分」节)。
+DEFAULT_MODEL="huihui_ai/Qwen3.6-abliterated:35b"
+PASS_MODELS={
+    "scene":   "huihui_ai/Qwen3.6-abliterated:27b",  # 场景拆分:判断任务,27b 更稳
+    # 其余 pass(character/item/location/event)未列出者一律走 DEFAULT_MODEL(35b)
+}
+def model_for(pass_name):
+    return PASS_MODELS.get(pass_name, DEFAULT_MODEL)
 def _safe_json(s):
     """容忍模型返回被截断的 JSON:先直接解析,失败则尝试补全收尾再解析。"""
     try: return json.loads(s)
@@ -41,8 +49,8 @@ def _safe_json(s):
             except Exception: continue
     raise ValueError("JSON irreparably truncated")
 
-def call_model(prompt, temperature=0.12, num_ctx=49152, timeout=300, retries=1):
-    body={"model":MODEL,"prompt":prompt,"stream":False,"think":False,"format":"json",
+def call_model(prompt, temperature=0.12, num_ctx=49152, timeout=300, retries=1, model=None):
+    body={"model":model or DEFAULT_MODEL,"prompt":prompt,"stream":False,"think":False,"format":"json",
           "options":{"temperature":temperature,"num_ctx":num_ctx,"num_predict":4096}}
     last=None
     for _ in range(retries+1):
@@ -72,7 +80,7 @@ def read_input(path):
 
 def analyze_chapter(text):
     """单章五维度 + 事件 + 章节归并。返回 merged dict。"""
-    scenes=call_model(L("01_scene_splitting.txt").replace("{TEXT}",text),temperature=0.15)
+    scenes=call_model(L("01_scene_splitting.txt").replace("{TEXT}",text),temperature=0.15,model=model_for("scene"))
     # 人物 2pass
     c1=call_model(L("02_character_pass1_recognition.txt").replace("{TEXT}",text))
     clist="\n".join(f'  id={c["id"]} name="{c["name"]}" role="{c.get("role","")}"' for c in c1["characters"])
