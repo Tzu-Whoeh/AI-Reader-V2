@@ -64,7 +64,11 @@ def call_model(prompt, temperature=0.12, num_ctx=49152, timeout=300, retries=1, 
     raise last
 EP.call_model=call_model
 
-PROMPTS=os.path.dirname(os.path.abspath(__file__))  # 提示词默认在本脚本同目录
+_HERE=os.path.dirname(os.path.abspath(__file__))
+# 提示词的单一真相源是 new-design/prompts/(完整 12 个);pipeline/ 不再存放提示词副本。
+# 优先用同级 prompts/;若不存在(如旧布局把提示词放本目录)则回退到本目录,保持向后兼容。
+_SIBLING_PROMPTS=os.path.join(os.path.dirname(_HERE),"prompts")
+PROMPTS=_SIBLING_PROMPTS if os.path.isdir(_SIBLING_PROMPTS) else _HERE
 def L(fn): return open(os.path.join(PROMPTS,fn),encoding="utf-8").read()
 EP.set_prompts_dir(PROMPTS)  # 让事件管道也用同一提示词目录
 VEH=("车","轿车","雪佛来","汽车")
