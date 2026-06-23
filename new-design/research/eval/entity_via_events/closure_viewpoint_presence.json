@@ -1,0 +1,6 @@
+{
+ "test": "viewpoint=华剑雄 喂给思绪在场判定(scene_presence_inner_v2),ch44场景2",
+ "expect": "present=[华剑雄] 不再是'他'; thought_of分流思绪人物",
+ "result": "3跑全部 present=['华剑雄'] ✓; thought_of=[柳媚,黎子午,何小月,藤原香子]各带证据",
+ "conclusion": "viewpoint从源头解决思绪场景指代,闭环成功"
+}
