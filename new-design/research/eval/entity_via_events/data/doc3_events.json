@@ -1,0 +1,105 @@
+{
+ "scenes": [
+  {
+   "index": 1,
+   "title": "办公室接电话",
+   "type": "现实叙述",
+   "location": "办公室",
+   "cut_reason": "start",
+   "viewpoint": "华剑雄",
+   "summary": "华剑雄在办公室接到柳媚内线，告知丁墨村中午约饭。尽管内心对柳媚的冷热反差及丁墨村的意图有所盘算（并入本段），但物理地点未变，属同一场景。",
+   "start_text": "华剑雄正在愣神，电话响了，一看是内线。",
+   "end_text": "已经１１点５０分了。"
+  },
+  {
+   "index": 2,
+   "title": "得胜楼密谈与调派秘书",
+   "type": "现实叙述",
+   "location": "得胜楼包间",
+   "cut_reason": "loc",
+   "viewpoint": "华剑雄",
+   "summary": "场景切换至得胜楼。华剑雄与丁墨村饮酒，话题从夜莺组织刺杀案延伸至丁墨村将秘书王凤滟调派给华剑雄的暧昧意图。期间包含对华剑雄心理活动的描写及关于夜莺组织的背景介绍（视为当下对话中的信息补充或短暂思绪回溯，未构成独立的长篇往事回放边界），整体为同一地点连续互动。",
+   "start_text": "得胜楼雅致的包间里，华剑雄和丁墨村一杯又一杯地喝着洋酒。",
+   "end_text": "属下就恭敬不如从命了。"
+  },
+  {
+   "index": 3,
+   "title": "车内惊闻大使遇刺",
+   "type": "现实叙述",
+   "location": "专车内",
+   "cut_reason": "loc",
+   "viewpoint": "华剑雄",
+   "summary": "场景切换至从得胜楼出来后的专车上。华剑雄因头晕看报纸，发现南京大使裴仁基遇刺身亡的新闻，震惊并命令司机加速回机关。",
+   "start_text": "从得胜楼出来，华剑雄觉得头有点晕。他酒量一向很大，但对洋酒他一直不习惯，喝多了头总是头晕。",
+   "end_text": "快！快开，回机关！"
+  }
+ ],
+ "events": [
+  {
+   "desc": "柳媚致电告知丁墨村邀约",
+   "anchor_text": "是柳媚在外间打进来的：\"处座，丁主任来过了，说跟你约好了中午去得胜楼吃饭。\"",
+   "scene_ref": 1,
+   "agent": "柳媚",
+   "patient": null,
+   "instruments": [
+    "电话"
+   ],
+   "location": "办公室",
+   "participants": [
+    "华剑雄",
+    "柳媚"
+   ],
+   "is_flashback": false,
+   "abs_time": null
+  },
+  {
+   "desc": "丁墨村展示红色丝巾",
+   "anchor_text": "说着，丁墨村从西服里内侧的口袋里拿出个红色的小丝巾来，摊开在手上。",
+   "scene_ref": 2,
+   "agent": "丁墨村",
+   "patient": null,
+   "instruments": [
+    "小丝巾"
+   ],
+   "location": "得胜楼包间",
+   "participants": [
+    "华剑雄",
+    "丁墨村"
+   ],
+   "is_flashback": false,
+   "abs_time": null
+  },
+  {
+   "desc": "丁墨村调派王秘书给华剑雄",
+   "anchor_text": "\"王秘书的事就这样定了，明天就叫她到你那边报到。\"",
+   "scene_ref": 2,
+   "agent": "丁墨村",
+   "patient": null,
+   "instruments": [],
+   "location": "得胜楼包间",
+   "participants": [
+    "华剑雄",
+    "丁墨村"
+   ],
+   "is_flashback": false,
+   "abs_time": null
+  },
+  {
+   "desc": "华剑雄车内惊闻大使遇刺",
+   "anchor_text": "\"南京方面派往满洲国的建交谈判大使裴仁基昨晚在一个小型酒会上突遇刺客，身中两弹，当场身亡。\"",
+   "scene_ref": 3,
+   "agent": null,
+   "patient": null,
+   "instruments": [
+    "报纸"
+   ],
+   "location": "车内",
+   "participants": [
+    "华剑雄",
+    "老赵"
+   ],
+   "is_flashback": false,
+   "abs_time": "昨晚"
+  }
+ ]
+}

@@ -1,0 +1,207 @@
+{
+ "scenes": [
+  {
+   "index": 1,
+   "title": "霞露公寓内的争论与告别",
+   "type": "现实叙述",
+   "location": "霞露公寓三楼房间",
+   "cut_reason": "start",
+   "viewpoint": "客观",
+   "summary": "在得胜楼华剑雄被灌醉的同时，霞露公寓内黄克己、老任和周雪萍激烈争论营救丽萍之事。最终决定放弃营救，众人陆续离开，留下周雪萍独自悲痛哭泣并回顾局势背景。",
+   "start_text": "就在华剑雄在得胜楼被丁墨村用洋酒灌得头晕脑胀的时候",
+   "end_text": "许久没掉眼泪的雪萍终于忍不住大哭起来。"
+  },
+  {
+   "index": 2,
+   "title": "周雪萍的往事回放与入睡",
+   "type": "回忆",
+   "location": "未明",
+   "cut_reason": "time",
+   "viewpoint": "周雪萍",
+   "summary": "周雪萍在哭泣中模糊地想起许多和妹妹的往事，随后倦累睡去。此处由当下叙述跳入对过去记忆的客观回放（'想起了...往事'），构成时间边界。",
+   "start_text": "周雪萍整个哭得晕乎乎的，模糊之间想起了许多和妹妹的往事",
+   "end_text": "最后终于在朦胧中倦累地睡去。"
+  }
+ ],
+ "events": [
+  {
+   "desc": "华剑雄被灌酒",
+   "anchor_text": "就在华剑雄在得胜楼被丁墨村用洋酒灌得头晕脑胀的时候，",
+   "scene_ref": 1,
+   "agent": "华剑雄",
+   "patient": null,
+   "instruments": [
+    "洋酒"
+   ],
+   "location": "得胜楼",
+   "participants": [],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "黄克己反对意见",
+   "anchor_text": "\"我反对你们的意见，现在是救丽萍的最后时机。\"",
+   "scene_ref": 1,
+   "agent": "黄克己",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "周雪萍",
+    "老任"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "黄克己敲木桌",
+   "anchor_text": "说完烦躁的用手敲着黑色的木桌。",
+   "scene_ref": 1,
+   "agent": "黄克己",
+   "patient": null,
+   "instruments": [
+    "黑色的木桌"
+   ],
+   "location": "霞露公寓",
+   "participants": [],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "老任皱眉建议顾全大局",
+   "anchor_text": "\"克己！条件不具备，成功希望渺茫，要顾全大局啊。\"",
+   "scene_ref": 1,
+   "agent": "老任",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "黄克己"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍制止老任",
+   "anchor_text": "但这时一只白净的手拍了拍他的手腕，让他忍了下去。",
+   "scene_ref": 1,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "老任"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍告知决定不宜营救",
+   "anchor_text": "\"今天紧急通知你和老任来，就是要你有心理准备，告诉你这个决定。\"",
+   "scene_ref": 1,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "黄克己",
+    "老任"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍解释枫的重要性",
+   "anchor_text": "\"况且他也尽了全力，几次传递出丽萍的消息。\"",
+   "scene_ref": 1,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "黄克己"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍落泪并擦泪",
+   "anchor_text": "看着周雪萍掏出白色的手巾擦泪，老任这时开口道：\"雪萍，克强，同志的血不会白流。\"",
+   "scene_ref": 1,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [
+    "白色的手巾"
+   ],
+   "location": "霞露公寓",
+   "participants": [],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "黄克己起身离开",
+   "anchor_text": "\"你们回去时要注意安全……\"黄克己没有说话，点点头就起身开门出去了。",
+   "scene_ref": 1,
+   "agent": "黄克己",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [
+    "周雪萍"
+   ],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "老任拿起帽子提包离开",
+   "anchor_text": "\"老任，你走吧。\"老任沉重地点点头，没再说什么，起身拿起衣帽架上的帽子，提起地板上的黑色提包走了出去。",
+   "scene_ref": 1,
+   "agent": "老任",
+   "patient": null,
+   "instruments": [
+    "帽子",
+    "黑色提包"
+   ],
+   "location": "霞露公寓",
+   "participants": [],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍趴在桌上痛哭",
+   "anchor_text": "直到老任的脚步声完全消失，周雪萍才终于压抑不住强忍多时的悲痛，趴在桌子上痛哭起来。",
+   "scene_ref": 1,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [],
+   "is_flashback": false,
+   "abs_time": null,
+   "sync_with": null
+  },
+  {
+   "desc": "周雪萍回忆往事并入睡",
+   "anchor_text": "周雪萍整个哭得晕乎乎的，模糊之间想起了许多和妹妹的往事，最后终于在朦胧中倦累地睡去。",
+   "scene_ref": 2,
+   "agent": "周雪萍",
+   "patient": null,
+   "instruments": [],
+   "location": "霞露公寓",
+   "participants": [],
+   "is_flashback": true,
+   "abs_time": null,
+   "sync_with": null
+  }
+ ]
+}
