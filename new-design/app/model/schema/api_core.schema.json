@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/api_core.schema.json",
+  "title": "API 传输层 · 共享形态",
+  "description": "端点响应是领域模型(core.schema.json)的投影/组合,不新增语义。node/edge 为图谱投影。",
+  "$defs": {
+    "nodeType": { "enum": ["character", "item", "location", "event"] },
+
+    "node": {
+      "type": "object",
+      "required": ["id", "label", "type"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(character|item|location|event):[0-9]+$",
+          "description": "复合 id:'<type>:<global_id>',前端按 ':' 切分"
+        },
+        "label": { "type": "string" },
+        "type": { "$ref": "#/$defs/nodeType" },
+        "meta": {
+          "type": "object",
+          "description": "可选投影字段(从模型实体投影,只读)",
+          "properties": {
+            "confidence": { "$ref": "core.schema.json#/$defs/confidence" },
+            "degree": { "type": "integer", "description": "连边数,供前端布局/筛选" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "edge": {
+      "type": "object",
+      "required": ["from", "to", "kind"],
+      "properties": {
+        "from": { "type": "string", "description": "源 node.id(复合)" },
+        "to": { "type": "string", "description": "目标 node.id(复合)" },
+        "label": { "type": "string", "description": "关系自然语言描述/类型" },
+        "kind": {
+          "enum": ["char", "loc", "item", "event"],
+          "description": "边来源维度:char=人物关系 loc=地点关系 item=物品边 event=事件参与/时序"
+        },
+        "relation_type": {
+          "description": "原始 relation_type(实体关系边携带);事件/物品边可省",
+          "type": "string"
+        },
+        "confidence": { "$ref": "core.schema.json#/$defs/confidence" }
+      },
+      "additionalProperties": false
+    },
+
+    "error": {
+      "type": "object",
+      "required": ["error"],
+      "properties": {
+        "error": {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
