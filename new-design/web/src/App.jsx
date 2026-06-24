@@ -3,14 +3,18 @@ import { getSummary, getGraph } from './api.js'
 import Filters from './components/Filters.jsx'
 import GraphPane from './components/GraphPane.jsx'
 import SidePanel from './components/SidePanel.jsx'
+import Timeline from './views/Timeline.jsx'
+import Scenes from './views/Scenes.jsx'
 
 const TYPES = { character: '人物', item: '物品', location: '地点' }
+const VIEWS = { graph: '图谱', timeline: '时间线', scenes: '场景' }
 
 export default function App() {
   const [summary, setSummary] = useState(null)
   const [graph, setGraph] = useState({ nodes: [], edges: [] })
   const [show, setShow] = useState({ character: true, item: true, location: true })
   const [selected, setSelected] = useState(null) // {type, id, label}
+  const [view, setView] = useState('graph')
 
   useEffect(() => {
     getSummary().then(setSummary).catch(console.error)
@@ -28,15 +32,30 @@ export default function App() {
       <div className="top">
         <h1>叙事档案</h1>
         <span className="sub">NARRATIVE BROWSER</span>
+        <nav className="views">
+          {Object.keys(VIEWS).map(v => (
+            <button key={v} className={view === v ? 'active' : ''} onClick={() => setView(v)}>
+              {VIEWS[v]}
+            </button>
+          ))}
+        </nav>
         <span className="stat">{stat}</span>
       </div>
-      <Filters types={TYPES} show={show} onToggle={(t, v) => setShow(s => ({ ...s, [t]: v }))} />
-      <div className="main">
-        <div className="graph-pane">
-          <GraphPane graph={graph} show={show} onSelect={setSelected} />
-        </div>
-        <SidePanel selected={selected} typeNames={TYPES} />
-      </div>
+
+      {view === 'graph' && (
+        <>
+          <Filters types={TYPES} show={show} onToggle={(t, v) => setShow(s => ({ ...s, [t]: v }))} />
+          <div className="main">
+            <div className="graph-pane">
+              <GraphPane graph={graph} show={show} onSelect={setSelected} />
+            </div>
+            <SidePanel selected={selected} typeNames={TYPES} />
+          </div>
+        </>
+      )}
+
+      {view === 'timeline' && <Timeline />}
+      {view === 'scenes' && <Scenes />}
     </>
   )
 }

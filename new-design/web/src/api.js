@@ -12,5 +12,6 @@ async function get(path) {
 export const getSummary = () => get('/summary')
 export const getGraph = () => get('/graph')
 export const getDimension = (name) => get('/dimension/' + encodeURIComponent(name))
+export const getEvents = () => get('/events')
 export const getNode = (type, id) =>
   get(`/node/${encodeURIComponent(type)}/${encodeURIComponent(id)}`)
