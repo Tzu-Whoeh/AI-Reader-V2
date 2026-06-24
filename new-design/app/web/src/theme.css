@@ -158,3 +158,7 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .upp-done{margin-top:18px;display:flex;align-items:center;gap:16px;
   font-family:sans-serif;font-size:13px;color:var(--loc)}
 .upp-done .up-btn{margin-left:0}
+
+/* 当前子步骤(进度条下) */
+.upp-step{margin-top:8px;font-family:sans-serif;font-size:12px;color:var(--thread)}
+.upp-step-frac{color:var(--dim)}

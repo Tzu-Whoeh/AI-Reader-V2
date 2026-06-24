@@ -48,9 +48,17 @@ export default function Upload({ onDone }) {
     }
   }
 
-  const pct = prog && prog.total
-    ? Math.round((prog.done / prog.total) * 100)
-    : (prog && prog.stage === 'done' ? 100 : 0)
+  // 子步骤级进度:(已完成章×步数 + 当前章已完成步) / (总章×步数)
+  const pct = (() => {
+    if (!prog) return 0
+    if (prog.stage === 'done') return 100
+    if (!prog.total) return 0
+    const stepTotal = prog.step_total || 1
+    const stepIdx = prog.step_idx || 0
+    const units = prog.total * stepTotal
+    const completedUnits = prog.done * stepTotal + stepIdx
+    return Math.min(99, Math.round((completedUnits / units) * 100))
+  })()
 
   return (
     <div className="view-scroll">
@@ -89,6 +97,12 @@ export default function Upload({ onDone }) {
               {prog.total > 0 && <span className="upp-frac">{prog.done} / {prog.total} 章</span>}
             </div>
             <div className="upp-bar"><div className="upp-fill" style={{ width: pct + '%' }} /></div>
+            {prog.stage === 'analyzing' && prog.step_name && (
+              <div className="upp-step">
+                第{prog.cur_chapter}章 · 正在{prog.step_name}…
+                {prog.step_total && <span className="upp-step-frac"> ({prog.step_idx}/{prog.step_total})</span>}
+              </div>
+            )}
             {prog.chapters?.length > 0 && (
               <ul className="upp-chs">
                 {prog.chapters.map((c, i) => (

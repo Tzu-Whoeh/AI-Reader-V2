@@ -99,8 +99,14 @@ def _run_analysis(job_id, presplit):
     def cb(ev):
         st = ev.get("stage")
         if st == "split": state["total"] = ev.get("total", 0); state["stage"] = "analyzing"
+        elif st == "step":
+            state["stage"] = "analyzing"
+            state["cur_chapter"] = ev.get("chapter")
+            state["step"] = ev.get("step"); state["step_name"] = ev.get("step_name")
+            state["step_idx"] = ev.get("step_idx"); state["step_total"] = ev.get("step_total")
         elif st == "chapter":
             state["done"] = ev.get("done", state["done"])
+            state["step"] = None; state["step_name"] = None
             state["chapters"].append({k: ev.get(k) for k in
                 ("chapter", "title", "scenes", "characters", "events", "skipped") if k in ev})
         elif st == "chapter_error":
