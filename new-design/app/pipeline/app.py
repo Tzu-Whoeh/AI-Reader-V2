@@ -84,33 +84,60 @@ def read_input(path):
         return "\n\n".join(parts)
     return open(path,encoding="utf-8",errors="replace").read()
 
-def analyze_chapter(text):
-    """单章五维度 + 事件 + 章节归并。返回 merged dict。"""
+CHAPTER_STEPS = [
+    ("scene", "场景拆分"),
+    ("character_p1", "人物识别"),
+    ("character_p2", "人物关系"),
+    ("item_p1", "物品抽取"),
+    ("item_p2", "物品关系"),
+    ("location_p1", "地点识别"),
+    ("location_p2", "地点关系"),
+    ("events", "事件分析"),
+    ("merge", "归并与后处理"),
+]
+STEP_TOTAL = len(CHAPTER_STEPS)
+
+def analyze_chapter(text, step_cb=None):
+    """单章五维度 + 事件 + 章节归并。返回 merged dict。
+    step_cb(step, name, idx, total) 可选:每个子步骤开始时回调,用于细粒度进度。"""
+    def step(i):
+        if step_cb:
+            k, nm = CHAPTER_STEPS[i]
+            try: step_cb(k, nm, i + 1, STEP_TOTAL)
+            except Exception: pass
+    step(0)
     scenes=call_model(L("01_scene_splitting.txt").replace("{TEXT}",text),temperature=0.15,model=model_for("scene"))
     # 人物 2pass
+    step(1)
     c1=call_model(L("02_character_pass1_recognition.txt").replace("{TEXT}",text))
     clist="\n".join(f'  id={c["id"]} name="{c["name"]}" role="{c.get("role","")}"' for c in c1["characters"])
+    step(2)
     c2=call_model(L("02_character_pass2_relations.txt").replace("{CHARLIST}",clist).replace("{TEXT}",text))
     c1["relations"]=c2.get("relations",[])
     # 物品 2pass(注入场景清单)
     slist="\n".join(f'  index={s.get("index")} title="{s.get("title","")}" start="{(s.get("start_text") or "")[:15]}" end="{(s.get("end_text") or "")[:15]}"' for s in scenes.get("scenes",[]))
+    step(3)
     i1=call_model(L("03_item_pass1_extraction.txt").replace("{SCENELIST}",slist).replace("{TEXT}",text))
     ilist="\n".join(f'  id={it["id"]} name="{it["name"]}" category={it["category"]}' for it in i1["items"])
+    step(4)
     i2=call_model(L("03_item_pass2_relations.txt").replace("{ITEMLIST}",ilist).replace("{TEXT}",text))
     rmap={r["id"]:r for r in i2.get("relations",[])}
     for it in i1["items"]:
         r=rmap.get(it["id"],{}); it["part_of"]=r.get("part_of"); it["set_group"]=r.get("set_group","")
     # 地点 2pass(+交通工具过滤)
+    step(5)
     l1=call_model(L("04_location_pass1_recognition.txt").replace("{TEXT}",text))
     l1["locations"]=[l for l in l1["locations"] if not any(w in l["name"] for w in VEH)]
     llist="\n".join(f'  id={l["id"]} name="{l["name"]}" scale={l["scale"]}' for l in l1["locations"])
+    step(6)
     l2=call_model(L("04_location_pass2_relations.txt").replace("{LOCLIST}",llist).replace("{TEXT}",text))
     l1["relations"]=l2.get("relations",[])
+    # 事件
+    step(7)
     # 章节归并(跨维度 id 解析)
     merged=merge_core.merge(text, scenes, c1, i1, l1)
     merged["character_relations"]=c2.get("relations",[])
     merged["location_relations"]=l2.get("relations",[])
-    # 两层事件(给场景补 location_ref 供事件→地点推导)
     for s in merged["scenes"]:
         pass  # location_ref 已在 merge 内解析到 scenes
     ev=EP.analyze_events(text, merged["scenes"], merged["characters"], merged["items"])
@@ -118,6 +145,7 @@ def analyze_chapter(text):
     merged["sub_events"]=ev["sub_events"]
     merged["time_refs"]=ev.get("time_refs",[])
     # 确定性后处理(不调模型):逐章建全向图索引 + 漏标疑点扫描,挂进本章产物
+    step(8)
     try:
         merged["_graph"]=graph_index.build_graph(merged, ev)
     except Exception as e:
@@ -172,10 +200,13 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None):
             print(f"[ch{ch:02d}] 已存在,跳过(断点续跑)"); done+=1
             emit(stage="chapter", chapter=ch, total=total, done=done, skipped=True); continue
         emit(stage="chapter_start", chapter=ch, total=total, done=done)
+        def _step_cb(k, nm, idx, tot, _ch=ch, _done=done, _total=total):
+            emit(stage="step", chapter=_ch, step=k, step_name=nm,
+                 step_idx=idx, step_total=tot, total=_total, done=_done)
         try:
             if len(c["text"])>40000:
                 print(f"[ch{ch:02d}] 超长章({len(c['text'])}字),可能逼近上下文上限")
-            merged=analyze_chapter(c["text"])
+            merged=analyze_chapter(c["text"], step_cb=_step_cb)
             merged["_title"]=c["title"]
             store.save_chapter_merged(ch, merged)
             done+=1
