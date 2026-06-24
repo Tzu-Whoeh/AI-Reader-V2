@@ -13,7 +13,7 @@
   --raw 指向按章拆分后的原文目录(chNN.txt),或单一原文文件目录。
 仅用标准库(http.server),零三方依赖。
 """
-import os, json, re, argparse
+import os, json, re, argparse, mimetypes, posixpath
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, unquote
 
@@ -21,6 +21,8 @@ OUTPUT_DIR="output"
 RAW={}          # chapter_index -> raw text
 GLOBALS={}      # dimension -> json
 CHAPTERS=[]     # merged per chapter
+BASE_PATH=""    # 部署前缀,如 "/new";nginx 透传时由 --base-path 设定
+STATIC_DIR=None # Vite 产物目录(pipeline/static);存在则优先托管,否则回退内嵌 FRONTEND
 
 def load_data(output_dir, raw_dir):
     global OUTPUT_DIR, RAW, GLOBALS, CHAPTERS
@@ -114,10 +116,36 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin","*")
         self.end_headers(); self.wfile.write(body)
 
+    def _serve_static(self, rel):
+        """从 STATIC_DIR 安全托管一个文件;命中返回 True。"""
+        if not STATIC_DIR: return False
+        # 防目录穿越:规范化后必须仍在 STATIC_DIR 内
+        rel=posixpath.normpath("/"+rel).lstrip("/")
+        fp=os.path.join(STATIC_DIR, rel)
+        if not os.path.isfile(fp): return False
+        if os.path.commonpath([os.path.realpath(fp), os.path.realpath(STATIC_DIR)])!=os.path.realpath(STATIC_DIR):
+            return False
+        ct=mimetypes.guess_type(fp)[0] or "application/octet-stream"
+        with open(fp,"rb") as f: body=f.read()
+        self.send_response(200); self.send_header("Content-Type",ct)
+        self.send_header("Access-Control-Allow-Origin","*")
+        self.end_headers(); self.wfile.write(body)
+        return True
+
     def do_GET(self):
         path=urlparse(self.path).path
+        # 剥离部署前缀(nginx 透传 /new 时 path 形如 /new/...)
+        if BASE_PATH and (path==BASE_PATH or path.startswith(BASE_PATH+"/")):
+            path=path[len(BASE_PATH):] or "/"
+        elif BASE_PATH and path=="/":
+            pass
         if path=="/" or path=="/index.html":
+            # 优先 Vite 产物的 index.html,缺失则回退内嵌 FRONTEND
+            if self._serve_static("index.html"): return
             return self._send(FRONTEND.encode(), "text/html; charset=utf-8")
+        # 静态资源(Vite 产物 /assets/* 等)
+        if not path.startswith("/api/") and self._serve_static(path.lstrip("/")):
+            return
         if path=="/api/summary":
             return self._send({
                 "chapters":[m["_chapter"] for m in CHAPTERS],
@@ -171,8 +199,16 @@ if __name__=="__main__":
     ap.add_argument("--output",default="output")
     ap.add_argument("--raw",default=None)
     ap.add_argument("--port",type=int,default=8080)
+    ap.add_argument("--base-path",default="",
+                    help="部署前缀,如 /new(nginx 透传时设);迁顶层留空")
+    ap.add_argument("--static",default=None,
+                    help="Vite 产物目录(默认同级 static/);存在则优先托管,否则回退内嵌前端")
     args=ap.parse_args()
+    BASE_PATH=args.base_path.rstrip("/")
+    sd=args.static or os.path.join(os.path.dirname(os.path.abspath(__file__)),"static")
+    STATIC_DIR=sd if os.path.isdir(sd) else None
     load_data(args.output,args.raw)
     print(f"加载: {len(CHAPTERS)}章, 原文{len(RAW)}章")
-    print(f"服务: http://127.0.0.1:{args.port}")
+    print(f"前端: {'Vite产物 '+STATIC_DIR if STATIC_DIR else '内嵌 FRONTEND(回退)'}")
+    print(f"服务: http://127.0.0.1:{args.port}{BASE_PATH or '/'}")
     HTTPServer(("127.0.0.1",args.port), Handler).serve_forever()

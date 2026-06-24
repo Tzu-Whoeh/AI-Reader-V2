@@ -117,3 +117,14 @@ temperature 场景 0.15 / 其余 0.12;`app.py` 整章 `num_ctx=49152`,`event_pip
 - 默认直连 Ollama `127.0.0.1:11434`;线上经 ops 平台 / 隧道调用时替换 `call_model()`。
 - 可视化 `server.py` 纯标准库,可独立起在任意有 output/ 与原文的机器上。
 - 改部署/服务配置前报计划等批准(L4 自治档:改 server 配置属"先告诉用户等 OK"类)。
+
+## 10. 可视化前端(web/)· 零依赖纪律豁免
+
+new-design 版的可视化前端独立工程 `web/`(Vite + React),**豁免本仓库「零三方依赖」纪律**——
+这是经用户批准的有意决策,仅限可视化层:
+
+- **豁免范围**:仅 `web/`(前端构建链 node/npm/Vite)。**后端 API `pipeline/server.py` 仍纯标准库**,不得引入三方依赖。
+- **产物契约**:`npm run build` → `pipeline/static/`。`server.py` 优先托管该目录;`static/` 不存在时回退内嵌 `FRONTEND` 字符串(旧机器/无构建环境仍可独立起)。
+- **base 可配**:开发期挂 `8443/new`(`VITE_BASE=/new/` + `server.py --base-path=/new`);成熟后迁顶层只改这两处配置,不改代码。
+- **部署形态**:nginx 反代 `8443/new` 透传前缀 → 新起的 server.py 实例(开发约定内部端口 8081)。改部署/nginx 仍按 §9 报计划等批准。
+- **旧前端**:`server.py` 内嵌 `FRONTEND` 保留作回退,不删;新功能在 `web/` 做。

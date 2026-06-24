@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/global_items.schema.json",
+  "title": "output/global/items.json",
+  "type": "object",
+  "required": ["global_items"],
+  "properties": {
+    "global_items": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/globalEntity" } },
+    "item_locations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["chapter", "location_id"],
+          "properties": {
+            "chapter": { "type": "integer" },
+            "location_id": { "type": "integer" },
+            "location_name": { "type": "string" },
+            "via_scene": {}
+          }
+        }
+      }
+    },
+    "ambiguities": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/ambiguity" } }
+  }
+}

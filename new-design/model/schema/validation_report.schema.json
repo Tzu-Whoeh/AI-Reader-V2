@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/validation_report.schema.json",
+  "title": "ValidationReport(校验产出统一形态)",
+  "type": "object",
+  "required": ["ok", "errors", "warnings"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/issue" } }
+  },
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "required": ["rule", "path", "detail"],
+      "properties": {
+        "rule": { "enum": ["R1", "R2", "R3", "R4", "R5", "R6", "schema"] },
+        "path": { "type": "string" },
+        "detail": { "type": "string" }
+      }
+    }
+  }
+}
