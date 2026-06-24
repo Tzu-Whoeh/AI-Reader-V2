@@ -1,0 +1,44 @@
+/* 叙事档案 · 配色与基础排版(从旧 server.py 内嵌前端平移) */
+:root{
+  --paper:#1a1714; --paper2:#221d18; --ink:#e8dcc8; --dim:#9a8f7d;
+  --stamp:#a8332a; --thread:#b8884a; --line:#3a322a;
+  --char:#a8332a; --item:#b8884a; --loc:#6f9b8e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);
+  font-family:"Songti SC","Noto Serif SC",serif;height:100vh;overflow:hidden}
+#root{height:100vh}
+
+.top{padding:14px 24px;border-bottom:2px solid var(--stamp);
+  display:flex;align-items:baseline;gap:18px}
+.top h1{font-size:22px;letter-spacing:.1em}
+.top .sub{color:var(--dim);font-size:12px;font-family:sans-serif;letter-spacing:.2em}
+.top .stat{margin-left:auto;font-family:sans-serif;font-size:12px;color:var(--dim)}
+
+.filters{padding:10px 24px;display:flex;gap:14px;font-family:sans-serif;
+  font-size:12px;border-bottom:1px solid var(--line)}
+.filters label{display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--dim)}
+.filters i{width:11px;height:11px;border-radius:50%;display:inline-block}
+
+.main{display:flex;height:calc(100vh - 52px - 41px)}
+.graph-pane{flex:1;position:relative}
+svg{width:100%;height:100%}
+
+.side{width:380px;border-left:1px solid var(--line);background:var(--paper2);
+  overflow-y:auto;padding:18px}
+.side h2{font-size:18px;margin-bottom:4px}
+.side .meta{font-family:sans-serif;font-size:11px;color:var(--thread);
+  letter-spacing:.1em;margin-bottom:14px}
+
+.node{cursor:pointer}
+.node circle{transition:r .15s}
+.node:hover circle{stroke:#fff;stroke-width:2}
+.node text{fill:var(--ink);font-size:12px;pointer-events:none}
+
+.occ{background:var(--paper);border-left:2px solid var(--thread);
+  padding:8px 11px;margin-bottom:7px;font-size:13px;line-height:1.5}
+.occ .ch{font-family:sans-serif;font-size:10px;color:var(--thread);
+  letter-spacing:.1em;display:block;margin-bottom:2px}
+.occ b{color:var(--stamp);font-weight:400;background:rgba(168,51,42,.15);padding:0 2px}
+.empty{color:var(--dim);font-style:italic;padding:20px 0}
+.hint{color:var(--dim);font-family:sans-serif;font-size:12px;text-align:center;margin-top:40%}
