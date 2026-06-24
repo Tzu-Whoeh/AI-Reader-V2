@@ -33,9 +33,17 @@
         "mentions": { "type": "array", "items": { "type": "string" } },
         "function": { "type": "string" },
         "owner": { "type": "string" },
-        "owner_ref": { "type": ["integer", "null"], "description": "→ Character.id" },
-        "part_of": { "type": ["integer", "null"], "description": "→ Item.id 部件归属" },
-        "set_group": { "type": ["integer", "null"], "description": "套组聚合 id" }
+        "owner_ref": { "type": ["integer", "object", "null"], "description": "→ Character.id;int 或 {ref}" },
+        "part_of": {
+          "type": ["integer", "object", "null"],
+          "description": "→ Item.id;int 或 {whole_id, relation, confidence}",
+          "properties": {
+            "whole_id": { "type": "integer" },
+            "relation": { "type": "string" },
+            "confidence": { "$ref": "#/$defs/confidence" }
+          }
+        },
+        "set_group": { "type": ["integer", "string", "object", "null"], "description": "套组聚合 id" }
       }
     },
 

@@ -36,7 +36,7 @@
 ### 1.3 Item(物品)
 继承基类,增:`category: enum{prop, set}`、`mentions: string[]`、`function: string`、
 以及**物品内部关系**(这是旧前端缺失的物品边来源):
-`owner: string`、`owner_ref: int|null`(→Character.id)、`part_of: int|null`(→Item.id,部件归属)、`set_group: int|null`(套组聚合 id)。
+`owner: string`、`owner_ref: int|object|null`(→Character.id)、`part_of: int|object|null`(→Item.id;实样为 `{whole_id, relation, confidence}`)、`set_group`(套组聚合,标量或 dict)。
 
 ### 1.4 Location(地点)
 继承基类,增:`scale: enum{room, building, area, city}`、`mentions: string[]`。
@@ -116,7 +116,7 @@
 Relation.from_id/to_id        → Character.id / Location.id (同类)
 Relation.from_global/to_global→ GlobalEntity.global_id
 Item.owner_ref                → Character.id
-Item.part_of                  → Item.id
+Item.part_of.whole_id         → Item.id
 Scene.location_ref.location_id → Location.id
 Event.global_participants[]   → Character.global_id
 TimelineEntry.event_id        → Event.event_id
