@@ -20,6 +20,12 @@ export default defineConfig({
         target: 'http://127.0.0.1:8081',
         changeOrigin: true,
       },
+      // 任务层(tasks.py)开发期在 :8090;剥离 /new/tasks 前缀转发到任务层根
+      '/new/tasks': {
+        target: 'http://127.0.0.1:8090',
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/new\/tasks/, ''),
+      },
     },
   },
 })

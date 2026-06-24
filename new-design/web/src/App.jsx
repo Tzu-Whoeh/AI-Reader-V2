@@ -6,9 +6,10 @@ import SidePanel from './components/SidePanel.jsx'
 import Timeline from './views/Timeline.jsx'
 import Scenes from './views/Scenes.jsx'
 import Reader from './views/Reader.jsx'
+import Upload from './views/Upload.jsx'
 
 const TYPES = { character: '人物', item: '物品', location: '地点' }
-const VIEWS = { graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
+const VIEWS = { upload: '分析', graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
 
 export default function App() {
   const [summary, setSummary] = useState(null)
@@ -58,6 +59,7 @@ export default function App() {
       {view === 'timeline' && <Timeline />}
       {view === 'scenes' && <Scenes />}
       {view === 'reader' && <Reader />}
+      {view === 'upload' && <Upload onDone={() => setView('reader')} />}
     </>
   )
 }
