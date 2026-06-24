@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "rules": [
+    {"id": "noise_url_line", "kind": "noise", "builtin": true, "name": "含网址的行", "pattern": ".*www\\.[\\w.-]+\\.(com|net|org|cc|cn).*", "desc": "整行包含 www 网址(盗版站常见)"},
+    {"id": "noise_site_domain", "kind": "noise", "builtin": true, "name": "盗版站域名行", "pattern": ".*[\\wＷｗ]{3,}\\.(piratebook|qidian|biquge|[\\w-]+)\\.(com|net|cc).*", "desc": "常见网文站域名"},
+    {"id": "noise_remember_site", "kind": "noise", "builtin": true, "name": "请记住本站", "pattern": ".*请记住本站.*", "desc": "盗版站提示语"},
+    {"id": "noise_mobile_visit", "kind": "noise", "builtin": true, "name": "手机用户请访问", "pattern": ".*手机用户请访问.*", "desc": "盗版站提示语"},
+    {"id": "noise_please_visit", "kind": "noise", "builtin": true, "name": "请访问本站", "pattern": ".*请访问本站.*", "desc": "盗版站提示语"},
+    {"id": "noise_chapter_unfinished", "kind": "noise", "builtin": true, "name": "本章未完", "pattern": ".*本章未完.*", "desc": "翻页提示"},
+    {"id": "noise_turn_page", "kind": "noise", "builtin": true, "name": "请翻页", "pattern": ".*请翻页.*", "desc": "翻页提示"},
+    {"id": "noise_to_be_continued", "kind": "noise", "builtin": true, "name": "未完待续", "pattern": ".*未完待续.*", "desc": "翻页提示"},
+    {"id": "noise_compiled_by", "kind": "noise", "builtin": true, "name": "本书由…整理", "pattern": ".*本书由.*整理.*", "desc": "整理署名"},
+    {"id": "noise_exclusive", "kind": "noise", "builtin": true, "name": "独家整理", "pattern": ".*独家整理.*", "desc": "整理署名"},
+    {"id": "noise_reprint_note", "kind": "noise", "builtin": true, "name": "转载请注明", "pattern": ".*转载请注明.*", "desc": "版权提示"},
+    {"id": "noise_more_visit", "kind": "noise", "builtin": true, "name": "更多精彩请访问", "pattern": ".*更多精彩.*请访问.*", "desc": "推广语"},
+    {"id": "noise_divider_line", "kind": "noise", "builtin": true, "name": "纯分隔线行", "pattern": "^[─—\\-=*＊·•\\s]{5,}$", "desc": "全是分隔符的行"},
+    {"id": "noise_full_end", "kind": "noise", "builtin": true, "name": "全文完", "pattern": "^\\s*全文完[。.\\s]*$", "desc": "结尾标记"},
+
+    {"id": "chap_num_cjk", "kind": "chapter", "builtin": true, "name": "第N章(阿拉伯)", "pattern": "^\\s*第\\s*[0-9]+\\s*[章回卷节]\\b.*$", "desc": "第123章/回/卷/节", "default_chapter": true},
+    {"id": "chap_num_hanzi", "kind": "chapter", "builtin": true, "name": "第N章(汉字)", "pattern": "^\\s*第\\s*[一二三四五六七八九十百千零〇两]+\\s*[章回卷节]\\b.*$", "desc": "第一百二十三章/回/卷/节", "default_chapter": true},
+    {"id": "chap_en_chapter", "kind": "chapter", "builtin": true, "name": "Chapter N", "pattern": "^\\s*Chapter\\s+\\d+.*$", "desc": "英文 Chapter 标题", "default_chapter": true},
+    {"id": "chap_num_short_line", "kind": "chapter", "builtin": true, "name": "数字编号短行(弱)", "pattern": "^\\s*[0-9]+[、.\\s].{0,30}$", "desc": "1、… 形式的短行;弱模式,默认不启用", "default_chapter": false}
+  ]
+}
