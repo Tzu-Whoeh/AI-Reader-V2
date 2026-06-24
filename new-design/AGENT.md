@@ -144,3 +144,37 @@ app/
 - **启动**:`cd new-design && python3 -m app.server.main --output app/output --raw app/raw --jobs app/jobs --base-path /new --port 8080`(或 `app/run.sh`)。
 - **保留在根**(非应用包):samples/、research/、docs/、tools/、AGENT.md 等开发参考。
 - **真 ollama 推理**:管线经 `OLLAMA_URL`(默认 18434 隧道)调用;隧道恢复即可端到端跑分析。
+
+## 12. 多小说库(取代单一 output)
+
+上传 txt/zip → 按小说独立存储/分析/浏览。根治"分析完看不到结果"(旧:任务产物落 jobs/,只读读主 output/,数据源不一致)。
+
+**数据布局(LIB 根 = `app/`):**
+```
+raw/<slug>.txt 或 raw/<slug>/        原始(zip 解压进目录)
+input/<slug>/chNN.txt                所有原文逐个清洗+拆章,全局重排
+output/<slug>/meta.json              {novel_name, author, source_type, uploaded_at, stage, 进度字段}
+output/<slug>/chNN/                  每章中间结果
+output/<slug>/global/                global 结果
+```
+- **slug** = 安全化小说名(去后缀 + 替换 `/\:*?"<>|` 与空白);原始名存 meta.json。
+- **重传同名 → 409**。
+- **端点**:`/api/upload`(txt/zip)、`/api/analyze/<slug>`、`/api/progress/<slug>`、`/api/novels`;只读端点(summary/graph/events/chapters/reader/dimension/node)全支持 `?novel=<slug>`,缺省取最近上传。
+- **readonly.py**:`use_novel(slug)` 上下文管理器加锁按小说装入模块全局(build_* 零改动);`set_library(lib)` 启用库模式;`list_novels()` 读各 meta.json。
+- **前端**:全局当前小说状态(App.jsx);阅读页左栏顶部小说选择器,所有视图(图谱/阅读/时间线/场景)跟随;Upload 改 txt/zip 文件流。
+- 入口参数改为 **`--lib <app目录>`**(取代 §11 的 `--output/--raw/--jobs`)。
+
+## 13. 生产部署(wangcai · 8543)
+
+独立部署,与 ubuntu 老版本(8011/8443)及平台配置完全隔离。
+
+- **工作区**:`/home/aiops/ai-reader-app/`(库根 = 其下 `app/`)。
+- **venv**:`/home/aiops/ai-reader-app/.venv`(get-pip 引导,因系统无 ensurepip);flask 装在此。
+- **systemd**:`ai-reader-new.service`(enabled,开机自启 + 崩溃重启)。
+  ExecStart:`.venv/bin/python3 -m app.server.main --lib .../app --static .../app/server/static --base-path "" --port 8081`,Environment `OLLAMA_URL=http://127.0.0.1:18434`。监听 127.0.0.1:8081。
+- **nginx**:`/etc/nginx/sites-available/ai-reader-new`(独立文件,**不碰平台的 f.xbot.cool 配置**),listen 8543 ssl,复用 letsencrypt f.xbot.cool 证书,login-gated 复用 :8765(同 8443),`location /` → proxy_pass 127.0.0.1:8081,proxy_read_timeout 3600s。
+- **前端构建**:`cd app/web && VITE_BASE=/ npm run build` → `app/server/static/`。
+- **访问**:`https://f.xbot.cool:8543/`(需登录,复用 dashboard 密码)。
+- **流程改代码/数据后 redeploy**:覆盖文件 → 重建前端 → `sudo systemctl restart ai-reader-new`;改 unit 需 daemon-reload。改 nginx 需 `nginx -t` 后 reload。
+- **待确认**:8543 外网可达性(云安全组/防火墙)未验证。
+- **运维红线**:改 systemd/nginx = L4 需批准;防火墙 = 最高档;不碰 f.xbot.cool 平台配置、ubuntu 老版本、8011/8443。
