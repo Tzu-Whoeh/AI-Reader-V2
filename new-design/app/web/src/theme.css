@@ -171,3 +171,12 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .up-drop{border:1px dashed var(--line);border-radius:6px;padding:28px;text-align:center;background:var(--paper2)}
 .up-hint{margin-top:10px;font-family:sans-serif;font-size:12px;color:var(--dim);line-height:1.6}
 .up-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 全局进行中任务条:任意视图下显示,点击跳回分析页 */
+.gjob{display:flex;align-items:center;gap:12px;cursor:pointer;
+  padding:6px 24px;background:var(--paper2);border-bottom:1px solid var(--line)}
+.gjob:hover .gjob-txt{color:var(--ink)}
+.gjob-bar{flex:0 0 180px;height:6px;background:var(--paper);
+  border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.gjob-fill{height:100%;background:var(--thread);transition:width .4s}
+.gjob-txt{font-family:sans-serif;font-size:12px;color:var(--dim);letter-spacing:.04em}
