@@ -109,6 +109,61 @@ def node_anchors(ntype, nid):
                     return [e.get("anchor_text","")] if e.get("anchor_text") else []
     return []
 
+def _entity_alias_index():
+    """构建 {别名: (type, global_id, canonical)} 倒排;长别名优先(避免短词截断长词)。
+    过滤 STOP_ANCHORS 与单字噪音。"""
+    out={}
+    def add(names, typ, gid, canon):
+        for nm in names:
+            if not nm or len(nm)<2 or nm in STOP_ANCHORS: continue
+            # 已存在更长别名映射时不覆盖(后续按长度排序匹配,这里仅登记)
+            out.setdefault(nm, (typ, gid, canon))
+    for g in GLOBALS.get("characters",{}).get("global_characters",[]):
+        add(g.get("all_names",[g.get("canonical")]), "character", g["global_id"], g.get("canonical"))
+    for g in GLOBALS.get("locations",{}).get("global_locations",[]):
+        add(g.get("all_names",[g.get("canonical")]), "location", g["global_id"], g.get("canonical"))
+    # 物品:canonical + all_names + 各章 mentions
+    item_names={}
+    for g in GLOBALS.get("items",{}).get("global_items",[]):
+        nm=[g.get("canonical")]+g.get("all_names",[])
+        item_names[g["global_id"]]=set(n for n in nm if n)
+    for m in CHAPTERS:
+        for it in m.get("items",[]):
+            for gid,names in item_names.items():
+                if it.get("name") in names:
+                    names.update(it.get("mentions",[]))
+    for gid,names in item_names.items():
+        canon=next((g.get("canonical") for g in GLOBALS.get("items",{}).get("global_items",[]) if g["global_id"]==gid), None)
+        add(list(names), "item", gid, canon)
+    return out
+
+def build_reader(chapter):
+    """某章原文 + 高亮区间索引。
+    返回 {chapter, text, highlights:[{start,end,type,global_id,label,term}]}。
+    区间不重叠:长别名优先,已占用区间不再匹配(短别名让位)。"""
+    text=RAW.get(chapter)
+    if text is None:
+        return {"chapter":chapter,"text":None,"highlights":[],"error":"该章原文不可用(server 未加载 --raw 或无此章)"}
+    alias=_entity_alias_index()
+    # 别名按长度降序,长的先占位
+    terms=sorted(alias.keys(), key=len, reverse=True)
+    occupied=[False]*len(text)
+    spans=[]
+    for term in terms:
+        typ,gid,canon=alias[term]
+        start=0
+        L=len(term)
+        while True:
+            pos=text.find(term, start)
+            if pos<0: break
+            if not any(occupied[pos:pos+L]):
+                for i in range(pos,pos+L): occupied[i]=True
+                spans.append({"start":pos,"end":pos+L,"type":typ,
+                              "global_id":gid,"label":canon or term,"term":term})
+            start=pos+L
+    spans.sort(key=lambda s:s["start"])
+    return {"chapter":chapter,"text":text,"highlights":spans}
+
 class Handler(BaseHTTPRequestHandler):
     def _send(self, obj, ct="application/json"):
         body=(obj if isinstance(obj,bytes) else json.dumps(obj,ensure_ascii=False).encode())
@@ -159,6 +214,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(build_graph())
         if path=="/api/events":
             return self._send(build_events())
+        if path=="/api/chapters":
+            # 阅读器:可读章列表(有原文的章)
+            return self._send({"chapters":sorted(RAW.keys())})
+        if path.startswith("/api/reader/"):
+            try: ch=int(unquote(path.split("/")[-1]))
+            except: return self._send({"error":"章号无效"})
+            return self._send(build_reader(ch))
         if path.startswith("/api/dimension/"):
             name=unquote(path.split("/")[-1])
             return self._send(GLOBALS.get(name,{}))
