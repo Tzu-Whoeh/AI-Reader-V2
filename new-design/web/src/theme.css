@@ -126,3 +126,35 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .d-row .d-k{font-family:sans-serif;font-size:11px;color:var(--thread);
   display:inline-block;min-width:54px;margin-right:6px}
 .occ-list{margin-top:12px}
+
+/* ===== 上传 / 进度 ===== */
+.upload-wrap{max-width:720px;margin:0 auto}
+.up-h{font-size:18px;margin-bottom:18px;color:var(--ink)}
+.up-text{width:100%;height:300px;background:var(--paper2);border:1px solid var(--line);
+  color:var(--ink);font-family:serif;font-size:15px;line-height:1.7;padding:14px;
+  border-radius:5px;resize:vertical}
+.up-text:focus{outline:none;border-color:var(--thread)}
+.up-row{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+.up-file{font-family:sans-serif;font-size:12px;color:var(--dim);cursor:pointer;
+  border:1px dashed var(--line);padding:7px 14px;border-radius:4px}
+.up-file input{display:none}
+.up-file:hover{border-color:var(--thread);color:var(--ink)}
+.up-chk{font-family:sans-serif;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px;cursor:pointer}
+.up-btn{margin-left:auto;background:var(--stamp);color:var(--paper);border:none;
+  font-family:sans-serif;font-size:13px;padding:8px 22px;border-radius:4px;cursor:pointer}
+.up-btn:hover{background:#bb3a30}
+.up-err{margin-top:12px;color:var(--stamp);font-size:13px;font-family:sans-serif}
+
+.up-progress{margin-top:10px}
+.upp-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;font-family:sans-serif}
+.upp-stage{font-size:15px;color:var(--thread)}
+.upp-frac{font-size:12px;color:var(--dim)}
+.upp-bar{height:8px;background:var(--paper2);border:1px solid var(--line);
+  border-radius:5px;overflow:hidden}
+.upp-fill{height:100%;background:var(--thread);transition:width .4s}
+.upp-chs{list-style:none;margin-top:14px;font-family:sans-serif;font-size:12px}
+.upp-chs li{padding:4px 0;color:var(--dim);border-bottom:1px solid var(--line)}
+.upp-chs li.err{color:var(--stamp)}
+.upp-done{margin-top:18px;display:flex;align-items:center;gap:16px;
+  font-family:sans-serif;font-size:13px;color:var(--loc)}
+.upp-done .up-btn{margin-left:0}
