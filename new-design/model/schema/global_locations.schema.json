@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/global_locations.schema.json",
+  "title": "output/global/locations.json",
+  "type": "object",
+  "required": ["global_locations"],
+  "properties": {
+    "global_locations": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/globalEntity" } },
+    "relations": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/relation" } },
+    "ambiguities": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/ambiguity" } }
+  }
+}
