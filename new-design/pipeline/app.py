@@ -49,12 +49,14 @@ def _safe_json(s):
             except Exception: continue
     raise ValueError("JSON irreparably truncated")
 
+# Ollama 端点可配:默认走 wangcai 隧道 18434(非生产 11434);经 ops 平台/其它环境用 OLLAMA_URL 覆盖。
+OLLAMA_URL=os.environ.get("OLLAMA_URL","http://127.0.0.1:18434")
 def call_model(prompt, temperature=0.12, num_ctx=49152, timeout=300, retries=1, model=None):
     body={"model":model or DEFAULT_MODEL,"prompt":prompt,"stream":False,"think":False,"format":"json",
           "options":{"temperature":temperature,"num_ctx":num_ctx,"num_predict":4096}}
     last=None
     for _ in range(retries+1):
-        req=urllib.request.Request("http://127.0.0.1:11434/api/generate",
+        req=urllib.request.Request(OLLAMA_URL.rstrip("/")+"/api/generate",
             data=json.dumps(body,ensure_ascii=False).encode(),
             headers={"Content-Type":"application/json"},method="POST")
         with urllib.request.urlopen(req,timeout=timeout) as r:
@@ -140,11 +142,16 @@ def load_presplit(dir_path):
     chapters.sort(key=lambda c:c["index"])
     return chapters
 
-def run(input_path, out_dir="output", presplit=False):
+def run(input_path, out_dir="output", presplit=False, progress_cb=None):
+    """progress_cb(event:dict) 可选回调,用于任务层捕获进度;不传则纯命令行行为不变。"""
+    def emit(**ev):
+        if progress_cb:
+            try: progress_cb(ev)
+            except Exception: pass
     store=storage.Store(out_dir)
     if presplit:
         if not os.path.isdir(input_path):
-            print("[错误] --presplit 需要输入为目录"); return
+            print("[错误] --presplit 需要输入为目录"); emit(stage="error",detail="presplit 需目录"); return
         chapters=load_presplit(input_path)
         print(f"[预拆分模式] 每个 txt 当一章,共 {len(chapters)} 章")
     else:
@@ -153,28 +160,39 @@ def run(input_path, out_dir="output", presplit=False):
         chapters=CS.split_chapters(cleaned)
         print(f"[清洗] 删除 {rep['dropped_count']} 行噪音")
         print(f"[拆分] {len(chapters)} 章")
+    total=len(chapters)
+    emit(stage="split", total=total, done=0)
 
+    done=0
     for c in chapters:
         ch=c["index"]
         cdir=os.path.join(out_dir,f"ch{ch:02d}")
         merged_path=os.path.join(cdir,"_merged.json")
         if os.path.exists(merged_path):
-            print(f"[ch{ch:02d}] 已存在,跳过(断点续跑)"); continue
-        # num_ctx=49152 可容纳整章(实测31k字≈21k token),整章处理保证指代/共指完整
+            print(f"[ch{ch:02d}] 已存在,跳过(断点续跑)"); done+=1
+            emit(stage="chapter", chapter=ch, total=total, done=done, skipped=True); continue
+        emit(stage="chapter_start", chapter=ch, total=total, done=done)
         try:
-            if len(c["text"])>40000:  # 超长极端章(>40k字)才警告,仍尝试整章
+            if len(c["text"])>40000:
                 print(f"[ch{ch:02d}] 超长章({len(c['text'])}字),可能逼近上下文上限")
             merged=analyze_chapter(c["text"])
             merged["_title"]=c["title"]
             store.save_chapter_merged(ch, merged)
+            done+=1
             print(f"[ch{ch:02d}] ✓ 「{c['title']}」 场景{len(merged.get('scenes',[]))} 人物{len(merged.get('characters',[]))} 事件{len(merged.get('parent_events',[]))}")
+            emit(stage="chapter", chapter=ch, total=total, done=done,
+                 title=c["title"], scenes=len(merged.get("scenes",[])),
+                 characters=len(merged.get("characters",[])), events=len(merged.get("parent_events",[])))
         except Exception as e:
             print(f"[ch{ch:02d}] ✗ 失败: {e} (跳过,继续下一章)")
+            emit(stage="chapter_error", chapter=ch, total=total, done=done, error=str(e))
 
     # 全局合并(确定性)
     print("[全局] 跨章合并 + 聚合 + 图索引 + 漏标扫描")
+    emit(stage="aggregate", total=total, done=done)
     idx=aggregate.aggregate(store)
     print(f"[全局] 完成: {idx['counts']}")
+    emit(stage="done", total=total, done=done, counts=idx.get("counts",{}))
     return idx
 
 if __name__=="__main__":
