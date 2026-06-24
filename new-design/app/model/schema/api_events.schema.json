@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/api_events.schema.json",
+  "title": "GET /api/events 响应(新增)",
+  "description": "事件时序视图,供 Timeline 视图与图谱事件层。直接投影 timeline.global_events + 派生视图,不新增语义。",
+  "type": "object",
+  "required": ["events"],
+  "properties": {
+    "events": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/event" } },
+    "sync_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event_id", "desc"],
+        "properties": {
+          "event_id": { "type": "integer" },
+          "desc": { "type": "string" },
+          "global_participants": { "type": "array", "items": { "type": "integer" } },
+          "chapter": { "type": "integer" }
+        }
+      }
+    },
+    "character_timelines": {
+      "type": "object",
+      "description": "{ <character global_id>: TimelineEntry[] }",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "core.schema.json#/$defs/timelineEntry" }
+      }
+    }
+  }
+}
