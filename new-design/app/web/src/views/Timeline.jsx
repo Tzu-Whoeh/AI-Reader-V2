@@ -3,23 +3,23 @@ import { getEvents, getDimension } from '../api.js'
 
 // 时间线视图:按 story_order(故事真实序)排列事件,标注倒叙、故事线、参与人物。
 // 数据源 /api/events(投影 timeline.global_events)。
-export default function Timeline() {
+export default function Timeline({ novel }) {
   const [data, setData] = useState(null)
   const [charNames, setCharNames] = useState({})
   const [order, setOrder] = useState('story') // story | narrative
   const [err, setErr] = useState(null)
 
   useEffect(() => {
-    getEvents().then(setData).catch(e => setErr(String(e)))
+    getEvents(novel).then(setData).catch(e => setErr(String(e)))
     // 取人物全局名,用于把 global_participants 的 id 渲染成名字
-    getDimension('characters')
+    getDimension('characters', novel)
       .then(d => {
         const m = {}
         for (const g of d.global_characters || []) m[g.global_id] = g.canonical
         setCharNames(m)
       })
       .catch(() => {})
-  }, [])
+  }, [novel])
 
   const events = useMemo(() => {
     const ev = [...(data?.events || [])]
