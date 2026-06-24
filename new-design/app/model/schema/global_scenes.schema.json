@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/global_scenes.schema.json",
+  "title": "output/global/scenes.json",
+  "type": "object",
+  "required": ["chapters"],
+  "properties": {
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["chapter", "scenes"],
+        "properties": {
+          "chapter": { "type": "integer" },
+          "scenes": { "type": "array", "items": { "$ref": "core.schema.json#/$defs/scene" } }
+        }
+      }
+    }
+  }
+}
