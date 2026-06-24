@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/core.schema.json",
+  "title": "叙事分析核心模型 · 共享定义",
+  "description": "实体层 + 时序层的共享类型。落盘/传输/校验共同依据。",
+  "$defs": {
+    "confidence": { "enum": ["high", "medium", "low"] },
+
+    "entityBase": {
+      "type": "object",
+      "required": ["id", "name", "confidence"],
+      "properties": {
+        "id": { "type": "integer", "minimum": 1, "description": "章内局部 id" },
+        "name": { "type": "string", "minLength": 1 },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "character": {
+      "allOf": [{ "$ref": "#/$defs/entityBase" }],
+      "properties": {
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "role": { "type": "string", "description": "自由文本:叙事角色,非枚举" },
+        "evidence": { "type": "string", "description": "锚点(R1 逐字校验)" }
+      }
+    },
+
+    "item": {
+      "allOf": [{ "$ref": "#/$defs/entityBase" }],
+      "properties": {
+        "category": { "enum": ["prop", "set"] },
+        "mentions": { "type": "array", "items": { "type": "string" } },
+        "function": { "type": "string" },
+        "owner": { "type": "string" },
+        "owner_ref": { "type": ["integer", "object", "null"], "description": "→ Character.id;int 或 {ref}" },
+        "part_of": {
+          "type": ["integer", "object", "null"],
+          "description": "→ Item.id;int 或 {whole_id, relation, confidence}",
+          "properties": {
+            "whole_id": { "type": "integer" },
+            "relation": { "type": "string" },
+            "confidence": { "$ref": "#/$defs/confidence" }
+          }
+        },
+        "set_group": { "type": ["integer", "string", "object", "null"], "description": "套组聚合 id" }
+      }
+    },
+
+    "location": {
+      "allOf": [{ "$ref": "#/$defs/entityBase" }],
+      "properties": {
+        "scale": { "enum": ["room", "building", "area", "city"] },
+        "mentions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "member": {
+      "type": "object",
+      "required": ["chapter", "local_id"],
+      "properties": {
+        "chapter": { "type": "integer", "minimum": 1 },
+        "local_id": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+
+    "globalEntity": {
+      "type": "object",
+      "required": ["global_id", "canonical", "all_names", "members"],
+      "properties": {
+        "global_id": { "type": "integer", "minimum": 1 },
+        "canonical": { "type": "string", "minLength": 1 },
+        "all_names": { "type": "array", "items": { "type": "string" } },
+        "members": { "type": "array", "items": { "$ref": "#/$defs/member" }, "minItems": 1 }
+      }
+    },
+
+    "relation": {
+      "type": "object",
+      "required": ["from_id", "to_id", "relation_type", "label"],
+      "properties": {
+        "from_id": { "type": "integer" },
+        "to_id": { "type": "integer" },
+        "from_global": { "type": "integer" },
+        "to_global": { "type": "integer" },
+        "relation_type": {
+          "enum": ["social", "kin", "affective", "attitude", "event", "awareness",
+                   "adjacency", "containment", "movement", "remote"]
+        },
+        "label": { "type": "string" },
+        "evidence": { "type": "string", "description": "锚点(R1)" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "chapter": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "scene": {
+      "type": "object",
+      "required": ["index", "title", "type", "start_text", "end_text"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "title": { "type": "string" },
+        "type": { "enum": ["现实叙述", "回忆", "内心独白", "动作"] },
+        "location": { "type": "string" },
+        "location_ref": {
+          "type": ["object", "null"],
+          "description": "→ Location:{location_id, matched}",
+          "properties": {
+            "location_id": { "type": "integer" },
+            "matched": { "type": "string" }
+          }
+        },
+        "summary": { "type": "string" },
+        "start_text": { "type": "string", "description": "锚点(R1)" },
+        "end_text": { "type": "string", "description": "锚点(R1)" }
+      }
+    },
+
+    "absInterval": {
+      "type": ["object", "null"],
+      "description": "绝对时间区间;无可靠依据时必须 null(R3)",
+      "properties": {
+        "start": { "type": ["string", "null"] },
+        "end": { "type": ["string", "null"] },
+        "granularity": { "type": ["string", "null"] }
+      }
+    },
+
+    "event": {
+      "type": "object",
+      "required": ["chapter", "desc", "narrative_order", "story_order", "is_flashback"],
+      "properties": {
+        "event_id": { "type": "integer", "description": "全局事件 id(缝合后)" },
+        "chapter": { "type": "integer", "minimum": 1 },
+        "desc": { "type": "string" },
+        "narrative_order": { "type": "integer" },
+        "story_order": { "type": "integer" },
+        "is_flashback": { "type": "boolean" },
+        "participants": { "type": "array", "items": { "type": "integer" },
+                          "description": "局部:→ Character.id[]" },
+        "global_participants": { "type": "array", "items": { "type": "integer" },
+                          "description": "全局:→ Character.global_id[]" },
+        "storyline": { "type": "string", "description": "自由文本,非枚举" },
+        "abs_interval": { "$ref": "#/$defs/absInterval" },
+        "confidence": { "$ref": "#/$defs/confidence" }
+      }
+    },
+
+    "timeExpression": {
+      "type": "object",
+      "required": ["text", "kind", "anchor"],
+      "properties": {
+        "text": { "type": "string" },
+        "kind": { "enum": ["clock", "duration", "relative"] },
+        "anchor": { "type": "string", "description": "锚点(R1)" }
+      }
+    },
+
+    "timelineEntry": {
+      "type": "object",
+      "required": ["seq", "event_id", "chapter", "desc", "is_flashback"],
+      "properties": {
+        "seq": { "type": "integer" },
+        "event_id": { "type": "integer" },
+        "chapter": { "type": "integer" },
+        "desc": { "type": "string" },
+        "is_flashback": { "type": "boolean" }
+      }
+    },
+
+    "ambiguity": {
+      "type": "object",
+      "required": ["reason"],
+      "properties": {
+        "reason": { "type": "string" },
+        "chapterA": { "type": "integer" }, "nameA": { "type": "string" },
+        "chapterB": { "type": "integer" }, "nameB": { "type": "string" },
+        "overlap": {}
+      }
+    }
+  }
+}
