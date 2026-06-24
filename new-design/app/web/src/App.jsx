@@ -6,10 +6,10 @@ import SidePanel from './components/SidePanel.jsx'
 import Timeline from './views/Timeline.jsx'
 import Scenes from './views/Scenes.jsx'
 import Reader from './views/Reader.jsx'
-import Upload from './views/Upload.jsx'
+import Library from './views/Library.jsx'
 
 const TYPES = { character: '人物', item: '物品', location: '地点' }
-const VIEWS = { upload: '分析', graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
+const VIEWS = { library: '书库', graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
 const ACTIVE_STAGES = new Set(['uploaded', 'splitting', 'starting', 'analyzing', 'aggregating'])
 
 // 进度百分比(与 Upload 内一致):章 × 步
@@ -114,8 +114,8 @@ export default function App() {
       </div>
 
       {/* 全局进度条:有进行中任务且不在分析页时显示,点击跳回分析页 */}
-      {jobActive && view !== 'upload' && (
-        <div className="gjob" onClick={() => setView('upload')} title="点击查看分析进度">
+      {jobActive && view !== 'library' && (
+        <div className="gjob" onClick={() => setView('library')} title="点击查看分析进度">
           <div className="gjob-bar"><div className="gjob-fill" style={{ width: progPct(jp) + '%' }} /></div>
           <span className="gjob-txt">{jobLabel} · 点击查看</span>
         </div>
@@ -138,11 +138,13 @@ export default function App() {
       {view === 'reader' && (
         <Reader novel={novel} novels={novels} onPickNovel={setNovel} />
       )}
-      {view === 'upload' && (
-        <Upload
+      {view === 'library' && (
+        <Library
+          novels={novels}
           job={job}
           onStarted={(slug) => startPolling(slug)}
-          onView={(slug) => { refreshNovels().then(() => { setNovel(slug); setView('reader') }) }}
+          onOpen={(slug) => { setNovel(slug); setView('reader') }}
+          onRefresh={refreshNovels}
         />
       )}
     </>
