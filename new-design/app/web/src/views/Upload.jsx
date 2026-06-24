@@ -1,42 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { uploadFile, startAnalyze, getProgress } from '../api.js'
+import React, { useState } from 'react'
+import { uploadFile, startAnalyze } from '../api.js'
 
 const STAGE_LABEL = {
   uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
   aggregating: '全局聚合', done: '完成', error: '出错', unknown: '—',
 }
 
-export default function Upload({ onDone }) {
+// 进度由 App 级轮询提供(props.job),本组件只负责:选文件→上传→触发分析→展示。
+// 切走再切回时 job 仍在 App,故能恢复进度;不再在此挂定时器。
+export default function Upload({ job, onStarted, onView }) {
   const [file, setFile] = useState(null)
-  const [slug, setSlug] = useState(null)
-  const [prog, setProg] = useState(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState(null)
-  const pollRef = useRef(null)
 
-  useEffect(() => () => clearInterval(pollRef.current), [])
-
-  const poll = (s) => {
-    clearInterval(pollRef.current)
-    pollRef.current = setInterval(async () => {
-      try {
-        const p = await getProgress(s)
-        setProg(p)
-        if (p.stage === 'done' || p.stage === 'error') {
-          clearInterval(pollRef.current); setBusy(false)
-        }
-      } catch (e) { /* 瞬时失败忽略 */ }
-    }, 1000)
-  }
+  const slug = job?.slug || null
+  const prog = job?.prog || null
 
   const run = async () => {
-    setErr(null); setProg(null); setBusy(true)
+    setErr(null); setBusy(true)
     try {
       if (!file) { setErr('请选择 .txt 或 .zip 文件'); setBusy(false); return }
       const up = await uploadFile(file)
-      setSlug(up.slug)
       await startAnalyze(up.slug)
-      poll(up.slug)
+      onStarted?.(up.slug)   // 轮询交给 App
+      setBusy(false)
     } catch (e) {
       // 409 = 同名已存在
       setErr(e.status === 409 ? (e.message || '该小说已存在') : (e.message || String(e)))
@@ -55,14 +42,16 @@ export default function Upload({ onDone }) {
     return Math.min(99, Math.round((completedUnits / units) * 100))
   })()
 
-  const idle = !busy && (!prog || prog.stage === 'error')
+  // 有进行中/出错的任务进度则展示进度区;否则展示上传表单
+  const hasJob = prog && prog.stage !== undefined
+  const showForm = !busy && (!hasJob || prog.stage === 'error' || prog.stage === 'done')
 
   return (
     <div className="view-scroll">
       <div className="upload-wrap">
         <h2 className="up-h">上传小说 · 启动分析</h2>
 
-        {idle && (
+        {showForm && (
           <>
             <div className="up-drop">
               <label className="up-file">
@@ -79,7 +68,7 @@ export default function Upload({ onDone }) {
           </>
         )}
 
-        {(busy || (prog && prog.stage !== 'error')) && prog && (
+        {hasJob && prog.stage !== 'error' && (
           <div className="up-progress">
             <div className="upp-head">
               <span className="upp-stage">{STAGE_LABEL[prog.stage] || prog.stage}</span>
@@ -106,12 +95,13 @@ export default function Upload({ onDone }) {
             {prog.stage === 'done' && (
               <div className="upp-done">
                 <span>分析完成 · {prog.counts ? `${prog.counts.global_characters || 0}人物 / ${prog.counts.global_locations || 0}地点` : ''}</span>
-                {onDone && <button className="up-btn" onClick={() => onDone(slug)}>查看结果</button>}
+                {onView && slug && <button className="up-btn" onClick={() => onView(slug)}>查看结果</button>}
               </div>
             )}
-            {prog.stage === 'error' && <div className="up-err">分析失败:{prog.error}</div>}
           </div>
         )}
+
+        {hasJob && prog.stage === 'error' && <div className="up-err">分析失败:{prog.error}</div>}
       </div>
     </div>
   )
