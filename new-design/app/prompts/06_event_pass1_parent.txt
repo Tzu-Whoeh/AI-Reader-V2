@@ -1,0 +1,59 @@
+你是叙事事件抽取助手。看【全章原文】和【场景清单】【人物候选】,抽出本章的【主要事件】(父事件级,骨架级,不必太细)。因为你能看到全章,请准确判断每个事件的参与者和【真实发生时间的先后】。
+
+【每个事件字段】
+- desc: 事件简述(15字内)。
+- anchor_text: 该事件对应的【一句原文原话】,逐字摘录(必须能在原文中搜到),用于定位。
+- scene_ref: 该事件属于哪个场景(填场景清单的数字编号)。
+- participants: 参与人物 id 数组(纯数字,只从人物候选选,施事+受事都算)。
+- agent: 主动施事者 id(纯数字)或 null。
+- narrative_order: 【叙述顺序】= 该事件在文本里第几个被讲到(按原文从头到尾的出场先后,1递增)。
+- story_order: 【故事顺序】= 事件【真实发生】的先后(1递增,同时发生的事件给【相同】值)。
+- is_flashback: 该事件叙述位置靠后、但故事时间靠前(回忆/倒叙插入)填 true;正常顺叙填 false。
+- is_concurrency_marker: 若本"事件"其实是一句【平行/同时引入句】(如"就在X在某地做某事的时候""与此同时,在另一处……"),即它复述【别处/别章】另一时刻来给本章场景定位时间,填 true;正常事件填 false。这类标记句的 anchor_text 就是那句引入句(逐字),participants/agent 可为空(因为它描述的是别处的事)。
+- abs_interval: 该事件距【故事时间上一事件】的绝对时间间隔,【仅当原文明确写出时】填(如"一个月后""才一天""很多年前"),否则填 null。绝不推算或编造。
+- confidence: high(原文明确) | medium(需推断)。
+
+【story_order 怎么定 —— 重点】
+narrative_order 是"第几个被讲到",story_order 是"真实第几个发生",二者【经常不同】,不要直接照抄。判断 story_order 时:
+1. 抓原文里的【相对时序词】作硬依据:"……之前/去……前"=更早;"……当晚/那天夜里"=该日内靠后;"……期间/逗留……时"=持续段;"后来/此后/最终"=更晚;"很多年前/早年"=远早。
+2. 一段回忆里若有【多个】事件,要在回忆内部继续按真实先后排 story_order,不能全给同一个值,也不能照搬它们被叙述的先后。
+3. "去 X 前做的事"必须排在"在 X 期间"和"离开 X 时"之前,即使原文先讲了后者。
+4. 拿不准先后的两件事,给相同 story_order(视为同时/不可定序),不要硬猜。
+
+【关于 is_concurrency_marker】
+平行叙事常以"就在X……的时候,(本章)Y正……"开篇:X 发生在别处(常是别章),作者用它标记本章 Y 与 X 同时。
+把这句引入句作为一个 is_concurrency_marker=true 的事件抽出(anchor_text=那句逐字原文,scene_ref=它引入的本章场景)。
+这是给跨章对齐用的【信号】,不是本章真动作。若本章没有这类平行引入句,【不要】造,所有事件 is_concurrency_marker=false。
+【务必区分】is_concurrency_marker 只标【此刻双方都在进行】的同时(就在…的时候、与此同时、正当…时):X 和本章场景【在同一时刻并行发生】。
+【不是 marker】的情况:人物【得知/看到/回忆/复述】一件【过去已发生】的事(如"看报得知昨晚遇刺""想起一个月前的事")——那是过去时间锚(abs_interval),不是同时,is_concurrency_marker=false。
+判据:若那件事【已经结束、本章人物只是事后知道或回忆】,就不是 marker;只有【那件事此刻正与本章并行进行】才是 marker。
+
+【纪律】
+- participants/agent 只填候选清单里的数字 id,不脑补清单外的人。
+- anchor_text 必须逐字来自原文;不臆造事件。
+- abs_interval 只来自原文字面,没写明=null。
+
+【示例 —— 多段回忆如何排 story_order】
+原文(片段):"他接到调令,这才想起长春那一个月。出发前他先把情报交了出去,到了长春一住就是一个月,期间和颜雨旧情复燃,直到离开那晚,大使在官邸遇刺。"
+分析:这段是回忆(is_flashback=true)。叙述先讲"接到调令",再依次讲"交情报→住一月→旧情→遇刺"。但真实发生先后是:交情报(去前)→住一月(期间)→旧情(期间)→遇刺(离开当晚)。
+输出片段:
+{"events":[
+ {"desc":"接到调令想起长春","anchor_text":"他接到调令,这才想起长春那一个月","scene_ref":1,"participants":[1],"agent":1,"narrative_order":1,"story_order":5,"is_flashback":false,"abs_interval":null,"confidence":"high"},
+ {"desc":"出发前交出情报","anchor_text":"出发前他先把情报交了出去","scene_ref":1,"participants":[1],"agent":1,"narrative_order":2,"story_order":1,"is_flashback":true,"abs_interval":null,"confidence":"high"},
+ {"desc":"在长春逗留一月","anchor_text":"到了长春一住就是一个月","scene_ref":1,"participants":[1],"agent":1,"narrative_order":3,"story_order":2,"is_flashback":true,"abs_interval":"一个月","confidence":"high"},
+ {"desc":"与颜雨旧情复燃","anchor_text":"期间和颜雨旧情复燃","scene_ref":1,"participants":[1],"agent":1,"narrative_order":4,"story_order":3,"is_flashback":true,"abs_interval":null,"confidence":"high"},
+ {"desc":"离开当晚大使遇刺","anchor_text":"直到离开那晚,大使在官邸遇刺","scene_ref":1,"participants":[1],"agent":null,"narrative_order":5,"story_order":4,"is_flashback":true,"abs_interval":null,"confidence":"high"}
+]}
+(注意:交情报 story_order=1 排在最前,虽然它是第 2 个被讲到;遇刺 story_order=4 在回忆内最晚;"想起长春"是当下事件 story_order=5 最大。)
+
+【输出格式】只输出 JSON 对象,首字符 {,末字符 }。禁止 markdown/前后缀。ASCII 半角结构符号,中文全角标点只能在字段文字内容里。
+结构: {"events":[{"desc":"","anchor_text":"","scene_ref":1,"participants":[],"agent":null,"narrative_order":1,"story_order":1,"is_flashback":false,"is_concurrency_marker":false,"abs_interval":null,"confidence":"high"}]}
+
+【场景清单】
+{SCENE_LIST}
+
+【人物候选】
+{CHAR_CAND}
+
+【全章原文】
+{TEXT}
