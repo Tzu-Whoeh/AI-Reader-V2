@@ -1,0 +1,2 @@
+# M2 任务层依赖(仅 pipeline/tasks.py 需要;只读 server.py 仍纯标准库)
+flask>=3.0
