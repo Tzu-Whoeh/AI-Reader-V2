@@ -14,14 +14,14 @@ function highlight(sentence, term) {
   )
 }
 
-export default function SidePanel({ selected, typeNames }) {
+export default function SidePanel({ selected, typeNames, novel }) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!selected) { setData(null); return }
     setLoading(true); setData(null)
-    getNode(selected.type, selected.id)
+    getNode(selected.type, selected.id, novel)
       .then(setData)
       .catch(e => { console.error(e); setData({ occurrences: [] }) })
       .finally(() => setLoading(false))

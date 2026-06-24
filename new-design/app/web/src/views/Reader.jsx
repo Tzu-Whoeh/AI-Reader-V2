@@ -4,7 +4,6 @@ import { getChapters, getReader, getNode, getDimension } from '../api.js'
 const TC = { character: '#a8332a', item: '#b8884a', location: '#6f9b8e' }
 const TN = { character: '人物', item: '物品', location: '地点' }
 
-// 把原文 + 高亮区间渲染成带 <mark> 的片段序列(区间已保证不重叠、按 start 排序)。
 function renderText(text, highlights, onPick) {
   const out = []
   let cur = 0
@@ -27,40 +26,42 @@ function renderText(text, highlights, onPick) {
   return out
 }
 
-export default function Reader() {
+export default function Reader({ novel, novels = [], onPickNovel }) {
   const [chapters, setChapters] = useState([])
   const [ch, setCh] = useState(null)
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [picked, setPicked] = useState(null)   // {type,id,label}
+  const [picked, setPicked] = useState(null)
   const [detail, setDetail] = useState(null)
-  const [dims, setDims] = useState({})          // 缓存各维度全局数据,用于属性展示
+  const [dims, setDims] = useState({})
   const [err, setErr] = useState(null)
 
+  // 小说变化 → 重取章节,缓存清空
   useEffect(() => {
-    getChapters()
+    setErr(null); setData(null); setPicked(null); setDetail(null); setDims({}); setCh(null)
+    if (!novel) { setChapters([]); return }
+    getChapters(novel)
       .then(d => {
         setChapters(d.chapters || [])
-        if ((d.chapters || []).length) setCh(d.chapters[0])
+        setCh((d.chapters || []).length ? d.chapters[0] : null)
       })
       .catch(e => setErr(String(e)))
-  }, [])
+  }, [novel])
 
   useEffect(() => {
-    if (ch == null) return
+    if (ch == null || !novel) return
     setLoading(true); setData(null); setPicked(null); setDetail(null)
-    getReader(ch).then(setData).catch(e => setErr(String(e))).finally(() => setLoading(false))
-  }, [ch])
+    getReader(ch, novel).then(setData).catch(e => setErr(String(e))).finally(() => setLoading(false))
+  }, [ch, novel])
 
-  // 点击实体 → 取该实体属性(全局维度)+ 原文出处(node 端点)
   useEffect(() => {
     if (!picked) { setDetail(null); return }
     const dimName = picked.type === 'character' ? 'characters'
       : picked.type === 'item' ? 'items' : 'locations'
     const ensureDim = dims[dimName]
       ? Promise.resolve(dims[dimName])
-      : getDimension(dimName).then(d => { setDims(s => ({ ...s, [dimName]: d })); return d })
-    Promise.all([ensureDim, getNode(picked.type, picked.id)])
+      : getDimension(dimName, novel).then(d => { setDims(s => ({ ...s, [dimName]: d })); return d })
+    Promise.all([ensureDim, getNode(picked.type, picked.id, novel)])
       .then(([dim, node]) => {
         const listKey = picked.type === 'character' ? 'global_characters'
           : picked.type === 'item' ? 'global_items' : 'global_locations'
@@ -77,21 +78,32 @@ export default function Reader() {
     return c
   }, [data])
 
-  if (err) return <div className="empty" style={{ padding: 24 }}>加载失败:{err}</div>
-
   return (
     <div className="reader">
       <aside className="reader-chs">
-        <div className="rc-title">章节</div>
+        <div className="rc-title">小说</div>
+        <select className="novel-sel" value={novel || ''}
+          onChange={e => onPickNovel && onPickNovel(e.target.value || null)}>
+          {!novels.length && <option value="">(无)</option>}
+          {novels.map(n => (
+            <option key={n.slug} value={n.slug}>
+              {n.novel_name}{n.stage && n.stage !== 'done' ? ` (${n.stage})` : ''}
+            </option>
+          ))}
+        </select>
+
+        <div className="rc-title" style={{ marginTop: 16 }}>章节</div>
         {chapters.map(c => (
           <button key={c} className={c === ch ? 'active' : ''} onClick={() => setCh(c)}>
             第 {c} 章
           </button>
         ))}
-        {!chapters.length && <div className="empty">无可读章节<br /><small>(server 未加载 --raw 原文)</small></div>}
+        {novel && !chapters.length && <div className="empty">无可读章节</div>}
+        {!novel && <div className="empty">请先选择小说</div>}
       </aside>
 
       <main className="reader-text">
+        {err && <div className="empty">加载失败:{err}</div>}
         {loading && <div className="hint">加载原文…</div>}
         {data && data.text == null && (
           <div className="empty">{data.error || '该章原文不可用'}</div>

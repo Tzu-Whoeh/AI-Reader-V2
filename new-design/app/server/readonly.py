@@ -13,7 +13,7 @@
   --raw 指向按章拆分后的原文目录(chNN.txt),或单一原文文件目录。
 仅用标准库(http.server),零三方依赖。
 """
-import os, json, re, argparse, mimetypes, posixpath
+import os, json, re, argparse, mimetypes, posixpath, threading
 from urllib.parse import urlparse, unquote
 
 OUTPUT_DIR="output"
@@ -23,28 +23,87 @@ CHAPTERS=[]     # merged per chapter
 BASE_PATH=""    # 部署前缀,如 "/new";nginx 透传时由 --base-path 设定
 STATIC_DIR=None # Vite 产物目录(pipeline/static);存在则优先托管,否则回退内嵌 FRONTEND
 
-def load_data(output_dir, raw_dir):
-    global OUTPUT_DIR, RAW, GLOBALS, CHAPTERS
-    OUTPUT_DIR=output_dir
-    # 全局维度
+# 多小说库:每次只读请求按 novel(安全化目录名)把该小说数据装入模块全局。
+# build_* 函数仍读模块全局(零改动、零回归);用锁串行化按 novel 加载。
+LIB_ROOT=None       # 库根:含 output/ input/ 的 app 目录;None 表示单库(老行为)
+_LIB_LOCK=threading.RLock()
+_CUR_NOVEL=None
+
+def _load_globals_chapters(output_dir):
+    g={}; chs_list=[]
     gdir=os.path.join(output_dir,"global")
     for name in ("characters","items","locations","timeline","scenes"):
         p=os.path.join(gdir,f"{name}.json")
-        if os.path.exists(p): GLOBALS[name]=json.load(open(p,encoding="utf-8"))
-    # 各章 merged
-    chs=sorted(d for d in os.listdir(output_dir) if d.startswith("ch") and d[2:].isdigit())
+        if os.path.exists(p): g[name]=json.load(open(p,encoding="utf-8"))
+    chs=sorted(d for d in os.listdir(output_dir) if d.startswith("ch") and d[2:].isdigit()) if os.path.isdir(output_dir) else []
     for d in chs:
         mp=os.path.join(output_dir,d,"_merged.json")
         if os.path.exists(mp):
             m=json.load(open(mp,encoding="utf-8")); m["_chapter"]=int(d[2:])
-            CHAPTERS.append(m)
-    # 原文(raw_dir 下 chNN.txt;或目录里所有 txt 按序当章)
+            chs_list.append(m)
+    return g, chs_list
+
+def _load_raw(raw_dir):
+    raw={}
     if raw_dir and os.path.isdir(raw_dir):
         txts=sorted(f for f in os.listdir(raw_dir) if f.endswith(".txt"))
         for i,f in enumerate(txts,1):
             mobj=re.search(r'(\d+)', f)
             idx=int(mobj.group(1)) if mobj else i
-            RAW[idx]=open(os.path.join(raw_dir,f),encoding="utf-8",errors="replace").read()
+            raw[idx]=open(os.path.join(raw_dir,f),encoding="utf-8",errors="replace").read()
+    return raw
+
+def load_data(output_dir, raw_dir):
+    """单库加载(老行为):把 output_dir/raw_dir 装入模块全局。"""
+    global OUTPUT_DIR, RAW, GLOBALS, CHAPTERS
+    OUTPUT_DIR=output_dir
+    g,chs=_load_globals_chapters(output_dir)
+    GLOBALS.clear(); GLOBALS.update(g)
+    CHAPTERS.clear(); CHAPTERS.extend(chs)
+    RAW.clear(); RAW.update(_load_raw(raw_dir))
+
+def set_library(lib_root):
+    """启用多小说库模式:lib_root 下有 output/<novel>/ 与 input/<novel>/。"""
+    global LIB_ROOT
+    LIB_ROOT=lib_root
+
+def list_novels():
+    """列出库中所有小说:读 output/<novel>/meta.json。"""
+    out=[]
+    odir=os.path.join(LIB_ROOT,"output") if LIB_ROOT else None
+    if not odir or not os.path.isdir(odir): return out
+    for slug in sorted(os.listdir(odir)):
+        nd=os.path.join(odir,slug)
+        if not os.path.isdir(nd): continue
+        meta_p=os.path.join(nd,"meta.json")
+        meta=json.load(open(meta_p,encoding="utf-8")) if os.path.exists(meta_p) else {}
+        # 章数:output/<slug>/chNN
+        chn=len([d for d in os.listdir(nd) if d.startswith("ch") and d[2:].isdigit()])
+        out.append({"slug":slug,"novel_name":meta.get("novel_name",slug),
+                    "author":meta.get("author"),"chapter_count":chn,
+                    "stage":meta.get("stage"),"uploaded_at":meta.get("uploaded_at")})
+    return out
+
+class use_novel:
+    """上下文管理器:加锁,把指定 novel 的数据装入模块全局,退出后保持(下次切换再换)。
+    单库模式(LIB_ROOT=None)或 slug 为空时为 no-op,沿用当前已加载数据。"""
+    def __init__(self, slug):
+        self.slug=slug
+    def __enter__(self):
+        _LIB_LOCK.acquire()
+        global _CUR_NOVEL, OUTPUT_DIR, RAW, GLOBALS, CHAPTERS
+        if LIB_ROOT and self.slug and self.slug!=_CUR_NOVEL:
+            odir=os.path.join(LIB_ROOT,"output",self.slug)
+            idir=os.path.join(LIB_ROOT,"input",self.slug)
+            g,chs=_load_globals_chapters(odir)
+            GLOBALS.clear(); GLOBALS.update(g)
+            CHAPTERS.clear(); CHAPTERS.extend(chs)
+            RAW.clear(); RAW.update(_load_raw(idir))
+            OUTPUT_DIR=odir; _CUR_NOVEL=self.slug
+        return self
+    def __exit__(self, *a):
+        _LIB_LOCK.release()
+        return False
 
 def _sentences_with(term, text):
     """在 text 中找含 term 的句子,返回 [{sentence, pos}]。"""

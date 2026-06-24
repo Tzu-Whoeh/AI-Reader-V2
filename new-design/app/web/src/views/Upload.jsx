@@ -1,16 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { uploadText, startAnalyze, getProgress } from '../api.js'
+import { uploadFile, startAnalyze, getProgress } from '../api.js'
 
 const STAGE_LABEL = {
-  uploaded: '已上传', starting: '准备中', analyzing: '分析中',
+  uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
   aggregating: '全局聚合', done: '完成', error: '出错', unknown: '—',
 }
 
 export default function Upload({ onDone }) {
-  const [text, setText] = useState('')
   const [file, setFile] = useState(null)
-  const [presplit, setPresplit] = useState(false)
-  const [job, setJob] = useState(null)
+  const [slug, setSlug] = useState(null)
   const [prog, setProg] = useState(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState(null)
@@ -18,37 +16,34 @@ export default function Upload({ onDone }) {
 
   useEffect(() => () => clearInterval(pollRef.current), [])
 
-  const poll = (jobId) => {
+  const poll = (s) => {
     clearInterval(pollRef.current)
     pollRef.current = setInterval(async () => {
       try {
-        const p = await getProgress(jobId)
+        const p = await getProgress(s)
         setProg(p)
         if (p.stage === 'done' || p.stage === 'error') {
-          clearInterval(pollRef.current)
-          setBusy(false)
+          clearInterval(pollRef.current); setBusy(false)
         }
-      } catch (e) { /* 轮询瞬时失败忽略,下次再试 */ }
+      } catch (e) { /* 瞬时失败忽略 */ }
     }, 1000)
   }
 
   const run = async () => {
     setErr(null); setProg(null); setBusy(true)
     try {
-      const payload = file || text
-      if (!payload || (typeof payload === 'string' && !payload.trim())) {
-        setErr('请粘贴文本或选择文件'); setBusy(false); return
-      }
-      const up = await uploadText(payload)
-      setJob(up.job_id)
-      await startAnalyze(up.job_id, presplit)
-      poll(up.job_id)
+      if (!file) { setErr('请选择 .txt 或 .zip 文件'); setBusy(false); return }
+      const up = await uploadFile(file)
+      setSlug(up.slug)
+      await startAnalyze(up.slug)
+      poll(up.slug)
     } catch (e) {
-      setErr(String(e)); setBusy(false)
+      // 409 = 同名已存在
+      setErr(e.status === 409 ? (e.message || '该小说已存在') : (e.message || String(e)))
+      setBusy(false)
     }
   }
 
-  // 子步骤级进度:(已完成章×步数 + 当前章已完成步) / (总章×步数)
   const pct = (() => {
     if (!prog) return 0
     if (prog.stage === 'done') return 100
@@ -56,35 +51,29 @@ export default function Upload({ onDone }) {
     const stepTotal = prog.step_total || 1
     const stepIdx = prog.step_idx || 0
     const units = prog.total * stepTotal
-    const completedUnits = prog.done * stepTotal + stepIdx
+    const completedUnits = (prog.done || 0) * stepTotal + stepIdx
     return Math.min(99, Math.round((completedUnits / units) * 100))
   })()
+
+  const idle = !busy && (!prog || prog.stage === 'error')
 
   return (
     <div className="view-scroll">
       <div className="upload-wrap">
-        <h2 className="up-h">上传文本 · 启动分析</h2>
+        <h2 className="up-h">上传小说 · 启动分析</h2>
 
-        {!busy && (!prog || prog.stage === 'error') && (
+        {idle && (
           <>
-            <textarea
-              className="up-text"
-              placeholder="在此粘贴小说文本…(或在下方选择 .txt 文件)"
-              value={text}
-              onChange={e => setText(e.target.value)}
-            />
-            <div className="up-row">
+            <div className="up-drop">
               <label className="up-file">
-                <input type="file" accept=".txt,text/plain"
+                <input type="file" accept=".txt,.zip"
                   onChange={e => setFile(e.target.files?.[0] || null)} />
-                {file ? file.name : '选择 .txt 文件'}
+                {file ? file.name : '选择 .txt 或 .zip 文件'}
               </label>
-              <label className="up-chk">
-                <input type="checkbox" checked={presplit}
-                  onChange={e => setPresplit(e.target.checked)} />
-                预拆分(每文件/段当一章)
-              </label>
-              <button className="up-btn" onClick={run}>开始分析</button>
+              <p className="up-hint">txt:整本或单章文本 · zip:多个 txt(每文件可含多章),将自动拆章清洗</p>
+            </div>
+            <div className="up-row">
+              <button className="up-btn" onClick={run} disabled={!file}>上传并分析</button>
             </div>
             {err && <div className="up-err">{err}</div>}
           </>
@@ -94,7 +83,7 @@ export default function Upload({ onDone }) {
           <div className="up-progress">
             <div className="upp-head">
               <span className="upp-stage">{STAGE_LABEL[prog.stage] || prog.stage}</span>
-              {prog.total > 0 && <span className="upp-frac">{prog.done} / {prog.total} 章</span>}
+              {prog.total > 0 && <span className="upp-frac">{prog.done || 0} / {prog.total} 章</span>}
             </div>
             <div className="upp-bar"><div className="upp-fill" style={{ width: pct + '%' }} /></div>
             {prog.stage === 'analyzing' && prog.step_name && (
@@ -117,7 +106,7 @@ export default function Upload({ onDone }) {
             {prog.stage === 'done' && (
               <div className="upp-done">
                 <span>分析完成 · {prog.counts ? `${prog.counts.global_characters || 0}人物 / ${prog.counts.global_locations || 0}地点` : ''}</span>
-                {onDone && <button className="up-btn" onClick={() => onDone(job)}>查看结果</button>}
+                {onDone && <button className="up-btn" onClick={() => onDone(slug)}>查看结果</button>}
               </div>
             )}
             {prog.stage === 'error' && <div className="up-err">分析失败:{prog.error}</div>}

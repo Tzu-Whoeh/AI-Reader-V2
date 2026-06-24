@@ -7,13 +7,13 @@ const TYPE_COLOR = {
   现实叙述: '#6f9b8e', 回忆: '#b8884a', 内心独白: '#9a7db8', 动作: '#a8332a',
 }
 
-export default function Scenes() {
+export default function Scenes({ novel }) {
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
 
   useEffect(() => {
-    getDimension('scenes').then(setData).catch(e => setErr(String(e)))
-  }, [])
+    getDimension('scenes', novel).then(setData).catch(e => setErr(String(e)))
+  }, [novel])
 
   if (err) return <div className="empty" style={{ padding: 24 }}>加载失败:{err}</div>
   if (!data) return <div className="hint">加载场景…</div>
