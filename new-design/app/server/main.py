@@ -21,7 +21,7 @@ AI Reader (new-design) · 合并后端(单服务单端口)· 多小说库
   OLLAMA_URL=http://127.0.0.1:18434 python -m app.server.main \
       --lib <app目录> --base-path "" --port 8080
 """
-import os, sys, json, re, time, zipfile, threading, argparse, unicodedata
+import os, sys, json, re, time, zipfile, threading, argparse, unicodedata, shutil
 from flask import Flask, request, jsonify, Response, send_from_directory
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -31,6 +31,7 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
 from app.server import readonly as RO
+from app.pipeline import rules as RULES
 
 BASE_PATH = ""
 STATIC_DIR = os.path.join(_HERE, "static")
@@ -129,7 +130,14 @@ def register_readonly():
 
     @app.get(_bp("/api/novels"))
     def novels():
-        return jsonify({"novels": RO.list_novels(), "current": latest_novel_slug()})
+        nv = RO.list_novels()
+        for n in nv:
+            m = read_meta(n.get("slug"))
+            n["dirty"] = _is_dirty(n.get("slug"), m)
+            if m:
+                for k in ("tags", "cover", "rules_selected"):
+                    if k in m: n[k] = m[k]
+        return jsonify({"novels": nv, "current": latest_novel_slug()})
 
 # ---------------- 任务 API ----------------
 def _set_stage(slug, **kw):
@@ -137,12 +145,13 @@ def _set_stage(slug, **kw):
     meta.update(kw)
     write_meta(slug, meta)
 
-def _split_to_input(slug):
+def _split_to_input(slug, selected_ids=None):
     """把 raw/<slug>(.txt 或目录) 的所有文本逐个清洗+拆章,汇总重排成 input/<slug>/chNN.txt。
     返回章数。"""
     _pp = os.path.join(_APP, "pipeline")
     if _pp not in sys.path: sys.path.append(_pp)
     import clean_split as CS
+    noise_pats, chap_pats = RULES.resolve_enabled(selected_ids)
     # 收集原文文件
     texts = []
     raw_txt = os.path.join(raw_dir(), slug + ".txt")
@@ -161,8 +170,8 @@ def _split_to_input(slug):
     # 逐个清洗 + 拆章,汇总
     chapters = []
     for t in texts:
-        cleaned, _ = CS.clean(t)
-        for ch in CS.split_chapters(cleaned):
+        cleaned, _ = CS.clean(t, noise_patterns=(noise_pats or None))
+        for ch in CS.split_chapters(cleaned, patterns=(chap_pats or None)):
             chapters.append(ch)
     # 写 input/<slug>/chNN.txt(全局重排)
     idir = novel_input(slug)
@@ -178,7 +187,9 @@ def _run_analysis(slug):
     out = novel_out(slug)
     try:
         _set_stage(slug, stage="splitting")
-        n = _split_to_input(slug)
+        meta0 = read_meta(slug) or {}
+        sel = meta0.get("rules_selected")  # None → 全局默认
+        n = _split_to_input(slug, sel)
         _set_stage(slug, stage="analyzing", chapter_count=n, done=0, total=n, chapters=[])
         meta = read_meta(slug)
         def cb(ev):
@@ -196,7 +207,9 @@ def _run_analysis(slug):
             elif st == "chapter_error":
                 meta.setdefault("chapters", []).append({"chapter": ev.get("chapter"), "error": ev.get("error")})
             elif st == "aggregate": meta["stage"] = "aggregating"
-            elif st == "done": meta["stage"] = "done"; meta["counts"] = ev.get("counts", {})
+            elif st == "done":
+                meta["stage"] = "done"; meta["counts"] = ev.get("counts", {})
+                meta["clean_fingerprint"] = RULES.fingerprint(meta.get("rules_selected"))
             write_meta(slug, meta)
         # presplit:input/<slug>/ 下已是 chNN.txt
         pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb)
@@ -270,6 +283,136 @@ def register_tasks():
         meta["running"] = slug in _RUNNING
         return jsonify(meta)
 
+
+# ---------------- 书库管理 API(规则 / meta / 删除 / 重新清洗) ----------------
+def _is_dirty(slug, meta):
+    """书已分析,但当前勾选规则指纹 != 分析时记录的指纹 → 脏(建议重新分析)。"""
+    if not meta or meta.get("stage") != "done":
+        return False
+    recorded = meta.get("clean_fingerprint")
+    if not recorded:
+        return False
+    return RULES.fingerprint(meta.get("rules_selected")) != recorded
+
+def register_library_admin():
+    app = flask_app
+
+    @app.get(_bp("/api/rules"))
+    def rules_get():
+        return jsonify({
+            "presets": [r for r in RULES.load_presets()],
+            "custom": RULES.load_custom().get("rules", []),
+            "user_presets": RULES.load_custom().get("presets", []),
+            "default_enabled": RULES.load_default_enabled(),
+        })
+
+    @app.post(_bp("/api/rules/custom"))
+    def rules_custom():
+        """body: {op:'add'|'update'|'delete', rule:{id,kind,name,pattern,desc}}"""
+        body = request.get_json(force=True, silent=True) or {}
+        op = body.get("op"); rule = body.get("rule") or {}
+        c = RULES.load_custom()
+        rid = rule.get("id")
+        builtin_ids = {r["id"] for r in RULES.load_presets()}
+        if op in ("add", "update"):
+            if not rid or rule.get("kind") not in ("noise", "chapter") or not rule.get("pattern"):
+                return jsonify({"error": "需要 id/kind/pattern"}), 400
+            if rid in builtin_ids:
+                return jsonify({"error": "不可覆盖预制规则 id"}), 400
+            try:
+                re.compile(rule["pattern"])
+            except re.error as e:
+                return jsonify({"error": f"正则无效: {e}"}), 400
+            c["rules"] = [r for r in c["rules"] if r.get("id") != rid]
+            c["rules"].append({"id": rid, "kind": rule["kind"], "name": rule.get("name", rid),
+                               "pattern": rule["pattern"], "desc": rule.get("desc", ""), "builtin": False})
+        elif op == "delete":
+            c["rules"] = [r for r in c["rules"] if r.get("id") != rid]
+        else:
+            return jsonify({"error": "op 必须是 add/update/delete"}), 400
+        RULES.save_custom(c)
+        return jsonify({"ok": True, "custom": c["rules"]})
+
+    @app.put(_bp("/api/rules/default"))
+    def rules_default():
+        body = request.get_json(force=True, silent=True) or {}
+        ids = body.get("enabled")
+        if not isinstance(ids, list):
+            return jsonify({"error": "需要 enabled:[id...]"}), 400
+        RULES.save_default_enabled(ids)
+        return jsonify({"ok": True, "default_enabled": ids})
+
+    @app.post(_bp("/api/rules/presets"))
+    def rules_user_presets():
+        """存/删用户预设。body: {op:'save'|'delete', name, enabled:[id...]}"""
+        body = request.get_json(force=True, silent=True) or {}
+        op = body.get("op"); name = (body.get("name") or "").strip()
+        c = RULES.load_custom()
+        if op == "save":
+            if not name:
+                return jsonify({"error": "需要 name"}), 400
+            c["presets"] = [p for p in c["presets"] if p.get("name") != name]
+            c["presets"].append({"name": name, "enabled": body.get("enabled", [])})
+        elif op == "delete":
+            c["presets"] = [p for p in c["presets"] if p.get("name") != name]
+        else:
+            return jsonify({"error": "op 必须是 save/delete"}), 400
+        RULES.save_custom(c)
+        return jsonify({"ok": True, "user_presets": c["presets"]})
+
+    @app.put(_bp("/api/novels/<slug>/meta"))
+    def novel_meta_update(slug):
+        meta = read_meta(slug)
+        if meta is None:
+            return jsonify({"error": "小说不存在"}), 404
+        body = request.get_json(force=True, silent=True) or {}
+        for k in ("novel_name", "author", "cover"):
+            if k in body:
+                meta[k] = body[k]
+        if "tags" in body and isinstance(body["tags"], list):
+            meta["tags"] = body["tags"]
+        if "rules_selected" in body:
+            v = body["rules_selected"]
+            meta["rules_selected"] = list(v) if isinstance(v, list) else None
+        write_meta(slug, meta)
+        meta["dirty"] = _is_dirty(slug, meta)
+        return jsonify({"ok": True, "meta": meta})
+
+    @app.delete(_bp("/api/novels/<slug>"))
+    def novel_delete(slug):
+        if read_meta(slug) is None:
+            return jsonify({"error": "小说不存在"}), 404
+        if slug in _RUNNING:
+            return jsonify({"error": "分析进行中,无法删除"}), 409
+        for p in (novel_out(slug), novel_input(slug),
+                  os.path.join(raw_dir(), slug), os.path.join(raw_dir(), slug + ".txt")):
+            try:
+                if os.path.isdir(p): shutil.rmtree(p)
+                elif os.path.isfile(p): os.remove(p)
+            except Exception:
+                pass
+        return jsonify({"ok": True, "deleted": slug})
+
+    @app.post(_bp("/api/reclean/<slug>"))
+    def reclean(slug):
+        """用该书当前勾选规则重跑 清洗+拆章 → 重排 input(不分析)。"""
+        meta = read_meta(slug)
+        if meta is None:
+            return jsonify({"error": "小说不存在"}), 404
+        if slug in _RUNNING:
+            return jsonify({"error": "分析进行中"}), 409
+        try:
+            idir = novel_input(slug)
+            if os.path.isdir(idir):
+                shutil.rmtree(idir)
+            n = _split_to_input(slug, meta.get("rules_selected"))
+            meta["chapter_count"] = n
+            meta["recleaned_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+            write_meta(slug, meta)
+            return jsonify({"ok": True, "chapter_count": n, "dirty": _is_dirty(slug, meta)})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
 # ---------------- 静态托管 ----------------
 def register_static():
     app = flask_app
@@ -290,7 +433,8 @@ def create_app(lib=None, base_path="", static=None):
     os.makedirs(input_dir(), exist_ok=True)
     os.makedirs(output_dir(), exist_ok=True)
     RO.set_library(LIB)
-    register_readonly(); register_tasks(); register_static()
+    RULES.set_library(LIB)
+    register_readonly(); register_tasks(); register_library_admin(); register_static()
     return flask_app
 
 if __name__ == "__main__":
