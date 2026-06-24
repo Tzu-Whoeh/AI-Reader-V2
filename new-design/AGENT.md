@@ -128,3 +128,19 @@ new-design 版的可视化前端独立工程 `web/`(Vite + React),**豁免本仓
 - **base 可配**:开发期挂 `8443/new`(`VITE_BASE=/new/` + `server.py --base-path=/new`);成熟后迁顶层只改这两处配置,不改代码。
 - **部署形态**:nginx 反代 `8443/new` 透传前缀 → 新起的 server.py 实例(开发约定内部端口 8081)。改部署/nginx 仍按 §9 报计划等批准。
 - **旧前端**:`server.py` 内嵌 `FRONTEND` 保留作回退,不删;新功能在 `web/` 做。
+
+## 11. 3B 收口:独立应用包 app/
+
+new-design 已收口为独立可部署应用,根目录 `pipeline/` `web/` `model/` `prompts/` **已移入 `app/`**:
+```
+app/
+  server/    合并后端(Flask 单服务):main.py(create_app+CLI)、readonly.py(只读逻辑)、static/(Vite 产物)
+  pipeline/  分析管线(app.py 全流程 + 各阶段模块 + validate)
+  prompts/   12 prompt   model/  schema+文档   web/  前端(产物→server/static/)
+  requirements.txt  run.sh  README.md
+```
+- **后端合并**:原 server.py(只读,纯标准库)+ tasks.py(任务,Flask)→ `app/server/main.py` **单 Flask 服务单端口**,同前缀下提供只读 API + 任务 API + 静态。纯标准库纪律在合并后端不再适用(已用 flask)。
+- **前端单 base**:`/api` 同时含只读与任务端点;产物输出 `app/server/static/`。
+- **启动**:`cd new-design && python3 -m app.server.main --output app/output --raw app/raw --jobs app/jobs --base-path /new --port 8080`(或 `app/run.sh`)。
+- **保留在根**(非应用包):samples/、research/、docs/、tools/、AGENT.md 等开发参考。
+- **真 ollama 推理**:管线经 `OLLAMA_URL`(默认 18434 隧道)调用;隧道恢复即可端到端跑分析。
