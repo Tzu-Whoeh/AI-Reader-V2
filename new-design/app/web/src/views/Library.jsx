@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel } from '../api.js'
+import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel, reclean } from '../api.js'
+import RulesPanel from './RulesPanel.jsx'
 
 const STAGE_LABEL = {
   uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
@@ -30,6 +31,8 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
   const [err, setErr] = useState(null)
   const [editing, setEditing] = useState(null)   // 编辑中的小说对象
   const [confirmDel, setConfirmDel] = useState(null)
+  const [rulesPanel, setRulesPanel] = useState(null)   // {mode:'global'|'book', slug?, initial?}
+  const [recleaning, setRecleaning] = useState(null)
 
   const jp = job?.prog
   const jobSlug = job?.slug
@@ -69,6 +72,18 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
     catch (e) { setErr(e.message || String(e)); setConfirmDel(null) }
   }
 
+  const doReclean = async (slug) => {
+    setErr(null); setRecleaning(slug)
+    try { await reclean(slug); onRefresh?.() }
+    catch (e) { setErr(e.message || String(e)) }
+    finally { setRecleaning(null) }
+  }
+
+  const applyBookRules = async (slug, enabledIds) => {
+    try { await updateNovelMeta(slug, { rules_selected: enabledIds }); onRefresh?.() }
+    catch (e) { setErr(e.message || String(e)) }
+  }
+
   return (
     <div className="view-scroll">
       <div className="lib-wrap">
@@ -82,6 +97,7 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
           <button className="up-btn lib-up-btn" onClick={doUpload} disabled={!file || busy}>
             {busy ? '上传中…' : '上传并分析'}
           </button>
+          <button className="lib-rules-btn" onClick={() => setRulesPanel({ mode: 'global' })}>清洗规则</button>
         </div>
         {err && <div className="up-err">{err}</div>}
 
@@ -128,6 +144,8 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                     {analyzed && <button onClick={() => onOpen?.(n.slug)}>打开</button>}
                     {!running && <button onClick={() => analyzeAgain(n.slug)}>{analyzed ? '重新分析' : '分析'}</button>}
                     <button onClick={() => setEditing({ ...n, tags: n.tags || [], cover: n.cover || color })}>编辑</button>
+                    {!running && <button onClick={() => setRulesPanel({ mode: 'book', slug: n.slug, initial: n.rules_selected ?? null })}>规则</button>}
+                    {!running && <button onClick={() => doReclean(n.slug)} disabled={recleaning === n.slug}>{recleaning === n.slug ? '清洗中…' : '重新清洗'}</button>}
                     <button className="bc-del" onClick={() => setConfirmDel(n.slug)}>删除</button>
                   </div>
                 </div>
@@ -177,6 +195,16 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
             </div>
           </div>
         </div>
+      )}
+
+      {rulesPanel && (
+        <RulesPanel
+          mode={rulesPanel.mode}
+          initialEnabled={rulesPanel.mode === 'book' ? rulesPanel.initial : null}
+          title={rulesPanel.mode === 'book' ? ('清洗规则 · ' + rulesPanel.slug) : null}
+          onClose={() => setRulesPanel(null)}
+          onApply={(ids) => { if (rulesPanel.mode === 'book') applyBookRules(rulesPanel.slug, ids) }}
+        />
       )}
     </div>
   )
