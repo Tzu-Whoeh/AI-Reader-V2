@@ -195,6 +195,12 @@ def analyze_chapter(text, step_cb=None):
     merged["parent_events"]=ev["parent_events"]
     merged["sub_events"]=ev["sub_events"]
     merged["time_refs"]=ev.get("time_refs",[])
+    # 场景基础标签(纯确定性,零模型):叙事类型 + 地点 + 涉及人物(由事件 participants 聚合)。
+    # 须在事件分析后(parent_events 已就位)才能聚合人物。功能类标签由后续 pass 另填。
+    try:
+        merge_core.derive_scene_tags(merged)
+    except Exception as e:
+        merged.setdefault("_postproc_errors",[]).append(f"scene_tags: {e}")
     # 组织维度(明说成员归属守红线;确定性后处理 + 成员名归一)
     step(8)
     try:
