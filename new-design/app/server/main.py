@@ -187,14 +187,22 @@ def _run_analysis(slug):
     from app.pipeline import app as pipeline
     out = novel_out(slug)
     try:
-        _set_stage(slug, stage="splitting")
+        _set_stage(slug, stage="splitting", control="go")
         meta0 = read_meta(slug) or {}
         sel = meta0.get("rules_selected")  # None → 全局默认
         n = _split_to_input(slug, sel)
         _set_stage(slug, stage="analyzing", chapter_count=n, done=0, total=n, chapters=[])
         meta = read_meta(slug)
+        def control():
+            # 读盘取最新 control(允许外部端点改写),返回 go|pause|stop
+            cur = read_meta(slug) or {}
+            return cur.get("control", "go")
         def cb(ev):
             st = ev.get("stage")
+            if st == "paused":
+                meta["stage"] = "paused"; meta["done"] = ev.get("done", meta.get("done", 0)); write_meta(slug, meta); return
+            if st == "stopping":
+                meta["stage"] = "stopping"; write_meta(slug, meta); return
             if st == "split": meta["total"] = ev.get("total", 0); meta["stage"] = "analyzing"
             elif st == "step":
                 meta["stage"] = "analyzing"; meta["cur_chapter"] = ev.get("chapter")
@@ -213,7 +221,7 @@ def _run_analysis(slug):
                 meta["clean_fingerprint"] = RULES.fingerprint(meta.get("rules_selected"))
             write_meta(slug, meta)
         # presplit:input/<slug>/ 下已是 chNN.txt
-        pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb)
+        pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb, should_continue=control)
         # 完结判定:逐章错误隔离会让 pipeline 即使大量失败也"跑完"并发 done。
         # 这里据实复核 —— 有章节失败或未跑满则标 partial,不再一律 done。
         m = read_meta(slug)
@@ -305,6 +313,32 @@ def register_tasks():
         if meta is None: return jsonify({"error": "小说不存在"}), 404
         meta["running"] = slug in _RUNNING
         return jsonify(meta)
+
+    def _set_control(slug, value):
+        meta = read_meta(slug)
+        if meta is None: return None
+        if slug not in _RUNNING:
+            return jsonify({"error": "该小说当前未在分析", "stage": meta.get("stage")}), 409
+        meta["control"] = value
+        write_meta(slug, meta)
+        return jsonify({"ok": True, "slug": slug, "control": value})
+
+    @app.post(_bp("/api/pause/<slug>"))
+    def pause(slug):
+        # 章间软停:置 control=pause,run 在下一章前阻塞
+        r = _set_control(slug, "pause")
+        return r if r is not None else (jsonify({"error": "小说不存在"}), 404)
+
+    @app.post(_bp("/api/resume/<slug>"))
+    def resume(slug):
+        r = _set_control(slug, "go")
+        return r if r is not None else (jsonify({"error": "小说不存在"}), 404)
+
+    @app.post(_bp("/api/stop/<slug>"))
+    def stop(slug):
+        # 停止后续章,run 会对已完成部分聚合后结束(结果通常为 partial)
+        r = _set_control(slug, "stop")
+        return r if r is not None else (jsonify({"error": "小说不存在"}), 404)
 
 
 # ---------------- 书库管理 API(规则 / meta / 删除 / 重新清洗) ----------------
