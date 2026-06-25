@@ -105,7 +105,7 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   return (
     <div className={'reader' + (chOpen ? ' ch-open' : '') + (picked ? ' detail-open' : '')}>
       <button className="reader-ch-toggle" onClick={() => setChOpen(o => !o)} aria-label="章节列表">☰ 章节</button>
-      <div className="reader-overlay" onClick={() => { setChOpen(false); setPicked(null) }} />
+      {(chOpen || picked) && <div className="reader-overlay" onClick={() => { setChOpen(false); setPicked(null) }} />}
       <aside className="reader-chs">
         <div className="rc-title">小说</div>
         <select className="novel-sel" value={novel || ''}
