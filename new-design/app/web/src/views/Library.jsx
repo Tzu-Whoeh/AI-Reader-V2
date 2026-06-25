@@ -88,6 +88,7 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
       await updateNovelMeta(e.slug, {
         novel_name: e.novel_name, author: e.author || null,
         tags: e.tags || [], cover: e.cover || null,
+        function_tag_catalog: e.function_tag_catalog || [],
       })
       setEditing(null); onRefresh?.()
     } catch (er) { setErr(er.message || String(er)) }
@@ -259,6 +260,9 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
             <label className="fld"><span>标签</span>
               <input value={(editing.tags || []).join(', ')} placeholder="逗号分隔"
                 onChange={e => setEditing({ ...editing, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} /></label>
+            <label className="fld"><span>功能标签清单</span>
+              <input value={(editing.function_tag_catalog || []).join('、')} placeholder="如:情报传递、冲突、抒情、铺垫(留空用内置默认)"
+                onChange={e => setEditing({ ...editing, function_tag_catalog: e.target.value.split(/[、,，]/).map(s => s.trim()).filter(Boolean) })} /></label>
             <div className="fld"><span>封面色</span>
               <div className="color-row">
                 {COVER_PRESETS.map(col => (
