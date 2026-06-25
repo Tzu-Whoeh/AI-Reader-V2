@@ -238,3 +238,42 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .modal-actions button:hover{color:var(--ink)}
 .modal-actions .up-btn{margin-left:0;background:var(--stamp);color:var(--paper);border:none}
 .bc-del-confirm{background:var(--stamp)!important;color:var(--paper)!important;border:none!important}
+/* ── 规则面板 ── */
+.lib-rules-btn{font-family:sans-serif;font-size:12px;background:none;border:1px solid var(--line);
+  color:var(--dim);padding:7px 14px;border-radius:3px;cursor:pointer}
+.lib-rules-btn:hover{color:var(--ink);border-color:var(--thread)}
+.rp-modal{width:640px;max-width:94vw;max-height:86vh;display:flex;flex-direction:column}
+.rp-inherit{font-family:sans-serif;font-size:12px;color:var(--thread);display:flex;
+  align-items:center;gap:6px;margin-bottom:10px;cursor:pointer}
+.rp-body{overflow-y:auto;flex:1}
+.rp-body.rp-dim{opacity:.45;pointer-events:none}
+.rp-sec{margin-bottom:16px}
+.rp-sec-h{font-family:sans-serif;font-size:12px;color:var(--thread);letter-spacing:.04em;
+  border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:7px;
+  display:flex;align-items:center;justify-content:space-between}
+.rp-empty{font-family:sans-serif;font-size:11px;color:var(--dim);font-style:italic;padding:3px 0}
+.rp-rule{display:flex;align-items:center;gap:8px;padding:4px 0;font-family:sans-serif;font-size:12px}
+.rp-rule input[type=checkbox]{flex:0 0 auto}
+.rp-kind{flex:0 0 auto;font-size:10px;color:var(--paper);background:var(--dim);
+  padding:1px 6px;border-radius:2px}
+.rp-name{flex:0 0 auto;color:var(--ink)}
+.rp-pat{flex:1;color:var(--dim);font-size:11px;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;font-family:monospace}
+.rp-ops{flex:0 0 auto;display:flex;gap:4px}
+.rp-ops button,.rp-add{font-size:11px;background:none;border:1px solid var(--line);
+  color:var(--dim);padding:1px 8px;border-radius:2px;cursor:pointer}
+.rp-ops button:hover,.rp-add:hover{color:var(--ink);border-color:var(--thread)}
+.rp-presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.rp-preset{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.rp-preset button{font-family:sans-serif;font-size:11px;background:none;border:none;
+  color:var(--thread);padding:3px 9px;cursor:pointer}
+.rp-preset button:hover{color:var(--ink)}
+.rp-preset-del{color:var(--dim)!important;border-left:1px solid var(--line)!important}
+.rp-save-preset{display:flex;gap:8px}
+.rp-save-preset input{flex:1;background:var(--paper);border:1px solid var(--line);color:var(--ink);
+  font-family:sans-serif;font-size:12px;padding:5px 8px;border-radius:3px}
+.rp-save-preset button{font-family:sans-serif;font-size:12px;background:none;border:1px solid var(--line);
+  color:var(--dim);padding:5px 12px;border-radius:3px;cursor:pointer}
+.rp-save-preset button:hover{color:var(--ink);border-color:var(--thread)}
+.fld select{width:100%;background:var(--paper);border:1px solid var(--line);color:var(--ink);
+  font-family:sans-serif;font-size:13px;padding:7px 9px;border-radius:3px}
