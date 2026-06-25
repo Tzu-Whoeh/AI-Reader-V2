@@ -135,7 +135,44 @@ def derive_scene_tags(merged):
         sc["tags"]=existing
     return merged
 
-def resolve_item_locations(items, scenes):
+# 功能标签候选清单(内置默认;C2b 将改为用户可在书库维护的动态清单)。
+# 作用:注入 prompt 引导模型优先复用(跨章聚合);后处理用它判 in_catalog。
+FUNCTION_TAG_CATALOG=[
+    "情报传递","冲突","争论","抒情","铺垫","审问","调情","回忆","日常","谈判",
+    "揭露","设伏","追逐","转折","决策","心理描写","悬念设置","重逢","告别","潜入",
+]
+
+def _bad_tag(t):
+    """词形校验:非 2-5 字 / 含标点或虚词 → 判废。返回 True=废弃。"""
+    if not isinstance(t,str): return True
+    t=t.strip()
+    if not (2<=len(t)<=5): return True
+    if any(p in t for p in "，,。.；;：:！!？?“”\"'（）()【】[]、 \n"): return True
+    if any(w in t for w in ("的","了","是","场景","推动","体现")): return True
+    return False
+
+def sanitize_function_tags(raw_scenes_tags, catalog=None):
+    """校验模型返回的功能标签:词形过滤(废弃记 report)+ in_catalog 标注。
+    raw_scenes_tags: [{index, function_tags:[...]}]。
+    返回 {index: {tags:[...], novel:[...]}}, report。
+    清单外的合法标签【保留】并记入 novel(不丢,留作 C2b 扩充清单的来源)。"""
+    cat=set(catalog or FUNCTION_TAG_CATALOG)
+    out={}; report={"dropped":[], "novel":[]}
+    for item in (raw_scenes_tags or []):
+        idx=item.get("index")
+        kept=[]; novel=[]; seen=set()
+        for t in (item.get("function_tags") or []):
+            ts=t.strip() if isinstance(t,str) else t
+            if _bad_tag(ts):
+                report["dropped"].append({"index":idx,"tag":t}); continue
+            if ts in seen: continue
+            seen.add(ts); kept.append(ts)
+            if ts not in cat:
+                novel.append(ts); report["novel"].append({"index":idx,"tag":ts})
+        out[idx]={"tags":kept[:5], "novel":novel}
+    return out, report
+
+
     """物品 scene 字段 -> 场景 location_ref -> 物品 location_ref(确定性推导)。
     scene 可为 int 或 list。物品可经过多地点。"""
     scene_loc={}  # scene index -> location_id
