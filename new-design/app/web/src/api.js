@@ -63,6 +63,9 @@ export const uploadFile = (file) => {
 export const startAnalyze = (slug) =>
   post('/analyze/' + encodeURIComponent(slug))
 export const getProgress = (slug) => get('/progress/' + encodeURIComponent(slug))
+export const pauseAnalyze = (slug) => post('/pause/' + encodeURIComponent(slug))
+export const resumeAnalyze = (slug) => post('/resume/' + encodeURIComponent(slug))
+export const stopAnalyze = (slug) => post('/stop/' + encodeURIComponent(slug))
 
 // 书库管理
 export const updateNovelMeta = (slug, patch) =>
