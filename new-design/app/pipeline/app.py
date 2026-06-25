@@ -17,6 +17,7 @@
 模型调用:替换 call_model()(默认直连 Ollama)。
 """
 import os, sys, json, glob, re
+import time
 import clean_split as CS
 import storage, merge_core, aggregate, graph_index, gap_scan, org_extract
 import event_pipeline as EP
@@ -182,8 +183,15 @@ def load_presplit(dir_path):
     chapters.sort(key=lambda c:c["index"])
     return chapters
 
-def run(input_path, out_dir="output", presplit=False, progress_cb=None):
-    """progress_cb(event:dict) 可选回调,用于任务层捕获进度;不传则纯命令行行为不变。"""
+def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_continue=None):
+    """progress_cb(event:dict) 可选回调,用于任务层捕获进度;不传则纯命令行行为不变。
+    should_continue() -> "go"|"pause"|"stop" 可选:每章开始前查询控制状态。
+      pause:run 在章间阻塞轮询(2s)直到 go/stop —— 实现章间软停(不打断进行中的章)。
+      stop:停止后续章,但仍对已完成章做全局聚合后返回。"""
+    def _control():
+        if not should_continue: return "go"
+        try: return should_continue() or "go"
+        except Exception: return "go" 
     def emit(**ev):
         if progress_cb:
             try: progress_cb(ev)
@@ -204,7 +212,19 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None):
     emit(stage="split", total=total, done=0)
 
     done=0
+    stopped=False
     for c in chapters:
+        # 章间软停检查:pause 则阻塞轮询,stop 则跳出
+        st=_control()
+        while st=="pause":
+            emit(stage="paused", total=total, done=done)
+            time.sleep(2)
+            st=_control()
+        if st=="stop":
+            print("[控制] 收到 stop,停止后续章,聚合已完成部分")
+            emit(stage="stopping", total=total, done=done)
+            stopped=True
+            break
         ch=c["index"]
         cdir=os.path.join(out_dir,f"ch{ch:02d}")
         merged_path=os.path.join(cdir,"_merged.json")
