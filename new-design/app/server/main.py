@@ -210,6 +210,10 @@ def _run_analysis(slug):
         n = _split_to_input(slug, sel)
         _set_stage(slug, stage="analyzing", chapter_count=n, done=0, total=n, chapters=[])
         meta = read_meta(slug)
+        # 清除上一轮遗留的失败统计,避免陈旧数据污染本轮显示(本轮完成时据实重写)
+        for _k in ("error_count", "succeeded_count", "partial_reason", "first_error"):
+            meta.pop(_k, None)
+        write_meta(slug, meta)
         def control():
             # 读盘取最新 control(允许外部端点改写),返回 go|pause|stop
             cur = read_meta(slug) or {}
