@@ -4,7 +4,7 @@ import RulesPanel from './RulesPanel.jsx'
 
 const STAGE_LABEL = {
   uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
-  aggregating: '全局聚合', paused: '已暂停', stopping: '停止中', done: '已分析', partial: '部分完成', error: '出错', unknown: '—',
+  aggregating: '全局聚合', paused: '已暂停', stopping: '停止中', interrupted: '已中断', done: '已分析', partial: '部分完成', error: '出错', unknown: '—',
 }
 const COVER_PRESETS = ['#a8332a', '#b8884a', '#6f9b8e', '#5a6b8c', '#8c5a7a', '#3a322a']
 
