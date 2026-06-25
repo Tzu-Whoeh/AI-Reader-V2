@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { getRules, saveCustomRule, setDefaultRules, saveUserPreset } from '../api.js'
 
+// 把用户输入的关键词转成"整行含该词即删"的安全正则(转义元字符;clean() 用 match 锚定行首,故前缀 .*)
+const reEscape = (s) => (s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const kwToPattern = (kw) => '.*' + reEscape((kw || '').trim())
+// 从 .*转义 形式反推关键词(供编辑回显);失败则返回空,回退到正则模式
+const patternToKw = (pat) => {
+  if (!pat || !pat.startsWith('.*')) return null
+  try { const body = pat.slice(2); return body.replace(/\\([.*+?^${}()|[\]\\])/g, '$1') } catch { return null }
+}
+
 const KIND_LABEL = { noise: '噪音', chapter: '章节' }
 
 // mode: 'global'(编辑全局默认)| 'book'(编辑某书 rules_selected)
@@ -56,10 +65,17 @@ export default function RulesPanel({ mode = 'global', title, initialEnabled = nu
 
   const submitRule = async () => {
     const r = editRule
-    if (!r.id || !r.pattern || !r.kind) { setErr('需要 id / kind / pattern'); return }
+    // 含关键词模式:由关键词生成正则
+    const pattern = r._uimode === 'contains' ? kwToPattern(r.keyword) : r.pattern
+    const kind = r._uimode === 'contains' ? 'noise' : r.kind
+    const name = r.name || (r._uimode === 'contains' && r.keyword ? ('含「' + r.keyword.trim() + '」删行') : r.id)
+    if (!r.id || !pattern || (r._uimode === 'contains' && !(r.keyword || '').trim())) {
+      setErr(r._uimode === 'contains' ? '需要 ID 和 关键词' : '需要 id / kind / pattern'); return
+    }
     try {
       await saveCustomRule(r._isNew ? 'add' : 'update', {
-        id: r.id, kind: r.kind, name: r.name || r.id, pattern: r.pattern, desc: r.desc || '',
+        id: r.id, kind, name, pattern,
+        desc: r.desc || (r._uimode === 'contains' ? ('整行含「' + r.keyword.trim() + '」即删除') : ''),
       })
       setEditRule(null); await load()
     } catch (e) { setErr(e.message || String(e)) }
@@ -128,7 +144,7 @@ export default function RulesPanel({ mode = 'global', title, initialEnabled = nu
                   <span className="rp-name">{r.name || r.id}</span>
                   <code className="rp-pat" title={r.pattern}>{r.pattern}</code>
                   <span className="rp-ops">
-                    <button onClick={(e) => { e.preventDefault(); setEditRule({ ...r, _isNew: false }) }}>改</button>
+                    <button onClick={(e) => { e.preventDefault(); const kw = patternToKw(r.pattern); setEditRule({ ...r, _isNew: false, _uimode: kw != null ? 'contains' : 'regex', keyword: kw || '' }) }}>改</button>
                     <button onClick={(e) => { e.preventDefault(); delRule(r.id) }}>删</button>
                   </span>
                 </label>
@@ -166,17 +182,33 @@ export default function RulesPanel({ mode = 'global', title, initialEnabled = nu
               <label className="fld"><span>ID(唯一,不可与预制重名)</span>
                 <input value={editRule.id} disabled={!editRule._isNew}
                   onChange={e => setEditRule({ ...editRule, id: e.target.value.replace(/\s/g, '_') })} /></label>
-              <label className="fld"><span>类型</span>
-                <select value={editRule.kind} onChange={e => setEditRule({ ...editRule, kind: e.target.value })}>
-                  <option value="noise">噪音(整行匹配即删)</option>
-                  <option value="chapter">章节(标题行)</option>
+              <label className="fld"><span>方式</span>
+                <select value={editRule._uimode || 'regex'} onChange={e => setEditRule({ ...editRule, _uimode: e.target.value })}>
+                  <option value="contains">含关键词删整行</option>
+                  <option value="regex">正则(高级)</option>
                 </select></label>
-              <label className="fld"><span>名称</span>
-                <input value={editRule.name} onChange={e => setEditRule({ ...editRule, name: e.target.value })} /></label>
-              <label className="fld"><span>正则(Python re,整行 match)</span>
-                <input value={editRule.pattern} onChange={e => setEditRule({ ...editRule, pattern: e.target.value })} /></label>
-              <label className="fld"><span>说明</span>
-                <input value={editRule.desc} onChange={e => setEditRule({ ...editRule, desc: e.target.value })} /></label>
+              {(editRule._uimode || 'regex') === 'contains' ? (
+                <>
+                  <label className="fld"><span>关键词(整行包含即删,可改)</span>
+                    <input value={editRule.keyword || ''} placeholder="如:布塔书屋"
+                      onChange={e => setEditRule({ ...editRule, keyword: e.target.value })} /></label>
+                  <div className="rp-hint">将删除任何含「{(editRule.keyword || '').trim() || '…'}」的整行。</div>
+                </>
+              ) : (
+                <>
+                  <label className="fld"><span>类型</span>
+                    <select value={editRule.kind} onChange={e => setEditRule({ ...editRule, kind: e.target.value })}>
+                      <option value="noise">噪音(整行匹配即删)</option>
+                      <option value="chapter">章节(标题行)</option>
+                    </select></label>
+                  <label className="fld"><span>名称</span>
+                    <input value={editRule.name} onChange={e => setEditRule({ ...editRule, name: e.target.value })} /></label>
+                  <label className="fld"><span>正则(Python re,整行 match)</span>
+                    <input value={editRule.pattern} onChange={e => setEditRule({ ...editRule, pattern: e.target.value })} /></label>
+                  <label className="fld"><span>说明</span>
+                    <input value={editRule.desc} onChange={e => setEditRule({ ...editRule, desc: e.target.value })} /></label>
+                </>
+              )}
               <div className="modal-actions">
                 <button onClick={() => setEditRule(null)}>取消</button>
                 <button className="up-btn" onClick={submitRule}>保存</button>
