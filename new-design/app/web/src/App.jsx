@@ -56,13 +56,18 @@ export default function App() {
       try {
         const p = await getProgress(slug)
         setJob({ slug, prog: p })
-        if (p.stage === 'done' || p.stage === 'error') {
+        // 单一真相:把实时进度的 stage 同步进对应卡片,避免顶栏与卡片状态打架
+        setNovels(list => list.map(n => n.slug === slug
+          ? { ...n, stage: p.stage, running: !!p.running,
+              chapter_count: (p.done != null ? p.done : n.chapter_count) }
+          : n))
+        const TERMINAL = ['done', 'error', 'interrupted']
+        if (TERMINAL.includes(p.stage) || p.running === false) {
           clearInterval(pollRef.current)
           jobSlugRef.current = null
-          if (p.stage === 'done') {
-            // 完成自动入库:刷新列表,若当前未选则选中本书
-            refreshNovels().then(() => setNovel(cur => cur || slug))
-          }
+          setJob(null)               // 收起顶栏进度条
+          // 拉一次权威列表(后端会据实给出 done/partial/interrupted)
+          refreshNovels().then(() => { if (p.stage === 'done') setNovel(cur => cur || slug) })
         }
       } catch (e) { /* 瞬时失败忽略,下一拍重试 */ }
     }, 1000)
