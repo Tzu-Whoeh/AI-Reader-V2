@@ -99,6 +99,52 @@ CHAPTER_STEPS = [
 ]
 STEP_TOTAL = len(CHAPTER_STEPS)
 
+def _scene_excerpt(text, sc, pad=40):
+    """按 start_text/end_text 在原文中切出该场景片段,供重做摘要参考。
+    锚点缺失或定位失败时回退到原 summary 文本(总比不给强)。"""
+    st=sc.get("start_text"); en=sc.get("end_text")
+    a=text.find(st) if st else -1
+    b=text.find(en) if en else -1
+    if a>=0 and b>a:
+        return text[a:b+len(en)+pad]
+    if a>=0:
+        return text[a:a+800]
+    return sc.get("summary") or ""
+
+def _redo_scene_summaries(text, merged, Lload):
+    """对 _validation.scene_redo 列出的场景调模型重做 summary(带打回原因)。
+    重做结果再过 detect 校验:干净则替换;仍不合格或调用失败 → 确定性兜底截断。"""
+    redo=merged.get("_validation",{}).get("scene_redo",[])
+    if not redo: return
+    scenes={s.get("index"):s for s in merged.get("scenes",[])}
+    try: tmpl=Lload("01b_summary_redo.txt")
+    except Exception: tmpl=None
+    done=[]
+    for item in redo:
+        idx=item.get("index"); sc=scenes.get(idx)
+        if not sc: continue
+        ok=False
+        if tmpl:
+            excerpt=_scene_excerpt(text, sc)
+            prompt=(tmpl.replace("{REASON}", item.get("reason",""))
+                        .replace("{TITLE}", sc.get("title","") or "")
+                        .replace("{SCENE_TEXT}", excerpt))
+            try:
+                r=call_model(prompt, temperature=0.15, model=model_for("scene"))
+                new_sm=(r or {}).get("summary","").strip()
+                # 重做结果须非空且确定性校验干净(无元论证/不超长/不以问号结尾)
+                probe,_=merge_core.detect_scene_issues([{"index":idx,"summary":new_sm,
+                    "start_text":sc.get("start_text"),"end_text":sc.get("end_text")}], text)
+                if new_sm and not probe:
+                    sc["summary"]=new_sm; sc["_summary_redone"]=True; ok=True
+                    done.append({"index":idx,"action":"重做成功","len":len(new_sm)})
+            except Exception as e:
+                done.append({"index":idx,"action":"重做调用失败","err":str(e)[:80]})
+        if not ok:
+            fb=merge_core.apply_summary_fallback(sc, text)
+            done.append({"index":idx,"action":fb["reason"],"kept_len":fb["kept_len"]})
+    merged["_validation"]["scene_redo_result"]=done
+
 def analyze_chapter(text, step_cb=None):
     """单章五维度 + 事件 + 章节归并。返回 merged dict。
     step_cb(step, name, idx, total) 可选:每个子步骤开始时回调,用于细粒度进度。"""
@@ -138,6 +184,9 @@ def analyze_chapter(text, step_cb=None):
     step(7)
     # 章节归并(跨维度 id 解析)
     merged=merge_core.merge(text, scenes, c1, i1, l1)
+    # 场景 summary 兜底:对检测出问题的场景(元论证/超长/自问)调模型重做,带打回原因;
+    # 重做后再校验,仍不合格则用确定性截断兜底。重做保信息,兜底防 abliterated 二次翻车。
+    _redo_scene_summaries(text, merged, L)
     merged["character_relations"]=c2.get("relations",[])
     merged["location_relations"]=l2.get("relations",[])
     for s in merged["scenes"]:
