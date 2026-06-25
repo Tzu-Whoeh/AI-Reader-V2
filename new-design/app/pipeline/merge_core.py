@@ -36,7 +36,66 @@ def resolve(value, idx):
         if n and (n in value or value in n): return (i,n)  # 包含次之
     return (None,None)
 
-# ---------- 主归并 ----------
+# ---------- 场景兜底清洗(第二道防线;prompt 是第一道) ----------
+# 切分元论证标志词:模型偶尔把"该不该这样分段"的自我辩论写进 summary。
+# 这些是确定性的污染信号 —— 命中即在该词处截断 summary(只保留它之前的客观叙述)。
+_SCENE_META_MARKERS=["根据核心原则","根据原则","本应合并","应合并为","应合并?","严格遵循",
+    "考虑到原文结构","通常叙事单元","若严格","本应","故第","注:此处","注：此处"]
+_SCENE_SUMMARY_MAX=120   # 客观摘要软上限;超出在句末截断
+
+def _truncate_at_sentence(s, limit):
+    """在 limit 内的最后一个句末标点处截断;找不到则硬截到 limit。"""
+    if len(s)<=limit: return s
+    head=s[:limit]
+    cut=max(head.rfind("。"), head.rfind("!"), head.rfind("?"),
+            head.rfind("！"), head.rfind("？"))
+    return head[:cut+1] if cut>0 else head
+
+def sanitize_scenes(scenes, text):
+    """场景兜底:剥离 summary 元论证、超长截断、锚点缺失/重复检测。
+    确定性可判的(元论证词、超长)直接清;无法可靠判定的(重复锚点)只记 ambiguities 交人工,不硬猜。"""
+    report={"summary":[], "anchors":[], "ambiguities":[]}
+    prev_start=None
+    for sc in scenes:
+        idx=sc.get("index")
+        sm=sc.get("summary") or ""
+        orig_len=len(sm)
+        # 1) 元论证剥离:命中标志词 → 截到最早命中位置之前
+        hits=[(sm.find(m), m) for m in _SCENE_META_MARKERS if m in sm]
+        if hits:
+            pos=min(p for p,_ in hits)
+            cleaned=sm[:pos].rstrip().rstrip("，,；;").rstrip()
+            report["summary"].append({"index":idx,"reason":"元论证剥离",
+                "markers":sorted({m for _,m in hits}),"orig_len":orig_len,"kept_len":len(cleaned)})
+            sm=cleaned; sc["_summary_flagged"]=True
+        # 2) 以问号结尾(自问)→ 去掉末句问句
+        if sm.rstrip().endswith("?") or sm.rstrip().endswith("？"):
+            q=max(sm.rfind("。"), sm.rfind("！"), sm.rfind("!"))
+            cleaned=sm[:q+1] if q>0 else sm
+            if cleaned!=sm:
+                report["summary"].append({"index":idx,"reason":"去自问句尾","orig_len":len(sm),"kept_len":len(cleaned)})
+                sm=cleaned; sc["_summary_flagged"]=True
+        # 3) 超长 → 句末截断
+        if len(sm)>_SCENE_SUMMARY_MAX:
+            cut=_truncate_at_sentence(sm, _SCENE_SUMMARY_MAX)
+            report["summary"].append({"index":idx,"reason":"超长截断","orig_len":len(sm),"kept_len":len(cut)})
+            sm=cut; sc["_summary_flagged"]=True
+        sc["summary"]=sm
+        # 4) 锚点缺失
+        st=sc.get("start_text"); en=sc.get("end_text")
+        miss=[k for k,v in (("start_text",st),("end_text",en)) if not v]
+        if miss:
+            report["anchors"].append({"index":idx,"missing":miss,"title":sc.get("title")})
+        # 5) 锚点逐字校验:start/end 应摘自原文
+        for k,v in (("start_text",st),("end_text",en)):
+            if v and v not in text:
+                report["anchors"].append({"index":idx,"key":k,"reason":"原文未找到","head":v[:20]})
+        # 6) 相邻场景 start_text 相同 → 无法确定哪个对,交人工(不硬改)
+        if st and prev_start and st==prev_start:
+            report["ambiguities"].append({"index":idx,"reason":"start_text与上一场景相同,锚点存疑",
+                "start_text":st[:30]})
+        prev_start=st
+    return report
 
 def resolve_item_locations(items, scenes):
     """物品 scene 字段 -> 场景 location_ref -> 物品 location_ref(确定性推导)。
@@ -90,11 +149,14 @@ def sanitize_items(items):
 
 def merge(text, scenes, characters, items, locations):
     items_clean, item_report=sanitize_items(items.get("items",[]))
-    out={"scenes":scenes.get("scenes",[]),
+    scene_list=scenes.get("scenes",[])
+    scene_report=sanitize_scenes(scene_list, text)
+    out={"scenes":scene_list,
          "characters":characters.get("characters",[]),
          "items":items_clean,
          "locations":locations.get("locations",[]),
-         "_validation":{"anchors":[], "xref":[], "item_sanitize":item_report}}
+         "_validation":{"anchors":[], "xref":[], "item_sanitize":item_report,
+                        "scene_sanitize":scene_report}}
 
     # 锚点校验各维度
     out["_validation"]["anchors"]+=anchor_clean(out["characters"], text, "name", ["aliases"])
