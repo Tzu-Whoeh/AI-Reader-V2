@@ -42,15 +42,17 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
 
   useEffect(() => {
     if (!expandedNovel) { setStats(null); return }
-    const analyzed = expandedNovel.stage === 'done' || expandedNovel.stage === 'partial'
-    if (!analyzed) { setStats(null); return }
+    // 只要已有章节产物就拉统计(分析中也有部分结果);完全没开始(uploaded/splitting)才不拉
+    const hasData = (expandedNovel.chapter_count || 0) > 0 ||
+      ['done','partial','analyzing','aggregating','paused','stopping'].includes(expandedNovel.stage)
+    if (!hasData) { setStats(null); return }
     let stale = false
     setStats({ loading: true })
     getSummary(expandedNovel.slug)
       .then(s => { if (!stale) setStats({ loading: false, counts: s.counts || {}, chapters: (s.chapters || []).length }) })
       .catch(() => { if (!stale) setStats({ loading: false, counts: null }) })
     return () => { stale = true }
-  }, [expanded]) // eslint-disable-line
+  }, [expanded, expandedNovel && expandedNovel.chapter_count, expandedNovel && expandedNovel.stage]) // eslint-disable-line
 
   const doUpload = async () => {
     setErr(null); setBusy(true)
