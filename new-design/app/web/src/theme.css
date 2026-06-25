@@ -277,3 +277,100 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .rp-save-preset button:hover{color:var(--ink);border-color:var(--thread)}
 .fld select{width:100%;background:var(--paper);border:1px solid var(--line);color:var(--ink);
   font-family:sans-serif;font-size:13px;padding:7px 9px;border-radius:3px}
+/* ════════════════ 响应式适配 ════════════════ */
+/* 桌面默认隐藏移动专用控件 */
+.nav-toggle, .reader-ch-toggle, .reader-overlay, .reader-detail-close { display: none; }
+
+/* ───── 平板及以下 ≤768px ───── */
+@media (max-width: 768px) {
+  body { overflow: auto; }
+
+  /* 顶栏:汉堡切视图,stat 收起 */
+  .top { flex-wrap: wrap; gap: 10px 14px; padding: 12px 16px; position: relative; }
+  .top h1 { font-size: 19px; }
+  .top .sub { display: none; }
+  .top .stat { display: none; }
+  .nav-toggle { display: inline-block; margin-left: auto; background: none;
+    border: 1px solid var(--line); color: var(--ink); font-size: 18px;
+    line-height: 1; padding: 5px 11px; border-radius: 3px; cursor: pointer; }
+  .top .views { display: none; flex-direction: column; gap: 4px;
+    position: absolute; top: 100%; right: 16px; z-index: 40; min-width: 150px;
+    background: var(--paper2); border: 1px solid var(--line); border-radius: 4px;
+    padding: 6px; margin-left: 0; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+  .top .views.open { display: flex; }
+  .top .views button { width: 100%; text-align: left; padding: 9px 12px; font-size: 14px; }
+
+  /* 全局进度条 */
+  .gjob { padding: 6px 16px; }
+  .gjob-bar { flex: 0 0 110px; }
+
+  /* 图谱:过滤器换行,侧栏移到下方堆叠 */
+  .filters { padding: 9px 16px; flex-wrap: wrap; }
+  .main { flex-direction: column; height: auto; }
+  .graph-pane { height: 56vh; min-height: 320px; }
+  .side { width: 100%; border-left: none; border-top: 1px solid var(--line);
+    max-height: none; }
+
+  /* 阅读:单栏正文为主;章节抽屉 + 属性底部弹层 */
+  .reader { display: block; height: auto; position: relative; }
+  .reader-ch-toggle { display: inline-block; position: sticky; top: 0; z-index: 20;
+    margin: 10px 16px; background: var(--paper2); border: 1px solid var(--line);
+    color: var(--ink); font-family: sans-serif; font-size: 13px;
+    padding: 7px 14px; border-radius: 4px; cursor: pointer; }
+
+  /* 章节列表 → 左侧抽屉 */
+  .reader-chs { position: fixed; top: 0; left: 0; bottom: 0; width: 76%; max-width: 300px;
+    z-index: 60; transform: translateX(-100%); transition: transform .25s ease;
+    border-right: 1px solid var(--line); padding: 18px 14px; }
+  .reader.ch-open .reader-chs { transform: translateX(0); }
+  .reader-chs button { font-size: 15px; padding: 9px 10px; }
+
+  /* 遮罩:抽屉/弹层打开时出现 */
+  .reader-overlay { display: none; position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,.5); }
+  .reader.ch-open .reader-overlay,
+  .reader.detail-open .reader-overlay { display: block; }
+
+  /* 正文:取消固定高度滚动,自然流;保证不竖排 */
+  .reader-text { padding: 6px 18px 40px; overflow: visible; }
+  .rt-body { font-size: 17px; line-height: 1.95; max-width: 100%; }
+  .rt-bar { flex-wrap: wrap; }
+
+  /* 属性面板 → 底部弹层 */
+  .reader-detail { position: fixed; left: 0; right: 0; bottom: 0; width: auto;
+    z-index: 60; max-height: 72vh; border-left: none; border-top: 2px solid var(--stamp);
+    border-radius: 10px 10px 0 0; transform: translateY(100%);
+    transition: transform .25s ease; padding: 20px 18px 28px; }
+  .reader.detail-open .reader-detail { transform: translateY(0); }
+  .reader-detail-close { display: block; position: absolute; top: 10px; right: 14px;
+    background: none; border: none; color: var(--dim); font-size: 26px;
+    line-height: 1; cursor: pointer; }
+  .reader-detail-close:hover { color: var(--ink); }
+
+  /* 书库网格 */
+  .lib-wrap { padding: 16px; }
+  .lib-head { gap: 10px; }
+  .lib-upload { margin-left: 0; }
+  .lib-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+  /* 时间线 / 场景 / 通用滚动页 */
+  .view-scroll { height: auto; padding: 16px; }
+  .view-bar { flex-wrap: wrap; gap: 10px; }
+  .view-bar .seg { margin-left: 0; }
+
+  /* 规则面板全宽 */
+  .rp-modal { width: 96vw; max-height: 88vh; }
+  .modal { width: 92vw; }
+}
+
+/* ───── 手机 ≤480px ───── */
+@media (max-width: 480px) {
+  .top h1 { font-size: 17px; }
+  .rt-body { font-size: 16px; line-height: 1.9; }
+  .reader-detail { max-height: 80vh; }
+  .lib-grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+  .bc-cover { height: 92px; }
+  .bc-cover-ch { font-size: 38px; }
+  .rp-rule { flex-wrap: wrap; }
+  .rp-pat { flex-basis: 100%; margin-left: 22px; }
+}
