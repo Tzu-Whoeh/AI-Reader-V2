@@ -201,6 +201,27 @@ def analyze_chapter(text, step_cb=None):
         merge_core.derive_scene_tags(merged)
     except Exception as e:
         merged.setdefault("_postproc_errors",[]).append(f"scene_tags: {e}")
+    # 功能标签(独立 pass,模型):依据场景标题+摘要打 1-5 个功能类标签(情报传递/冲突/抒情…)。
+    # 候选清单注入 prompt 引导优先复用;后处理词形校验 + in_catalog 标注,清单外保留记 novel。
+    try:
+        catalog=getattr(merge_core,"FUNCTION_TAG_CATALOG",[])
+        slist="\n".join(f'  index={s.get("index")} 标题="{s.get("title","")}" 摘要="{s.get("summary","")}"'
+                        for s in merged.get("scenes",[]))
+        ft_raw=call_model(L("01c_scene_function_tags.txt")
+                          .replace("{CATALOG}", "、".join(catalog))
+                          .replace("{SCENELIST}", slist),
+                          temperature=0.15, model=model_for("scene"))
+        ft_clean, ft_report=merge_core.sanitize_function_tags(ft_raw.get("scenes",[]), catalog)
+        for s in merged.get("scenes",[]):
+            res=ft_clean.get(s.get("index"))
+            if res:
+                tags=s.get("tags") if isinstance(s.get("tags"),dict) else {}
+                tags["function"]=res["tags"]
+                if res["novel"]: tags["function_novel"]=res["novel"]
+                s["tags"]=tags
+        merged.setdefault("_validation",{})["function_tags"]=ft_report
+    except Exception as e:
+        merged.setdefault("_postproc_errors",[]).append(f"function_tags: {e}")
     # 组织维度(明说成员归属守红线;确定性后处理 + 成员名归一)
     step(8)
     try:
