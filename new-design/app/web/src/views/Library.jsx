@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel, reclean } from '../api.js'
+import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel, reclean, pauseAnalyze, resumeAnalyze } from '../api.js'
 import RulesPanel from './RulesPanel.jsx'
 
 const STAGE_LABEL = {
   uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
-  aggregating: '全局聚合', done: '已分析', partial: '部分完成', error: '出错', unknown: '—',
+  aggregating: '全局聚合', paused: '已暂停', stopping: '停止中', done: '已分析', partial: '部分完成', error: '出错', unknown: '—',
 }
 const COVER_PRESETS = ['#a8332a', '#b8884a', '#6f9b8e', '#5a6b8c', '#8c5a7a', '#3a322a']
 
@@ -53,6 +53,15 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
 
   const analyzeAgain = async (slug) => {
     try { await startAnalyze(slug); onStarted?.(slug) }
+    catch (e) { setErr(e.message || String(e)) }
+  }
+
+  const doPause = async (slug) => {
+    try { await pauseAnalyze(slug); onRefresh?.() }
+    catch (e) { setErr(e.message || String(e)) }
+  }
+  const doResume = async (slug) => {
+    try { await resumeAnalyze(slug); onRefresh?.() }
     catch (e) { setErr(e.message || String(e)) }
   }
 
@@ -144,6 +153,9 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                     <div className="bc-partial" title={n.partial_reason}>{n.partial_reason}</div>}
                   <div className="bc-actions">
                     {analyzed && <button onClick={() => onOpen?.(n.slug)}>打开</button>}
+                    {running && (n.stage === 'paused'
+                      ? <button onClick={() => doResume(n.slug)}>继续</button>
+                      : <button onClick={() => doPause(n.slug)} disabled={n.stage === 'stopping'}>暂停</button>)}
                     {!running && <button onClick={() => analyzeAgain(n.slug)}>{analyzed ? '重新分析' : '分析'}</button>}
                     <button onClick={() => setEditing({ ...n, tags: n.tags || [], cover: n.cover || color })}>编辑</button>
                     {!running && <button onClick={() => setRulesPanel({ mode: 'book', slug: n.slug, initial: n.rules_selected ?? null })}>规则</button>}
