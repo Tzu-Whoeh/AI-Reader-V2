@@ -99,6 +99,17 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
     }
   }, [picked, chOpen])
 
+  // 上一章/下一章(按 chapters 数组定位,兼容非连续章号;头尾为 null)
+  const navAdj = useMemo(() => {
+    const i = chapters.indexOf(ch)
+    if (i < 0) return { prev: null, next: null }
+    return {
+      prev: i > 0 ? chapters[i - 1] : null,
+      next: i < chapters.length - 1 ? chapters[i + 1] : null,
+    }
+  }, [chapters, ch])
+  const goCh = (c) => { if (c != null) { setCh(c); window.scrollTo(0, 0) } }
+
   const counts = useMemo(() => {
     if (!data?.highlights) return {}
     const c = {}
@@ -149,6 +160,14 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
               ))}
             </div>
             <article className="rt-body">{renderText(data.text, data.highlights, setPicked)}</article>
+            <nav className="rt-nav">
+              {navAdj.prev != null
+                ? <button className="rt-nav-prev" onClick={() => goCh(navAdj.prev)}>← 第 {navAdj.prev} 章</button>
+                : <span className="rt-nav-edge">已是第一章</span>}
+              {navAdj.next != null
+                ? <button className="rt-nav-next" onClick={() => goCh(navAdj.next)}>第 {navAdj.next} 章 →</button>
+                : <span className="rt-nav-edge">已是最后一章</span>}
+            </nav>
           </>
         )}
       </main>
