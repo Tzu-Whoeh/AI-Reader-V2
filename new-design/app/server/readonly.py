@@ -77,11 +77,16 @@ def list_novels():
         if not os.path.isdir(nd): continue
         meta_p=os.path.join(nd,"meta.json")
         meta=json.load(open(meta_p,encoding="utf-8")) if os.path.exists(meta_p) else {}
-        # 章数:output/<slug>/chNN
-        chn=len([d for d in os.listdir(nd) if d.startswith("ch") and d[2:].isdigit()])
-        out.append({"slug":slug,"novel_name":meta.get("novel_name",slug),
+        # 章数 + 已分析章号区间:output/<slug>/chNN
+        chnums=sorted(int(d[2:]) for d in os.listdir(nd) if d.startswith("ch") and d[2:].isdigit())
+        chn=len(chnums)
+        item={"slug":slug,"novel_name":meta.get("novel_name",slug),
                     "author":meta.get("author"),"chapter_count":chn,
-                    "stage":meta.get("stage"),"uploaded_at":meta.get("uploaded_at")})
+                    "stage":meta.get("stage"),"uploaded_at":meta.get("uploaded_at")}
+        if chnums:
+            item["analyzed_min"]=chnums[0]; item["analyzed_max"]=chnums[-1]
+            item["analyzed_count"]=chn
+        out.append(item)
     return out
 
 class use_novel:
