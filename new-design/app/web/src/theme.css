@@ -407,9 +407,9 @@ mark.hl:hover{background:color-mix(in srgb, var(--hc) 38%, transparent)}
 .bc-more { color: var(--dim); }
 /* 放大卡片:分析统计 */
 .bcm-stats { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 18px;
-  padding: 14px 8px; background: var(--paper2); border-radius: 8px; }
-.bcm-stat { flex: 1; min-width: 56px; display: flex; flex-direction: column;
-  align-items: center; gap: 2px; }
+  padding: 12px 8px; background: var(--paper2); border-radius: 8px; }
+.bcm-stat { flex: 0 0 calc(33.333% - 4px); display: flex; flex-direction: column;
+  align-items: center; gap: 2px; padding: 6px 0; }
 .bcm-stat-n { font-size: 20px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 .bcm-stat-l { font-size: 11px; color: var(--dim); font-family: sans-serif; }
 .bcm-stats-hint { font-family: sans-serif; font-size: 13px; color: var(--dim); padding: 4px 6px; }
