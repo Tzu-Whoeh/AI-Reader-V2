@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel, reclean, pauseAnalyze, resumeAnalyze } from '../api.js'
+import React, { useState, useEffect } from 'react'
+import { uploadFile, startAnalyze, updateNovelMeta, deleteNovel, reclean, pauseAnalyze, resumeAnalyze, getSummary } from '../api.js'
 import RulesPanel from './RulesPanel.jsx'
 
 const STAGE_LABEL = {
@@ -34,10 +34,23 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
   const [rulesPanel, setRulesPanel] = useState(null)   // {mode:'global'|'book', slug?, initial?}
   const [recleaning, setRecleaning] = useState(null)
   const [expanded, setExpanded] = useState(null)   // 点击放大的卡片(slug)
+  const [stats, setStats] = useState(null)         // 放大卡片的分析统计 {loading, counts, chapters}
 
   const jp = job?.prog
   const jobSlug = job?.slug
   const expandedNovel = expanded ? novels.find(n => n.slug === expanded) : null
+
+  useEffect(() => {
+    if (!expandedNovel) { setStats(null); return }
+    const analyzed = expandedNovel.stage === 'done' || expandedNovel.stage === 'partial'
+    if (!analyzed) { setStats(null); return }
+    let stale = false
+    setStats({ loading: true })
+    getSummary(expandedNovel.slug)
+      .then(s => { if (!stale) setStats({ loading: false, counts: s.counts || {}, chapters: (s.chapters || []).length }) })
+      .catch(() => { if (!stale) setStats({ loading: false, counts: null }) })
+    return () => { stale = true }
+  }, [expanded]) // eslint-disable-line
 
   const doUpload = async () => {
     setErr(null); setBusy(true)
@@ -196,6 +209,26 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                     <div className="bc-partial">{n.partial_reason}</div>}
                 </div>
               </div>
+              {stats && (
+                <div className="bcm-stats">
+                  {stats.loading ? <span className="bcm-stats-hint">统计加载中…</span>
+                   : stats.counts ? (
+                    <>
+                      {[['characters','人物'],['organizations','组织'],['items','物品'],
+                        ['locations','地点'],['events','事件']].map(([k, label]) => (
+                        <div key={k} className="bcm-stat">
+                          <span className="bcm-stat-n">{stats.counts[k] ?? 0}</span>
+                          <span className="bcm-stat-l">{label}</span>
+                        </div>
+                      ))}
+                      <div className="bcm-stat">
+                        <span className="bcm-stat-n">{stats.chapters ?? 0}</span>
+                        <span className="bcm-stat-l">章</span>
+                      </div>
+                    </>
+                   ) : <span className="bcm-stats-hint">统计不可用</span>}
+                </div>
+              )}
               <div className="bcm-actions">
                 {analyzed && <button className="up-btn" onClick={() => { onOpen?.(n.slug); close() }}>打开阅读</button>}
                 {running && (n.stage === 'paused'
