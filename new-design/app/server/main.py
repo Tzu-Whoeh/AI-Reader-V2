@@ -152,7 +152,7 @@ def register_readonly():
                     done = (m or {}).get("done", 0); total = (m or {}).get("total", 0)
                     n["partial_reason"] = f"分析中断,已完成 {done}/{total} 章(可重新分析续跑)"
             if m:
-                for k in ("tags", "cover", "rules_selected", "partial_reason", "error_count", "first_error"):
+                for k in ("tags", "cover", "rules_selected", "function_tag_catalog", "partial_reason", "error_count", "first_error"):
                     if k in m and k not in n: n[k] = m[k]
         return jsonify({"novels": nv, "current": latest_novel_slug()})
 
@@ -206,6 +206,7 @@ def _run_analysis(slug):
         _set_stage(slug, stage="splitting", control="go")
         meta0 = read_meta(slug) or {}
         sel = meta0.get("rules_selected")  # None → 全局默认
+        ftcat = meta0.get("function_tag_catalog")  # 单书功能标签候选清单;None/空 → pipeline 回退内置默认
         n = _split_to_input(slug, sel)
         _set_stage(slug, stage="analyzing", chapter_count=n, done=0, total=n, chapters=[])
         meta = read_meta(slug)
@@ -237,7 +238,7 @@ def _run_analysis(slug):
                 meta["clean_fingerprint"] = RULES.fingerprint(meta.get("rules_selected"))
             write_meta(slug, meta)
         # presplit:input/<slug>/ 下已是 chNN.txt
-        pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb, should_continue=control)
+        pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb, should_continue=control, function_catalog=ftcat)
         # 完结判定:逐章错误隔离会让 pipeline 即使大量失败也"跑完"并发 done。
         # 这里据实复核 —— 有章节失败或未跑满则标 partial,不再一律 done。
         m = read_meta(slug)
@@ -449,6 +450,19 @@ def register_library_admin():
         if "rules_selected" in body:
             v = body["rules_selected"]
             meta["rules_selected"] = list(v) if isinstance(v, list) else None
+        if "function_tag_catalog" in body:
+            v = body["function_tag_catalog"]
+            # 仅接受字符串列表;去空白/去重/限长(单词级,与 sanitize_function_tags 一致的精神)
+            if isinstance(v, list):
+                seen=set(); clean=[]
+                for t in v:
+                    if not isinstance(t, str): continue
+                    t=t.strip()
+                    if t and 2<=len(t)<=5 and t not in seen:
+                        seen.add(t); clean.append(t)
+                meta["function_tag_catalog"] = clean
+            else:
+                meta["function_tag_catalog"] = None
         write_meta(slug, meta)
         meta["dirty"] = _is_dirty(slug, meta)
         return jsonify({"ok": True, "meta": meta})

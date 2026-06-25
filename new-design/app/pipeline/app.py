@@ -145,7 +145,7 @@ def _redo_scene_summaries(text, merged, Lload):
             done.append({"index":idx,"action":fb["reason"],"kept_len":fb["kept_len"]})
     merged["_validation"]["scene_redo_result"]=done
 
-def analyze_chapter(text, step_cb=None):
+def analyze_chapter(text, step_cb=None, function_catalog=None):
     """单章五维度 + 事件 + 章节归并。返回 merged dict。
     step_cb(step, name, idx, total) 可选:每个子步骤开始时回调,用于细粒度进度。"""
     def step(i):
@@ -204,7 +204,7 @@ def analyze_chapter(text, step_cb=None):
     # 功能标签(独立 pass,模型):依据场景标题+摘要打 1-5 个功能类标签(情报传递/冲突/抒情…)。
     # 候选清单注入 prompt 引导优先复用;后处理词形校验 + in_catalog 标注,清单外保留记 novel。
     try:
-        catalog=getattr(merge_core,"FUNCTION_TAG_CATALOG",[])
+        catalog=function_catalog or getattr(merge_core,"FUNCTION_TAG_CATALOG",[])
         slist="\n".join(f'  index={s.get("index")} 标题="{s.get("title","")}" 摘要="{s.get("summary","")}"'
                         for s in merged.get("scenes",[]))
         ft_raw=call_model(L("01c_scene_function_tags.txt")
@@ -259,7 +259,7 @@ def load_presplit(dir_path):
     chapters.sort(key=lambda c:c["index"])
     return chapters
 
-def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_continue=None):
+def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_continue=None, function_catalog=None):
     """progress_cb(event:dict) 可选回调,用于任务层捕获进度;不传则纯命令行行为不变。
     should_continue() -> "go"|"pause"|"stop" 可选:每章开始前查询控制状态。
       pause:run 在章间阻塞轮询(2s)直到 go/stop —— 实现章间软停(不打断进行中的章)。
@@ -314,7 +314,7 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
         try:
             if len(c["text"])>40000:
                 print(f"[ch{ch:02d}] 超长章({len(c['text'])}字),可能逼近上下文上限")
-            merged=analyze_chapter(c["text"], step_cb=_step_cb)
+            merged=analyze_chapter(c["text"], step_cb=_step_cb, function_catalog=function_catalog)
             merged["_title"]=c["title"]
             store.save_chapter_merged(ch, merged)
             done+=1
