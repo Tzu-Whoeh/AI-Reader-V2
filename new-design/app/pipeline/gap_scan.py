@@ -14,10 +14,13 @@ import json, re
 def _scene_segments(fulltext, scenes):
     segs={}
     for s in scenes:
-        st=fulltext.find(s["start_text"][:20]); en=fulltext.find(s["end_text"][:20])
+        start_anchor=(s.get("start_text") or "")[:20]
+        end_anchor=(s.get("end_text") or "")[:20]
+        st=fulltext.find(start_anchor) if start_anchor else -1
+        en=fulltext.find(end_anchor) if end_anchor else -1
         if st<0: st=0
-        en=len(fulltext) if en<0 else en+len(s["end_text"][:20])
-        segs[s["index"]]=(st,en,fulltext[st:en])
+        en=len(fulltext) if en<0 else en+len(end_anchor)
+        segs[s.get("index")]=(st,en,fulltext[st:en])
     return segs
 
 def scan(fulltext, merged, events):
