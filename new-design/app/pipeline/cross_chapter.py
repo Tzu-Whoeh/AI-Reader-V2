@@ -12,6 +12,29 @@ from collections import defaultdict
 
 def norm(s): return (s or "").strip()
 
+# --- 通用词守卫:这些"称呼"非专名,多个不同人共用,不能作为跨章合并的桥(否则
+#     一个"他"把全部人物并成一坨)。仅用于合并判定;真专名重叠仍正常合并。 ---
+import re as _re
+_PRONOUNS={"他","她","它","我","你","您","咱","俺","他们","她们","咱们","我们","你们","他们几个"}
+_GENERIC_TITLES={"处长","处座","主任","秘书","司机","老板","老头子","老子","老弟","义父",
+  "属下","部下","下属","顶头上司","上司","得力手下","手下","大使","尊神","侩子手","刽子手",
+  "犯人","女犯","男犯","队长","组长","科长","局长","站长","先生","太太","小姐","老爷",
+  "一处之长","刑稽处长","华处长","处座大人"}
+_EPITHETS={"卖国贼","叛徒","汉奸","大汉奸","走狗","奸细","内奸","败类"}
+_GENERIC=_PRONOUNS|_GENERIC_TITLES|_EPITHETS
+_SURNAME_TITLE=_re.compile(r"^[\u4e00-\u9fa5]?(秘书|处长|主任|司机|老板|队长|科长|局长|站长|先生|太太|小姐)$")
+def _is_merge_key(tok):
+    """该名字是否够"专名",可作跨章合并桥。"""
+    t=norm(tok)
+    if not t or len(t)<=1: return False         # 单字基本是代词/泛称
+    if t in _GENERIC: return False
+    if _SURNAME_TITLE.match(t): return False     # 林秘书/王处长…姓+泛职,跨人易撞
+    return True
+def _display_names(names):
+    """对外展示的 all_names:剔除代词/贬称/纯泛称,保留可作称呼的专名与有意义别名。"""
+    out=[n for n in names if n and n not in _PRONOUNS and n not in _EPITHETS]
+    return sorted(out)
+
 def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
     """
     跨章实体归一。返回:
@@ -25,7 +48,8 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
             names=set([norm(r.get(name_key))])
             if alias_key and r.get(alias_key): names|={norm(a) for a in r[alias_key]}
             names={n for n in names if n}
-            nodes.append({"chapter":ch_idx+1,"local_id":r["id"],"names":names,"raw":r})
+            mkeys={n for n in names if _is_merge_key(n)} if ent_key=="characters" else set(names)
+            nodes.append({"chapter":ch_idx+1,"local_id":r["id"],"names":names,"mkeys":mkeys,"raw":r})
 
     # 并查集: 名字有交集则合并
     parent=list(range(len(nodes)))
@@ -40,7 +64,7 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
     # 复杂度从 O(n^2) 降到 O(n + Σ 桶内对数);现实语料里绝大多数名字桶很小。
     name2nodes=defaultdict(list)
     for idx,nd in enumerate(nodes):
-        for nm in nd["names"]:
+        for nm in nd["mkeys"]:
             name2nodes[nm].append(idx)
 
     # 收集所有"共享名字"的无序节点对(去重),并记录它们共享的名字集合。
@@ -59,7 +83,7 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
     # overlap 直接用两节点 name 集合的交集(与原实现逐字一致,而非累加器),
     # 保证 overlap 列表内部顺序也与原输出 byte 级相同。
     for (i,j) in sorted(pair_overlap.keys()):
-        inter=nodes[i]["names"] & nodes[j]["names"]
+        inter=nodes[i]["mkeys"] & nodes[j]["mkeys"]
         # 判断置信: 是否有"主名"级别的交集(任一方的第一个名/最长名相同)
         exact = nodes[i]["raw"].get(name_key)==nodes[j]["raw"].get(name_key)
         union(i,j)
@@ -76,6 +100,7 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
     for gi,(root,members) in enumerate(groups.items(),1):
         allnames=set(); 
         for m in members: allnames|=m["names"]
+        if ent_key=="characters": allnames=set(_display_names(allnames))
         # canonical: 出现最多/最长的本名
         canon=sorted((m["raw"].get(name_key) for m in members), key=lambda s:-len(s or ""))[0]
         global_list.append({
