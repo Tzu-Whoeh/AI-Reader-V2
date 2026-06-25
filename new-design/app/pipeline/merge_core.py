@@ -107,6 +107,34 @@ def apply_summary_fallback(sc, text=None):
     sc["_summary_flagged"]=True
     return {"index":sc.get("index"),"reason":"重做失败→确定性兜底","markers":markers,"kept_len":len(sm)}
 
+def derive_scene_tags(merged):
+    """纯确定性派生场景基础标签(零模型):
+      - narrative: 叙事类型(scene.type)
+      - location:  场景地点(scene.location,去'未明')
+      - characters: 该场景涉及人物名(由 parent_events[scene_ref==idx].participants 聚合 → 人物名)
+    结果写入 sc['tags'](dict)。功能类标签(情报传递/冲突等)由后续模型 pass 另填,不在此处覆盖。"""
+    id2name={c.get("id"):c.get("name") for c in merged.get("characters",[])}
+    scene_chars={}
+    for ev in merged.get("parent_events",[]):
+        sref=ev.get("scene_ref")
+        if sref is None: continue
+        bucket=scene_chars.setdefault(sref, [])
+        for p in (ev.get("participants") or []):
+            if p not in bucket: bucket.append(p)
+    for sc in merged.get("scenes",[]):
+        idx=sc.get("index")
+        chars=[id2name.get(p) for p in scene_chars.get(idx,[]) if id2name.get(p)]
+        loc=sc.get("location")
+        base={
+            "narrative": sc.get("type") or None,
+            "location": loc if (loc and loc!="未明") else None,
+            "characters": chars,
+        }
+        existing=sc.get("tags") if isinstance(sc.get("tags"), dict) else {}
+        existing.update({k:v for k,v in base.items() if v})
+        sc["tags"]=existing
+    return merged
+
 def resolve_item_locations(items, scenes):
     """物品 scene 字段 -> 场景 location_ref -> 物品 location_ref(确定性推导)。
     scene 可为 int 或 list。物品可经过多地点。"""
