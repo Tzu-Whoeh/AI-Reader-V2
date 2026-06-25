@@ -18,7 +18,7 @@
 """
 import os, sys, json, glob, re
 import clean_split as CS
-import storage, merge_core, aggregate, graph_index, gap_scan
+import storage, merge_core, aggregate, graph_index, gap_scan, org_extract
 import event_pipeline as EP
 
 # ---- 模型调用(默认直连;平台环境替换此函数,并赋给 EP.call_model)----
@@ -93,6 +93,7 @@ CHAPTER_STEPS = [
     ("location_p1", "地点识别"),
     ("location_p2", "地点关系"),
     ("events", "事件分析"),
+    ("organization", "组织识别"),
     ("merge", "归并与后处理"),
 ]
 STEP_TOTAL = len(CHAPTER_STEPS)
@@ -144,8 +145,19 @@ def analyze_chapter(text, step_cb=None):
     merged["parent_events"]=ev["parent_events"]
     merged["sub_events"]=ev["sub_events"]
     merged["time_refs"]=ev.get("time_refs",[])
-    # 确定性后处理(不调模型):逐章建全向图索引 + 漏标疑点扫描,挂进本章产物
+    # 组织维度(明说成员归属守红线;确定性后处理 + 成员名归一)
     step(8)
+    try:
+        o_raw=call_model(L("09_org_extraction.txt").replace("{TEXT}",text))
+        o_clean=org_extract.postprocess(o_raw, text)
+        merged["organizations"]=o_clean["organizations"]
+        merged["org_memberships"]=org_extract.resolve_member_ids(o_clean["memberships"], merged.get("characters",[]))
+        merged["org_relations"]=o_clean["org_relations"]
+    except Exception as e:
+        merged["organizations"]=[]; merged["org_memberships"]=[]; merged["org_relations"]=[]
+        merged.setdefault("_postproc_errors",[]).append(f"organization: {e}")
+    # 确定性后处理(不调模型):逐章建全向图索引 + 漏标疑点扫描,挂进本章产物
+    step(9)
     try:
         merged["_graph"]=graph_index.build_graph(merged, ev)
     except Exception as e:
