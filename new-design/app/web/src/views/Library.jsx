@@ -8,6 +8,14 @@ const STAGE_LABEL = {
 }
 const COVER_PRESETS = ['#a8332a', '#b8884a', '#6f9b8e', '#5a6b8c', '#8c5a7a', '#3a322a']
 
+// 已分析章节范围标签:有区间数据时显示「第A–B章·共N章」(连续则省「·共N章」),否则回退「N 章」
+function chapterRange(n) {
+  const { analyzed_min: a, analyzed_max: b, analyzed_count: c, chapter_count: cc } = n
+  if (a == null || b == null) return cc > 0 ? `${cc} 章` : null
+  const span = b - a + 1
+  return (c != null && c !== span) ? `第${a}–${b}章 · 共${c}章` : `第${a}–${b}章`
+}
+
 // 从 slug/书名派生稳定色(无 meta.cover 时)
 function deriveColor(s) {
   let h = 0
@@ -165,7 +173,7 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                   )}
                   <div className="bc-meta">
                     <span className={'bc-stage s-' + (n.stage || 'unknown')}>{STAGE_LABEL[n.stage] || n.stage}</span>
-                    {n.chapter_count > 0 && <span className="bc-ch">{n.chapter_count} 章</span>}
+                    {chapterRange(n) && <span className="bc-ch">{chapterRange(n)}</span>}
                   </div>
                   {n.stage === 'partial' && n.partial_reason &&
                     <div className="bc-partial" title={n.partial_reason}>{n.partial_reason}</div>}
@@ -206,7 +214,7 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                     <div className="bc-tags">{n.tags.map((t, i) => <span key={i} className="bc-tag">{t}</span>)}</div>}
                   <div className="bc-meta">
                     <span className={'bc-stage s-' + (n.stage || 'unknown')}>{STAGE_LABEL[n.stage] || n.stage}</span>
-                    {n.chapter_count > 0 && <span className="bc-ch">{n.chapter_count} 章</span>}
+                    {chapterRange(n) && <span className="bc-ch">{chapterRange(n)}</span>}
                   </div>
                   {n.stage === 'partial' && n.partial_reason &&
                     <div className="bc-partial">{n.partial_reason}</div>}
