@@ -13,6 +13,9 @@ def aggregate(store):
             "locations": m.get("locations",[]),
             "events": m.get("parent_events", m.get("events",[])),  # 新流程用 parent_events
             "scenes": m.get("scenes",[]),
+            "organizations": m.get("organizations",[]),
+            "org_memberships": m.get("org_memberships",[]),
+            "org_relations": m.get("org_relations",[]),
             "_chapter": ch,
             "character_relations": m.get("character_relations",[]),
             "location_relations": m.get("location_relations",[]),
@@ -78,6 +81,45 @@ def aggregate(store):
     locations_doc={"global_locations":cross["global_locations"],
                    "relations":global_loc_relations,
                    "ambiguities":cross["ambiguities"]["locations"]}
+    # ---- 全局组织文档(明说成员归属成边,推断进 ambiguities) ----
+    loc2glob_org={}
+    for g in cross["global_organizations"]:
+        for m in g["members"]: loc2glob_org[(m["chapter"],m["local_id"])]=g["global_id"]
+    org_memberships=[]; org_member_amb=[]; seen_mem=set()
+    for ch in chapters:
+        chap_no=ch["_chapter"]
+        for mem in ch.get("org_memberships",[]):
+            cg=loc2glob_char.get((chap_no,mem.get("character_id")))
+            og=loc2glob_org.get((chap_no,mem.get("org_id")))
+            if cg is None or og is None: continue
+            conf=mem.get("source", mem.get("confidence","explicit"))
+            if conf=="inferred":
+                # 推断归属:不擅自落边,交人工
+                org_member_amb.append({
+                    "reason":"推断的成员归属,建议人工确认",
+                    "character_global":cg,"org_global":og,"role":mem.get("role"),
+                    "chapter":chap_no,"anchor_text":mem.get("anchor_text","")})
+                continue
+            key=(cg,og,mem.get("role"))
+            if key in seen_mem: continue
+            seen_mem.add(key)
+            org_memberships.append({"character_global":cg,"org_global":og,
+                "role":mem.get("role"),"chapter":chap_no,
+                "anchor_text":mem.get("anchor_text",""),"source":conf})
+    # 组织间关系(章级 from_id/to_id 经 members 映射到全局)
+    global_org_relations=[]
+    for ch in chapters:
+        chap_no=ch["_chapter"]
+        for r in ch.get("org_relations",[]):
+            f=loc2glob_org.get((chap_no,r.get("from_id"))); t=loc2glob_org.get((chap_no,r.get("to_id")))
+            if f and t:
+                nr=dict(r); nr["from_global"]=f; nr["to_global"]=t; nr["chapter"]=chap_no
+                global_org_relations.append(nr)
+    organizations_doc={"global_organizations":cross["global_organizations"],
+                       "memberships":org_memberships,
+                       "relations":global_org_relations,
+                       "ambiguities":cross["ambiguities"].get("organizations",[])+org_member_amb}
+
     # ---- 全局时间线文档 ----
     timeline_doc={"global_scenes":cross["global_scenes"],
                   "global_events":cross.get("global_events",[]),
@@ -93,15 +135,17 @@ def aggregate(store):
     store.save_global("items",items_doc)
     store.save_global("locations",locations_doc)
     store.save_global("timeline",timeline_doc)
+    store.save_global("organizations",organizations_doc)
     store.save_global("scenes",scenes_doc)
 
     index={
         "chapters":chs,
-        "global_files":["characters.json","items.json","locations.json","timeline.json","scenes.json"],
+        "global_files":["characters.json","items.json","locations.json","organizations.json","timeline.json","scenes.json"],
         "counts":{
             "global_characters":len(cross["global_characters"]),
             "global_items":len(cross["global_items"]),
             "global_locations":len(cross["global_locations"]),
+            "global_organizations":len(cross["global_organizations"]),
             "global_scenes":len(cross["global_scenes"]),
             "global_events":len(cross.get("global_events",[])),
             "sync_points":len(cross["sync_points"]),
