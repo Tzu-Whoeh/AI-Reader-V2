@@ -7,7 +7,12 @@ const TN = { character: '人物', item: '物品', location: '地点' }
 function renderText(text, highlights, onPick) {
   const out = []
   let cur = 0
-  highlights.forEach((h, i) => {
+  // 防御:跳过 null / 缺字段 / 越界 / 重叠的高亮 span(后端偶发脏 span 会导致整个阅读视图崩溃)
+  const spans = (highlights || [])
+    .filter(h => h && typeof h.start === 'number' && typeof h.end === 'number' && h.end > h.start)
+    .sort((a, b) => a.start - b.start)
+  spans.forEach((h, i) => {
+    if (h.start < cur) return            // 与前一个重叠,跳过避免乱序
     if (h.start > cur) out.push(<span key={'t' + i}>{text.slice(cur, h.start)}</span>)
     out.push(
       <mark
@@ -15,7 +20,7 @@ function renderText(text, highlights, onPick) {
         className="hl"
         style={{ '--hc': TC[h.type] || '#888' }}
         onClick={() => onPick({ type: h.type, id: h.global_id, label: h.label })}
-        title={`${TN[h.type] || h.type}:${h.label}`}
+        title={`${TN[h.type] || h.type}:${h.label || ''}`}
       >
         {text.slice(h.start, h.end)}
       </mark>
@@ -98,7 +103,7 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   const counts = useMemo(() => {
     if (!data?.highlights) return {}
     const c = {}
-    for (const h of data.highlights) c[h.type] = (c[h.type] || 0) + 1
+    for (const h of data.highlights) { if (h && h.type) c[h.type] = (c[h.type] || 0) + 1 }
     return c
   }, [data])
 
