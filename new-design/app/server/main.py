@@ -37,6 +37,14 @@ BASE_PATH = ""
 STATIC_DIR = os.path.join(_HERE, "static")
 LIB = _APP                       # 库根:其下 raw/ input/ output/
 _RUNNING = set()                 # 正在分析的 slug
+_ACTIVE_STAGES = {"splitting", "analyzing", "aggregating", "paused", "stopping"}
+def _effective_stage(slug, meta):
+    """据实修正僵尸状态:meta 标记为活动态,但进程已不在 _RUNNING → 实际中断。
+    返回应对外展示的 stage(不改盘,纯读)。"""
+    st = (meta or {}).get("stage")
+    if st in _ACTIVE_STAGES and slug not in _RUNNING:
+        return "interrupted"
+    return st
 
 flask_app = Flask(__name__)
 
@@ -133,11 +141,19 @@ def register_readonly():
     def novels():
         nv = RO.list_novels()
         for n in nv:
-            m = read_meta(n.get("slug"))
-            n["dirty"] = _is_dirty(n.get("slug"), m)
+            slug = n.get("slug")
+            m = read_meta(slug)
+            n["dirty"] = _is_dirty(slug, m)
+            n["running"] = slug in _RUNNING
+            eff = _effective_stage(slug, m)
+            if eff != n.get("stage"):
+                n["stage"] = eff
+                if eff == "interrupted":
+                    done = (m or {}).get("done", 0); total = (m or {}).get("total", 0)
+                    n["partial_reason"] = f"分析中断,已完成 {done}/{total} 章(可重新分析续跑)"
             if m:
                 for k in ("tags", "cover", "rules_selected", "partial_reason", "error_count", "first_error"):
-                    if k in m: n[k] = m[k]
+                    if k in m and k not in n: n[k] = m[k]
         return jsonify({"novels": nv, "current": latest_novel_slug()})
 
 # ---------------- 任务 API ----------------
@@ -312,6 +328,8 @@ def register_tasks():
         meta = read_meta(slug)
         if meta is None: return jsonify({"error": "小说不存在"}), 404
         meta["running"] = slug in _RUNNING
+        eff = _effective_stage(slug, meta)
+        if eff != meta.get("stage"): meta["stage"] = eff
         return jsonify(meta)
 
     def _set_control(slug, value):
