@@ -35,6 +35,7 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   const [detail, setDetail] = useState(null)
   const [dims, setDims] = useState({})
   const [err, setErr] = useState(null)
+  const [chOpen, setChOpen] = useState(false)   // 窄屏章节抽屉
 
   // 小说变化 → 重取章节,缓存清空
   useEffect(() => {
@@ -79,7 +80,9 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   }, [data])
 
   return (
-    <div className="reader">
+    <div className={'reader' + (chOpen ? ' ch-open' : '') + (picked ? ' detail-open' : '')}>
+      <button className="reader-ch-toggle" onClick={() => setChOpen(o => !o)} aria-label="章节列表">☰ 章节</button>
+      <div className="reader-overlay" onClick={() => { setChOpen(false); setPicked(null) }} />
       <aside className="reader-chs">
         <div className="rc-title">小说</div>
         <select className="novel-sel" value={novel || ''}
@@ -94,7 +97,7 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
 
         <div className="rc-title" style={{ marginTop: 16 }}>章节</div>
         {chapters.map(c => (
-          <button key={c} className={c === ch ? 'active' : ''} onClick={() => setCh(c)}>
+          <button key={c} className={c === ch ? 'active' : ''} onClick={() => { setCh(c); setChOpen(false) }}>
             第 {c} 章
           </button>
         ))}
@@ -124,6 +127,7 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
       </main>
 
       <aside className="reader-detail">
+        <button className="reader-detail-close" onClick={() => setPicked(null)} aria-label="关闭">×</button>
         {!picked && <div className="hint">点击高亮的<br />人物 / 物品 / 地点<br />查看属性</div>}
         {picked && !detail && <div className="hint">加载属性…</div>}
         {detail && (
