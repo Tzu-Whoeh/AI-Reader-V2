@@ -72,6 +72,33 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
       .catch(e => setErr(String(e)))
   }, [picked]) // eslint-disable-line
 
+  // 窄屏:底部弹层/抽屉打开时锁定 body 滚动,关闭后恢复并回到原位置,
+  // 修复关闭后页面停留在正文下方空白处导致"整页变黑"的问题。
+  useEffect(() => {
+    const open = !!picked || chOpen
+    if (typeof document === 'undefined') return
+    const b = document.body
+    if (open) {
+      const y = window.scrollY
+      b.dataset.lockY = String(y)
+      b.style.position = 'fixed'
+      b.style.top = `-${y}px`
+      b.style.left = '0'; b.style.right = '0'
+    } else if (b.style.position === 'fixed') {
+      const y = parseInt(b.dataset.lockY || '0', 10)
+      b.style.position = ''; b.style.top = ''; b.style.left = ''; b.style.right = ''
+      window.scrollTo(0, y)
+    }
+    return () => {
+      // 卸载兜底:确保不把 body 永久锁死
+      if (b.style.position === 'fixed') {
+        const y = parseInt(b.dataset.lockY || '0', 10)
+        b.style.position = ''; b.style.top = ''; b.style.left = ''; b.style.right = ''
+        window.scrollTo(0, y)
+      }
+    }
+  }, [picked, chOpen])
+
   const counts = useMemo(() => {
     if (!data?.highlights) return {}
     const c = {}
