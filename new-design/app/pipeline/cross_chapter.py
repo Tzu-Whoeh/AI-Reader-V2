@@ -309,6 +309,29 @@ def check_abs_consistency(global_scenes, timelines):
                     "note":"场景 abs_interval 指向更早,但场景顺序将其排在 prev 之后,请人工确认"})
     return amb
 
+def project_global_events(global_scenes):
+    """把挂在场景下的事件投影成全局事件线(确定性,不新增语义)。
+    全局序 = 场景在 global_scenes 的既有时间轴顺序;场景内按 events 既有顺序(已按 story_order 排)。
+    供 /api/summary 计数、/api/events、build_graph 的事件节点使用。"""
+    out=[]; seq=0
+    for sc in global_scenes:
+        for e in sc.get("events",[]):
+            seq+=1
+            out.append({
+                "global_seq":seq,
+                "scene_uid":sc["scene_uid"],
+                "chapter":sc["chapter"],
+                "location_global":sc.get("location_global"),
+                "location_name":sc.get("location_name"),
+                "is_flashback":e.get("is_flashback", sc.get("is_flashback",False)),
+                "desc":e.get("desc"),
+                "story_order":e.get("story_order"),
+                "abs_interval":e.get("abs_interval"),
+                "global_participants":e.get("global_participants",[]),
+                "anchor_text":e.get("anchor_text",""),
+            })
+    return out
+
 def run(chapters):
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
     item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
@@ -317,7 +340,8 @@ def run(chapters):
     timeline_amb = check_abs_consistency(global_scenes, timelines) + conc_amb
     return {
         "global_characters":char_global,"global_items":item_global,"global_locations":loc_global,
-        "global_scenes":global_scenes,"character_timelines":timelines,"sync_points":sync,
+        "global_scenes":global_scenes,"global_events":project_global_events(global_scenes),
+        "character_timelines":timelines,"sync_points":sync,
         "concurrency_links":conc_links,
         "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb,
                        "timeline":timeline_amb}}
