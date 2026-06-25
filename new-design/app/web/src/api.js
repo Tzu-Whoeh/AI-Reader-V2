@@ -69,3 +69,14 @@ export const updateNovelMeta = (slug, patch) =>
   req('PUT', '/novels/' + encodeURIComponent(slug) + '/meta', patch)
 export const deleteNovel = (slug) =>
   req('DELETE', '/novels/' + encodeURIComponent(slug))
+
+// 规则
+export const getRules = () => get('/rules')
+export const saveCustomRule = (op, rule) =>
+  req('POST', '/rules/custom', { op, rule })
+export const setDefaultRules = (enabled) =>
+  req('PUT', '/rules/default', { enabled })
+export const saveUserPreset = (op, name, enabled) =>
+  req('POST', '/rules/presets', { op, name, enabled })
+export const reclean = (slug) =>
+  req('POST', '/reclean/' + encodeURIComponent(slug))
