@@ -32,7 +32,7 @@ _CUR_NOVEL=None
 def _load_globals_chapters(output_dir):
     g={}; chs_list=[]
     gdir=os.path.join(output_dir,"global")
-    for name in ("characters","items","locations","timeline","scenes"):
+    for name in ("characters","items","locations","organizations","timeline","scenes"):
         p=os.path.join(gdir,f"{name}.json")
         if os.path.exists(p): g[name]=json.load(open(p,encoding="utf-8"))
     chs=sorted(d for d in os.listdir(output_dir) if d.startswith("ch") and d[2:].isdigit()) if os.path.isdir(output_dir) else []
@@ -239,11 +239,13 @@ def build_graph():
     gchars=GLOBALS.get("characters",{}).get("global_characters",[])
     gitems=GLOBALS.get("items",{}).get("global_items",[])
     glocs=GLOBALS.get("locations",{}).get("global_locations",[])
+    gorgs=GLOBALS.get("organizations",{}).get("global_organizations",[])
     gevents=GLOBALS.get("timeline",{}).get("global_events",[])
 
     char_ids={g["global_id"] for g in gchars}
     item_ids={g["global_id"] for g in gitems}
     loc_ids={g["global_id"] for g in glocs}
+    org_ids={g["global_id"] for g in gorgs}
 
     for g in gchars:
         nodes.append({"id":f"character:{g['global_id']}","label":g["canonical"],"type":"character"})
@@ -251,6 +253,8 @@ def build_graph():
         nodes.append({"id":f"item:{g['global_id']}","label":g["canonical"],"type":"item"})
     for g in glocs:
         nodes.append({"id":f"location:{g['global_id']}","label":g["canonical"],"type":"location"})
+    for g in gorgs:
+        nodes.append({"id":f"organization:{g['global_id']}","label":g["canonical"],"type":"organization"})
     for e in gevents:
         if e.get("event_id") is not None:
             lbl=(e.get("desc") or "")[:14]
@@ -269,6 +273,20 @@ def build_graph():
         if a is not None and b is not None and a in loc_ids and b in loc_ids:
             edges.append({"from":f"location:{a}","to":f"location:{b}",
                           "label":r.get("relation_type",""),"kind":"loc",
+                          "relation_type":r.get("relation_type","")})
+
+    # 组织成员边 —— 人物→组织(明说归属,confidence=explicit)
+    for m in GLOBALS.get("organizations",{}).get("memberships",[]):
+        cg=m.get("character_global"); og=m.get("org_global")
+        if cg is not None and og is not None and cg in char_ids and og in org_ids:
+            edges.append({"from":f"character:{cg}","to":f"organization:{og}",
+                          "label":m.get("role","") or "成员","kind":"membership"})
+    # 组织间关系边
+    for r in GLOBALS.get("organizations",{}).get("relations",[]):
+        a,b=r.get("from_global"),r.get("to_global")
+        if a is not None and b is not None and a in org_ids and b in org_ids:
+            edges.append({"from":f"organization:{a}","to":f"organization:{b}",
+                          "label":r.get("label",r.get("relation_type","")),"kind":"org",
                           "relation_type":r.get("relation_type","")})
 
     # 物品边 —— item→location(item_locations,局部 location_id 经 members 解析到全局)
