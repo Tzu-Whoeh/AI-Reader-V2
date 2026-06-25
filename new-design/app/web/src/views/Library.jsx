@@ -4,7 +4,7 @@ import RulesPanel from './RulesPanel.jsx'
 
 const STAGE_LABEL = {
   uploaded: '已上传', splitting: '拆章中', starting: '准备中', analyzing: '分析中',
-  aggregating: '全局聚合', done: '已分析', error: '出错', unknown: '—',
+  aggregating: '全局聚合', done: '已分析', partial: '部分完成', error: '出错', unknown: '—',
 }
 const COVER_PRESETS = ['#a8332a', '#b8884a', '#6f9b8e', '#5a6b8c', '#8c5a7a', '#3a322a']
 
@@ -122,7 +122,7 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
           {novels.map(n => {
             const color = n.cover || deriveColor(n.slug)
             const running = n.running || (jobSlug === n.slug && jp && jp.stage !== 'done' && jp.stage !== 'error')
-            const analyzed = n.stage === 'done'
+            const analyzed = n.stage === 'done' || n.stage === 'partial'
             return (
               <div key={n.slug} className="bookcard">
                 <div className="bc-cover" style={{ background: color }}
@@ -140,6 +140,8 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                     <span className={'bc-stage s-' + (n.stage || 'unknown')}>{STAGE_LABEL[n.stage] || n.stage}</span>
                     {n.chapter_count > 0 && <span className="bc-ch">{n.chapter_count} 章</span>}
                   </div>
+                  {n.stage === 'partial' && n.partial_reason &&
+                    <div className="bc-partial" title={n.partial_reason}>{n.partial_reason}</div>}
                   <div className="bc-actions">
                     {analyzed && <button onClick={() => onOpen?.(n.slug)}>打开</button>}
                     {!running && <button onClick={() => analyzeAgain(n.slug)}>{analyzed ? '重新分析' : '分析'}</button>}
