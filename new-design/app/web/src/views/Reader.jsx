@@ -1,30 +1,51 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getChapters, getReader, getNode, getDimension } from '../api.js'
 
 const TC = { character: '#a8332a', item: '#b8884a', location: '#6f9b8e' }
 const TN = { character: '人物', item: '物品', location: '地点' }
 
-function renderText(text, highlights, onPick) {
+function renderText(text, highlights, onPick, jump, jumpRef) {
   const out = []
   let cur = 0
   // 防御:跳过 null / 缺字段 / 越界 / 重叠的高亮 span(后端偶发脏 span 会导致整个阅读视图崩溃)
   const spans = (highlights || [])
     .filter(h => h && typeof h.start === 'number' && typeof h.end === 'number' && h.end > h.start)
     .sort((a, b) => a.start - b.start)
-  spans.forEach((h, i) => {
+  // 跳转目标:在 [jp, jp+jlen) 处注入一个脉冲锚点。校验落在正文范围内,
+  // 且不与任一 hl span 重叠(重叠则放弃注入,避免切碎 hl 导致 onPick 失效/乱序)。
+  let jp = -1, jlen = 0
+  if (jump && typeof jump.pos === 'number' && jump.pos >= 0 && jump.pos < text.length) {
+    jp = jump.pos
+    jlen = Math.max(1, Math.min(jump.len || 1, text.length - jp))
+    const overlap = spans.some(h => h.start < jp + jlen && h.end > jp)
+    if (overlap) { jp = -1; jlen = 0 }
+  }
+  // 把跳转脉冲并入待渲染 span 流(类型标记 __pulse__),统一按 start 排序后顺序输出。
+  const all = jp >= 0
+    ? [...spans, { start: jp, end: jp + jlen, __pulse__: true }].sort((a, b) => a.start - b.start)
+    : spans
+  all.forEach((h, i) => {
     if (h.start < cur) return            // 与前一个重叠,跳过避免乱序
     if (h.start > cur) out.push(<span key={'t' + i}>{text.slice(cur, h.start)}</span>)
-    out.push(
-      <mark
-        key={'h' + i}
-        className="hl"
-        style={{ '--hc': TC[h.type] || '#888' }}
-        onClick={() => onPick({ type: h.type, id: h.global_id, label: h.label })}
-        title={`${TN[h.type] || h.type}:${h.label || ''}`}
-      >
-        {text.slice(h.start, h.end)}
-      </mark>
-    )
+    if (h.__pulse__) {
+      out.push(
+        <mark key={'jp' + (jump.token || i)} ref={jumpRef} className="occ-pulse">
+          {text.slice(h.start, h.end)}
+        </mark>
+      )
+    } else {
+      out.push(
+        <mark
+          key={'h' + i}
+          className="hl"
+          style={{ '--hc': TC[h.type] || '#888' }}
+          onClick={() => onPick({ type: h.type, id: h.global_id, label: h.label })}
+          title={`${TN[h.type] || h.type}:${h.label || ''}`}
+        >
+          {text.slice(h.start, h.end)}
+        </mark>
+      )
+    }
     cur = h.end
   })
   if (cur < text.length) out.push(<span key="tail">{text.slice(cur)}</span>)
@@ -41,6 +62,8 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   const [dims, setDims] = useState({})
   const [err, setErr] = useState(null)
   const [chOpen, setChOpen] = useState(false)   // 窄屏章节抽屉
+  const [jump, setJump] = useState(null)         // 跳转目标 {chapter,pos,len,token}
+  const jumpRef = useRef(null)
 
   // 小说变化 → 重取章节,缓存清空
   useEffect(() => {
@@ -104,6 +127,25 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
   }, [chapters, ch])
   const goCh = (c) => { if (c != null) { setCh(c); window.scrollTo(0, 0) } }
 
+  // 点击原文出处 → 跳到该章并脉冲定位到该句。token 保证重复点同一条也能重触发。
+  const jumpToOcc = (o) => {
+    if (o == null || o.chapter == null) return
+    setPicked(null); setChOpen(false)
+    setJump({ chapter: o.chapter, pos: o.pos, len: (o.term || '').length || 1, token: Date.now() })
+    if (o.chapter !== ch) setCh(o.chapter)
+  }
+
+  // 跳转目标就绪(且当前章原文已渲染含锚点)→ 滚动到锚点居中。
+  // 依赖 jump.token + data:切章是异步,等 data 到位后该 effect 重跑拿到 jumpRef。
+  useEffect(() => {
+    if (!jump || !data || data.chapter !== jump.chapter) return
+    let raf = requestAnimationFrame(() => {
+      const el = jumpRef.current
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [jump, data])
+
   const counts = useMemo(() => {
     if (!data?.highlights) return {}
     const c = {}
@@ -153,7 +195,8 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
                 </span>
               ))}
             </div>
-            <article className="rt-body">{renderText(data.text, data.highlights, setPicked)}</article>
+            <article className="rt-body">{renderText(data.text, data.highlights, setPicked,
+              (jump && data.chapter === jump.chapter) ? jump : null, jumpRef)}</article>
             <nav className="rt-nav">
               {navAdj.prev != null
                 ? <button className="rt-nav-prev" onClick={() => goCh(navAdj.prev)}>← 第 {navAdj.prev} 章</button>
@@ -183,8 +226,10 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
             )}
             <div className="d-row"><span className="d-k">原文出处</span>{detail.node?.occurrences?.length || 0} 处</div>
             <div className="occ-list">
-              {(detail.node?.occurrences || []).slice(0, 30).map((o, i) => (
-                <div className="occ" key={i}>
+              {(detail.node?.occurrences || []).map((o, i) => (
+                <div className="occ occ-jump" key={i}
+                  onClick={() => jumpToOcc(o)}
+                  title="跳转到原文">
                   <span className="ch">第{o.chapter}章 · 「{o.term}」</span>{o.sentence}
                 </div>
               ))}
