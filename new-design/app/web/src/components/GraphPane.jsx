@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-const TC = { character: '#a8332a', item: '#b8884a', location: '#6f9b8e', event: '#9a7db8' }
+const TC = { character: '#a8332a', item: '#b8884a', location: '#6f9b8e', event: '#9a7db8', organization: '#4a8fb8' }
 
 // 网格近似斥力的力导向布局。
 // 优化点(对比旧版 260 固定迭代 + O(n²) 全量斥力):
@@ -133,14 +133,16 @@ export default function GraphPane({ graph, show, onSelect }) {
         const a = layout.nodes[layout.idx[e.from]], b = layout.nodes[layout.idx[e.to]]
         if (!a || !b) return null
         const stroke = e.kind === 'loc' ? '#6f9b8e' : e.kind === 'event' ? '#9a7db8'
-          : e.kind === 'item' ? '#b8884a' : '#c98b6a'
+          : e.kind === 'item' ? '#b8884a'
+          : e.kind === 'membership' ? '#4a8fb8'
+          : e.kind === 'org' ? '#3a7090' : '#c98b6a'
         return (
           <line key={i} x1={px(a.x)} y1={py(a.y)} x2={px(b.x)} y2={py(b.y)}
             stroke={stroke} strokeWidth="1" opacity=".4" />
         )
       })}
       {visNodes.map(n => {
-        const r = n.type === 'character' ? 9 : n.type === 'event' ? 5 : 6
+        const r = n.type === 'character' ? 9 : n.type === 'organization' ? 8 : n.type === 'event' ? 5 : 6
         return (
           <g key={n.id} className="node"
             onClick={() => onSelect({ type: n.type, id: n.id.split(':')[1], label: n.label })}>

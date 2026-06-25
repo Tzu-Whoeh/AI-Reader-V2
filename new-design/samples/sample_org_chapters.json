@@ -1,0 +1,118 @@
+[
+  {
+    "_chapter": 1,
+    "characters": [
+      {
+        "id": 1,
+        "name": "华剑雄"
+      },
+      {
+        "id": 2,
+        "name": "萧红"
+      }
+    ],
+    "organizations": [
+      {
+        "id": 1,
+        "name": "军统",
+        "type": "情报机构",
+        "aliases": [
+          "军事委员会调查统计局"
+        ],
+        "mentions": [
+          "军统",
+          "军统局"
+        ],
+        "desc": "国民政府情报机构"
+      },
+      {
+        "id": 2,
+        "name": "地下党",
+        "type": "政党组织",
+        "aliases": [],
+        "mentions": [
+          "党的组织"
+        ],
+        "desc": "中共地下组织"
+      }
+    ],
+    "org_memberships": [
+      {
+        "character_id": 1,
+        "org_id": 1,
+        "role": "处长",
+        "anchor_text": "华剑雄是军统的人",
+        "source": "explicit"
+      },
+      {
+        "character_id": 2,
+        "org_id": 2,
+        "role": "区委书记",
+        "anchor_text": "萧红是地下党的区委书记",
+        "source": "explicit"
+      },
+      {
+        "character_id": 2,
+        "org_id": 1,
+        "role": "卧底",
+        "anchor_text": "",
+        "source": "inferred"
+      }
+    ]
+  },
+  {
+    "_chapter": 2,
+    "characters": [
+      {
+        "id": 1,
+        "name": "华剑雄"
+      },
+      {
+        "id": 3,
+        "name": "周老板"
+      }
+    ],
+    "organizations": [
+      {
+        "id": 1,
+        "name": "军统",
+        "type": "情报机构",
+        "aliases": [
+          "军事委员会调查统计局"
+        ],
+        "mentions": [
+          "军统"
+        ],
+        "desc": ""
+      },
+      {
+        "id": 2,
+        "name": "76号",
+        "type": "特务机构",
+        "aliases": [],
+        "mentions": [
+          "七十六号"
+        ],
+        "desc": "汪伪特工总部"
+      }
+    ],
+    "org_memberships": [
+      {
+        "character_id": 3,
+        "org_id": 2,
+        "role": "老板",
+        "anchor_text": "他就是76号里无人不晓的周老板",
+        "source": "explicit"
+      }
+    ],
+    "org_relations": [
+      {
+        "from_id": 1,
+        "to_id": 2,
+        "relation_type": "attitude",
+        "label": "敌对",
+        "evidence": "军统与76号势不两立"
+      }
+    ]
+  }
+]

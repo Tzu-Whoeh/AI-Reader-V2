@@ -336,12 +336,14 @@ def run(chapters):
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
     item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
     loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions")
+    org_global,  org_amb  = resolve_global_entities(chapters,"organizations","name","aliases")
     global_scenes, timelines, sync, conc_amb, conc_links = stitch_timelines(chapters, char_global, loc_global)
     timeline_amb = check_abs_consistency(global_scenes, timelines) + conc_amb
     return {
         "global_characters":char_global,"global_items":item_global,"global_locations":loc_global,
+        "global_organizations":org_global,
         "global_scenes":global_scenes,"global_events":project_global_events(global_scenes),
         "character_timelines":timelines,"sync_points":sync,
         "concurrency_links":conc_links,
         "ambiguities":{"characters":char_amb,"items":item_amb,"locations":loc_amb,
-                       "timeline":timeline_amb}}
+                       "organizations":org_amb,"timeline":timeline_amb}}

@@ -89,6 +89,7 @@ def register_readonly():
             c = {"characters": len(RO.GLOBALS.get("characters", {}).get("global_characters", [])),
                  "items": len(RO.GLOBALS.get("items", {}).get("global_items", [])),
                  "locations": len(RO.GLOBALS.get("locations", {}).get("global_locations", [])),
+                 "organizations": len(RO.GLOBALS.get("organizations", {}).get("global_organizations", [])),
                  "events": len(RO.GLOBALS.get("timeline", {}).get("global_events", []))}
             return jsonify({"chapters": [m["_chapter"] for m in RO.CHAPTERS], "counts": c})
 

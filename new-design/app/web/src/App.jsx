@@ -8,7 +8,7 @@ import Scenes from './views/Scenes.jsx'
 import Reader from './views/Reader.jsx'
 import Library from './views/Library.jsx'
 
-const TYPES = { character: '人物', item: '物品', location: '地点' }
+const TYPES = { character: '人物', item: '物品', location: '地点', organization: '组织' }
 const VIEWS = { library: '书库', graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
 const ACTIVE_STAGES = new Set(['uploaded', 'splitting', 'starting', 'analyzing', 'aggregating'])
 
@@ -26,7 +26,7 @@ function progPct(p) {
 export default function App() {
   const [summary, setSummary] = useState(null)
   const [graph, setGraph] = useState({ nodes: [], edges: [] })
-  const [show, setShow] = useState({ character: true, item: true, location: true })
+  const [show, setShow] = useState({ character: true, item: true, location: true, organization: true })
   const [selected, setSelected] = useState(null)
   const [view, setView] = useState('graph')
   const [navOpen, setNavOpen] = useState(false)   // 窄屏视图汉堡菜单
@@ -91,7 +91,7 @@ export default function App() {
   const c = summary?.counts || {}
   const stat = summary
     ? `${c.characters || 0}人物 · ${c.items || 0}物品 · ${c.locations || 0}地点 · ` +
-      `${c.events || 0}事件 · ${(summary.chapters || []).length}章`
+      `${c.organizations || 0}组织 · ${c.events || 0}事件 · ${(summary.chapters || []).length}章`
     : (novel ? '加载中…' : '未选择小说')
 
   const jp = job?.prog

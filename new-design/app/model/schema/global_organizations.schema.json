@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-reader/new-design/schema/global_organizations.schema.json",
+  "title": "output/global/organizations.json",
+  "type": "object",
+  "required": [
+    "global_organizations"
+  ],
+  "properties": {
+    "global_organizations": {
+      "type": "array",
+      "items": {
+        "$ref": "core.schema.json#/$defs/globalEntity"
+      }
+    },
+    "memberships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "character_global",
+          "org_global"
+        ],
+        "properties": {
+          "character_global": {
+            "type": "integer"
+          },
+          "org_global": {
+            "type": "integer"
+          },
+          "role": {
+            "type": "string"
+          },
+          "chapter": {
+            "type": "integer"
+          },
+          "anchor_text": {
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "explicit",
+              "inferred"
+            ],
+            "description": "explicit=原文明说;inferred=推断(应进 ambiguities)"
+          }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "core.schema.json#/$defs/relation"
+      }
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "$ref": "core.schema.json#/$defs/ambiguity"
+      }
+    }
+  }
+}
