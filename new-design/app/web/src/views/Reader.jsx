@@ -62,19 +62,23 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
 
   useEffect(() => {
     if (!picked) { setDetail(null); return }
-    const dimName = picked.type === 'character' ? 'characters'
-      : picked.type === 'item' ? 'items' : 'locations'
+    let stale = false                     // 关闭/切换后忽略迟到的结果(修 m.type 竞态崩溃)
+    const cur = picked
+    const dimName = cur.type === 'character' ? 'characters'
+      : cur.type === 'item' ? 'items' : 'locations'
     const ensureDim = dims[dimName]
       ? Promise.resolve(dims[dimName])
-      : getDimension(dimName, novel).then(d => { setDims(s => ({ ...s, [dimName]: d })); return d })
-    Promise.all([ensureDim, getNode(picked.type, picked.id, novel)])
+      : getDimension(dimName, novel).then(d => { if (!stale) setDims(s => ({ ...s, [dimName]: d })); return d })
+    Promise.all([ensureDim, getNode(cur.type, cur.id, novel)])
       .then(([dim, node]) => {
-        const listKey = picked.type === 'character' ? 'global_characters'
-          : picked.type === 'item' ? 'global_items' : 'global_locations'
-        const ent = (dim[listKey] || []).find(g => g.global_id === picked.id)
+        if (stale) return
+        const listKey = cur.type === 'character' ? 'global_characters'
+          : cur.type === 'item' ? 'global_items' : 'global_locations'
+        const ent = (dim[listKey] || []).find(g => g.global_id === cur.id)
         setDetail({ ent, node })
       })
-      .catch(e => setErr(String(e)))
+      .catch(e => { if (!stale) setErr(String(e)) })
+    return () => { stale = true }
   }, [picked]) // eslint-disable-line
 
 
@@ -166,10 +170,10 @@ export default function Reader({ novel, novels = [], onPickNovel }) {
         <button className="reader-detail-close" onClick={() => setPicked(null)} aria-label="关闭">×</button>
         {!picked && <div className="hint">点击高亮的<br />人物 / 物品 / 地点<br />查看属性</div>}
         {picked && !detail && <div className="hint">加载属性…</div>}
-        {detail && (
+        {detail && picked && (
           <>
-            <h2>{detail.ent?.canonical || picked.label}</h2>
-            <div className="meta" style={{ color: TC[picked.type] }}>{TN[picked.type]}</div>
+            <h2>{detail.ent?.canonical || picked?.label}</h2>
+            <div className="meta" style={{ color: TC[picked?.type] }}>{TN[picked?.type]}</div>
             {detail.ent?.all_names?.length > 1 && (
               <div className="d-row"><span className="d-k">别名</span>{detail.ent.all_names.join('、')}</div>
             )}
