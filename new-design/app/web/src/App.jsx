@@ -29,6 +29,7 @@ export default function App() {
   const [show, setShow] = useState({ character: true, item: true, location: true })
   const [selected, setSelected] = useState(null)
   const [view, setView] = useState('graph')
+  const [navOpen, setNavOpen] = useState(false)   // 窄屏视图汉堡菜单
   const [novels, setNovels] = useState([])
   const [novel, setNovel] = useState(null)   // 当前小说 slug(全局,所有视图跟随)
 
@@ -103,9 +104,11 @@ export default function App() {
       <div className="top">
         <h1>叙事档案</h1>
         <span className="sub">NARRATIVE BROWSER</span>
-        <nav className="views">
+        <button className="nav-toggle" onClick={() => setNavOpen(o => !o)} aria-label="切换视图菜单">☰</button>
+        <nav className={'views' + (navOpen ? ' open' : '')}>
           {Object.keys(VIEWS).map(v => (
-            <button key={v} className={view === v ? 'active' : ''} onClick={() => setView(v)}>
+            <button key={v} className={view === v ? 'active' : ''}
+              onClick={() => { setView(v); setNavOpen(false) }}>
               {VIEWS[v]}
             </button>
           ))}
