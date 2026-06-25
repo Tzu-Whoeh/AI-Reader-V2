@@ -33,10 +33,14 @@ def _load(fn):
     return open(path,encoding="utf-8").read()
 
 def _scene_segment(fulltext, scene):
-    """用场景起止锚点切出该场景原文片段。"""
-    st=fulltext.find(scene["start_text"][:20]); en=fulltext.find(scene["end_text"][:20])
+    """用场景起止锚点切出该场景原文片段。
+    锚点可能缺失(退化单场景/模型漏给)——缺失时退回整段,绝不让单场景崩掉整章。"""
+    start_anchor=(scene.get("start_text") or "")[:20]
+    end_anchor=(scene.get("end_text") or "")[:20]
+    st=fulltext.find(start_anchor) if start_anchor else -1
+    en=fulltext.find(end_anchor) if end_anchor else -1
     if st<0: st=0
-    en=len(fulltext) if en<0 else en+len(scene["end_text"][:20])
+    en=len(fulltext) if en<0 else en+len(end_anchor)
     return fulltext[st:en]
 
 def extract_parent_events(fulltext, scenes, characters,
