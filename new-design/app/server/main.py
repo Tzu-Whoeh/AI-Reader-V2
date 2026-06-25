@@ -135,7 +135,7 @@ def register_readonly():
             m = read_meta(n.get("slug"))
             n["dirty"] = _is_dirty(n.get("slug"), m)
             if m:
-                for k in ("tags", "cover", "rules_selected"):
+                for k in ("tags", "cover", "rules_selected", "partial_reason", "error_count", "first_error"):
                     if k in m: n[k] = m[k]
         return jsonify({"novels": nv, "current": latest_novel_slug()})
 
@@ -213,8 +213,30 @@ def _run_analysis(slug):
             write_meta(slug, meta)
         # presplit:input/<slug>/ 下已是 chNN.txt
         pipeline.run(novel_input(slug), out_dir=out, presplit=True, progress_cb=cb)
+        # 完结判定:逐章错误隔离会让 pipeline 即使大量失败也"跑完"并发 done。
+        # 这里据实复核 —— 有章节失败或未跑满则标 partial,不再一律 done。
         m = read_meta(slug)
-        if m.get("stage") != "done": m["stage"] = "done"; write_meta(slug, m)
+        chs = m.get("chapters", []) or []
+        errored = [c for c in chs if c.get("error")]
+        succeeded = [c for c in chs if not c.get("error")]
+        total = m.get("total", 0) or 0
+        accounted = len(chs)
+        if errored or (total and accounted < total):
+            m["stage"] = "partial"
+            m["error_count"] = len(errored)
+            m["succeeded_count"] = len(succeeded)
+            # 给个可读摘要:多少章成功/失败/未跑
+            not_run = max(0, total - accounted)
+            m["partial_reason"] = (
+                f"成功 {len(succeeded)} 章、失败 {len(errored)} 章" +
+                (f"、未跑 {not_run} 章" if not_run else "") +
+                (f";首个错误:{errored[0].get('error')}" if errored else ""))
+            # 记录代表性错误(便于排查隧道/超时等)
+            if errored:
+                m["first_error"] = errored[0].get("error")
+            write_meta(slug, m)
+        elif m.get("stage") != "done":
+            m["stage"] = "done"; write_meta(slug, m)
     except Exception as e:
         _set_stage(slug, stage="error", error=str(e))
     finally:
