@@ -107,6 +107,22 @@ mark.occ-pulse{background:transparent;color:inherit;border-radius:2px;
 .sc-anchor{font-size:11px;color:var(--dim);font-family:sans-serif;display:flex;
   gap:5px;align-items:center;flex-wrap:wrap}
 .sc-arrow{color:var(--thread)}
+.sc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sc-tag{font-family:sans-serif;font-size:11px;padding:2px 9px;border-radius:11px;
+  border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;
+  transition:background .12s,border-color .12s,color .12s}
+.sc-tag-fn{color:var(--thread);border-color:var(--thread)}
+.sc-tag-fn:hover{background:var(--thread);color:var(--paper)}
+.sc-tag-fn.active{background:var(--thread);color:var(--paper);border-color:var(--thread)}
+.sc-filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-family:sans-serif;font-size:12px;padding:9px 13px;margin-bottom:14px;
+  background:var(--paper2);border:1px solid var(--line);border-radius:4px}
+.sc-fb-label{color:var(--dim)}
+.sc-fb-count{color:var(--dim)}
+.sc-fb-clear{font-family:sans-serif;font-size:12px;padding:2px 11px;border-radius:3px;
+  border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;margin-left:auto}
+.sc-fb-clear:hover{border-color:var(--stamp);color:var(--stamp)}
+.sc-fb-hint{color:var(--dim)}
 
 /* ===== 阅读器 ===== */
 .reader{display:flex;height:calc(100vh - 52px)}
