@@ -24,6 +24,21 @@ async function post(path, body, isJson = true) {
   }
   return r.json()
 }
+async function req(method, path, jsonBody) {
+  const opt = { method }
+  if (jsonBody !== undefined) {
+    opt.body = JSON.stringify(jsonBody)
+    opt.headers = { 'Content-Type': 'text/plain' }   // 后端 get_json(force=True) 接受
+  }
+  const r = await fetch(API + path, opt)
+  if (!r.ok) {
+    let detail = ''
+    try { detail = (await r.json()).error || '' } catch {}
+    const e = new Error(detail || `${path} → HTTP ${r.status}`)
+    e.status = r.status; throw e
+  }
+  return r.json()
+}
 
 // 只读(可带 novel slug)
 export const getSummary = (novel) => get('/summary' + nq(novel))
@@ -48,3 +63,9 @@ export const uploadFile = (file) => {
 export const startAnalyze = (slug) =>
   post('/analyze/' + encodeURIComponent(slug))
 export const getProgress = (slug) => get('/progress/' + encodeURIComponent(slug))
+
+// 书库管理
+export const updateNovelMeta = (slug, patch) =>
+  req('PUT', '/novels/' + encodeURIComponent(slug) + '/meta', patch)
+export const deleteNovel = (slug) =>
+  req('DELETE', '/novels/' + encodeURIComponent(slug))
