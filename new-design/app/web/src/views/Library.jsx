@@ -33,9 +33,11 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
   const [confirmDel, setConfirmDel] = useState(null)
   const [rulesPanel, setRulesPanel] = useState(null)   // {mode:'global'|'book', slug?, initial?}
   const [recleaning, setRecleaning] = useState(null)
+  const [expanded, setExpanded] = useState(null)   // 点击放大的卡片(slug)
 
   const jp = job?.prog
   const jobSlug = job?.slug
+  const expandedNovel = expanded ? novels.find(n => n.slug === expanded) : null
 
   const doUpload = async () => {
     setErr(null); setBusy(true)
@@ -135,11 +137,11 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
             return (
               <div key={n.slug} className="bookcard">
                 <div className="bc-cover" style={{ background: color }}
-                  onClick={() => analyzed && onOpen?.(n.slug)}>
+                  onClick={() => setExpanded(n.slug)}>
                   <span className="bc-cover-ch">{(n.novel_name || n.slug || '?').slice(0, 1)}</span>
                   {n.dirty && <span className="bc-dirty" title="规则已变,建议重新分析">规则已变</span>}
                 </div>
-                <div className="bc-body">
+                <div className="bc-body" onClick={() => setExpanded(n.slug)} style={{ cursor: 'pointer' }}>
                   <div className="bc-title" title={n.novel_name || n.slug}>{n.novel_name || n.slug}</div>
                   <div className="bc-author">{n.author || '佚名'}</div>
                   {n.tags?.length > 0 && (
@@ -152,15 +154,11 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
                   {n.stage === 'partial' && n.partial_reason &&
                     <div className="bc-partial" title={n.partial_reason}>{n.partial_reason}</div>}
                   <div className="bc-actions">
-                    {analyzed && <button onClick={() => onOpen?.(n.slug)}>打开</button>}
+                    {analyzed && <button onClick={(e) => { e.stopPropagation(); onOpen?.(n.slug) }}>打开</button>}
                     {running && (n.stage === 'paused'
-                      ? <button onClick={() => doResume(n.slug)}>继续</button>
-                      : <button onClick={() => doPause(n.slug)} disabled={n.stage === 'stopping'}>暂停</button>)}
-                    {!running && <button onClick={() => analyzeAgain(n.slug)}>{analyzed ? '重新分析' : '分析'}</button>}
-                    <button onClick={() => setEditing({ ...n, tags: n.tags || [], cover: n.cover || color })}>编辑</button>
-                    {!running && <button onClick={() => setRulesPanel({ mode: 'book', slug: n.slug, initial: n.rules_selected ?? null })}>规则</button>}
-                    {!running && <button onClick={() => doReclean(n.slug)} disabled={recleaning === n.slug}>{recleaning === n.slug ? '清洗中…' : '重新清洗'}</button>}
-                    <button className="bc-del" onClick={() => setConfirmDel(n.slug)}>删除</button>
+                      ? <button onClick={(e) => { e.stopPropagation(); doResume(n.slug) }}>继续</button>
+                      : <button onClick={(e) => { e.stopPropagation(); doPause(n.slug) }} disabled={n.stage === 'stopping'}>暂停</button>)}
+                    <button className="bc-more" onClick={(e) => { e.stopPropagation(); setExpanded(n.slug) }}>更多…</button>
                   </div>
                 </div>
               </div>
@@ -168,6 +166,51 @@ export default function Library({ novels = [], job, onStarted, onOpen, onRefresh
           })}
         </div>
       </div>
+
+      {/* 放大卡片:详情 + 操作 */}
+      {expandedNovel && (() => {
+        const n = expandedNovel
+        const color = n.cover || deriveColor(n.slug)
+        const running = n.running || (jobSlug === n.slug && jp && jp.stage !== 'done' && jp.stage !== 'error')
+        const analyzed = n.stage === 'done' || n.stage === 'partial'
+        const close = () => setExpanded(null)
+        const act = (fn) => { fn(); }
+        return (
+          <div className="modal-bg" onClick={close}>
+            <div className="modal bookcard-modal" onClick={ev => ev.stopPropagation()}>
+              <button className="bcm-close" onClick={close}>×</button>
+              <div className="bcm-head">
+                <div className="bcm-cover" style={{ background: color }}>
+                  <span className="bc-cover-ch">{(n.novel_name || n.slug || '?').slice(0, 1)}</span>
+                </div>
+                <div className="bcm-info">
+                  <div className="bcm-title">{n.novel_name || n.slug}</div>
+                  <div className="bcm-author">{n.author || '佚名'}</div>
+                  {n.tags && n.tags.length > 0 &&
+                    <div className="bc-tags">{n.tags.map((t, i) => <span key={i} className="bc-tag">{t}</span>)}</div>}
+                  <div className="bc-meta">
+                    <span className={'bc-stage s-' + (n.stage || 'unknown')}>{STAGE_LABEL[n.stage] || n.stage}</span>
+                    {n.chapter_count > 0 && <span className="bc-ch">{n.chapter_count} 章</span>}
+                  </div>
+                  {n.stage === 'partial' && n.partial_reason &&
+                    <div className="bc-partial">{n.partial_reason}</div>}
+                </div>
+              </div>
+              <div className="bcm-actions">
+                {analyzed && <button className="up-btn" onClick={() => { onOpen?.(n.slug); close() }}>打开阅读</button>}
+                {running && (n.stage === 'paused'
+                  ? <button onClick={() => act(() => doResume(n.slug))}>继续分析</button>
+                  : <button onClick={() => act(() => doPause(n.slug))} disabled={n.stage === 'stopping'}>暂停分析</button>)}
+                {!running && <button onClick={() => { analyzeAgain(n.slug); close() }}>{analyzed ? '重新分析' : '开始分析'}</button>}
+                <button onClick={() => { setEditing({ ...n, tags: n.tags || [], cover: n.cover || color }); close() }}>编辑信息</button>
+                {!running && <button onClick={() => { setRulesPanel({ mode: 'book', slug: n.slug, initial: n.rules_selected ?? null }); close() }}>清洗规则</button>}
+                {!running && <button onClick={() => act(() => doReclean(n.slug))} disabled={recleaning === n.slug}>{recleaning === n.slug ? '清洗中…' : '重新清洗'}</button>}
+                <button className="bc-del" onClick={() => { setConfirmDel(n.slug); close() }}>删除</button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* 编辑弹层 */}
       {editing && (
