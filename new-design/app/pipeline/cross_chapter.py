@@ -35,7 +35,7 @@ def _display_names(names):
     out=[n for n in names if n and n not in _PRONOUNS and n not in _EPITHETS]
     return sorted(out)
 
-def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
+def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None, alias_is_mentions=False):
     """
     跨章实体归一。返回:
       global_list: [{global_id, canonical, members:[(chapter,local_id)], all_names:set}]
@@ -46,10 +46,24 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
     for ch_idx, ch in enumerate(chapters):
         for r in ch.get(ent_key, []):
             names=set([norm(r.get(name_key))])
-            if alias_key and r.get(alias_key): names|={norm(a) for a in r[alias_key]}
+            # alias_key 的语义分两种:
+            #  - characters/organizations 的 aliases 是真正的"称呼",参与归并与展示;
+            #  - items/locations 的 mentions 是"原文出处定位短语"(可带描述定语,如
+            #    "那枚冷冰冰硬邦邦的徽章"),仅用于原文跳转,绝不可当归并键或展示别名 ——
+            #    否则描述短语污染 all_names,且不同物品因共享通用词("照片""文件")字面
+            #    相同而被并成超级簇(处决令/照片/文件/案卷/证章坍缩)。故分流入 aux。
+            aux=set()
+            if alias_key and r.get(alias_key):
+                vals={norm(a) for a in r[alias_key]}
+                if alias_is_mentions:
+                    aux|={v for v in vals if v}
+                else:
+                    names|=vals
             names={n for n in names if n}
-            mkeys={n for n in names if _is_merge_key(n)} if ent_key=="characters" else set(names)
-            nodes.append({"chapter":ch_idx+1,"local_id":r["id"],"names":names,"mkeys":mkeys,"raw":r})
+            # 归并键:所有实体类型都过 _is_merge_key,剔除泛称/代词/绰号/单字/姓+通用职务,
+            # 防止"照片""文件""女人"这类通用词成为跨实体桥(此前仅 characters 过滤)。
+            mkeys={n for n in names if _is_merge_key(n)}
+            nodes.append({"chapter":ch_idx+1,"local_id":r["id"],"names":names,"aux":aux,"mkeys":mkeys,"raw":r})
 
     # 并查集: 名字有交集则合并
     parent=list(range(len(nodes)))
@@ -79,28 +93,36 @@ def resolve_global_entities(chapters, ent_key, name_key="name", alias_key=None):
                 pair_overlap.setdefault((i,j),set()).add(nm)
 
     ambiguities=[]
-    # 按 (i,j) 升序遍历,精确复现原 for i: for j>i 的处理与 ambiguity 记录顺序。
-    # overlap 直接用两节点 name 集合的交集(与原实现逐字一致,而非累加器),
-    # 保证 overlap 列表内部顺序也与原输出 byte 级相同。
     for (i,j) in sorted(pair_overlap.keys()):
         inter=nodes[i]["mkeys"] & nodes[j]["mkeys"]
-        # 判断置信: 是否有"主名"级别的交集(任一方的第一个名/最长名相同)
-        exact = nodes[i]["raw"].get(name_key)==nodes[j]["raw"].get(name_key)
-        union(i,j)
-        if not exact:
+        nameA=nodes[i]["raw"].get(name_key)
+        nameB=nodes[j]["raw"].get(name_key)
+        # --- 归并置信判定(策略①:仅 exact 本名自动并) ---
+        # 演进历史:旧逻辑\"共享任一 merge_key 即无条件 union\"→全图坍缩(超级簇)。
+        # 策略②曾放宽为\"一方本名出现在另一方名字集\"自动并,但重度污染语料里 alias 通道
+        # 混入脏桥(如 ch199 黄克己.aliases 含\"丁主任\"、ch134 丁墨村.aliases 含\"剑雄\"),
+        # 窄规则被脏数据搭车 → 黄克己/黎子午/刘大壮 仍雪崩。故收紧到①:
+        # 只有\"双方本名逐字相同\"才自动归并;所有别名/部分名称重叠一律不并,落 ambiguities,
+        # 交由下游\"模型复核归并\"层(见 resolve_with_llm_review)按语义判定同指。
+        exact = nameA==nameB
+        if exact:
+            union(i,j)
+        else:
             ambiguities.append({
-                "reason":"仅通过别名/部分名称重叠归并,建议人工确认",
-                "chapterA":nodes[i]["chapter"],"nameA":nodes[i]["raw"].get(name_key),
-                "chapterB":nodes[j]["chapter"],"nameB":nodes[j]["raw"].get(name_key),
-                "overlap":list(inter)})
+                "reason":"本名不同但名称/别名重叠,未自动归并,待模型复核同指",
+                "chapterA":nodes[i]["chapter"],"nameA":nameA,
+                "chapterB":nodes[j]["chapter"],"nameB":nameB,
+                "overlap":sorted(inter)})
 
     groups=defaultdict(list)
     for i,n in enumerate(nodes): groups[find(i)].append(n)
     global_list=[]
     for gi,(root,members) in enumerate(groups.items(),1):
-        allnames=set(); 
-        for m in members: allnames|=m["names"]
-        if ent_key=="characters": allnames=set(_display_names(allnames))
+        allnames=set()
+        for m in members: allnames|=m["names"]   # 仅真 name 集合,不含 aux(mentions)
+        # 展示别名对所有实体类型都做清洗:剔除代词/贬称/纯泛称,保留专名与有意义别名。
+        # 此前只有 characters 清洗,导致物品/地点的 all_names 混入泛称;现统一。
+        allnames=set(_display_names(allnames))
         # canonical: 出现最多/最长的本名
         canon=sorted((m["raw"].get(name_key) for m in members), key=lambda s:-len(s or ""))[0]
         global_list.append({
@@ -357,10 +379,49 @@ def project_global_events(global_scenes):
             })
     return out
 
-def run(chapters):
+def run(chapters, call_model=None, novel_root=None, use_llm=True):
+    """
+    跨章聚合主入口。
+    - call_model: app.py 的 call_model(prompt, ...) -> dict;提供且 use_llm 时启用
+      封闭式清洗(entity_clean) + 模型复核归并(entity_review)。
+    - novel_root: 小说输出根目录;提供则启用 .review_cache/ 磁盘缓存(增量复用判定)。
+    - use_llm: 总开关。无 call_model 或关闭时降级为纯算法(①exact-only),保证可离线运行。
+    清洗在最前(净化各章人物),复核在 char_global 之后、stitch_timelines 之前 ——
+    确保 timelines/relations 引用的 global_id 映射到复核合并后的最终节点(id 自洽)。
+    """
+    llm_on = use_llm and call_model is not None
+    # 1) 封闭式清洗:净化各章人物(复合名/描述名/描述别名)。纯模型语义,带磁盘缓存。
+    if llm_on:
+        try:
+            import entity_clean
+            chapters = entity_clean.clean_chapters(chapters, call_model, novel_root=novel_root)
+        except Exception as e:
+            print(f"[run] 清洗层跳过(降级): {e}")
+
     char_global, char_amb = resolve_global_entities(chapters,"characters","name","aliases")
-    item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions")
-    loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions")
+
+    # 2) 模型复核归并:消化①的欠合并(同音异写/正式称谓同指),same=True 才并。带缓存。
+    if llm_on:
+        try:
+            import entity_review, os
+            cache=None; cpath=None
+            if novel_root:
+                cdir=os.path.join(novel_root, ".review_cache"); os.makedirs(cdir, exist_ok=True)
+                cpath=os.path.join(cdir, "review.json")
+                if os.path.exists(cpath):
+                    try: cache=json.load(open(cpath, encoding="utf-8"))
+                    except Exception: cache={}
+                else: cache={}
+            char_global, _dec = entity_review.resolve_with_llm_review(
+                char_global, char_amb, chapters, call_model, cache=cache)
+            if cpath is not None:
+                try: json.dump(cache, open(cpath,"w",encoding="utf-8"), ensure_ascii=False)
+                except Exception: pass
+        except Exception as e:
+            print(f"[run] 复核层跳过(降级): {e}")
+
+    item_global, item_amb = resolve_global_entities(chapters,"items","name","mentions",alias_is_mentions=True)
+    loc_global,  loc_amb  = resolve_global_entities(chapters,"locations","name","mentions",alias_is_mentions=True)
     org_global,  org_amb  = resolve_global_entities(chapters,"organizations","name","aliases")
     global_scenes, timelines, sync, conc_amb, conc_links = stitch_timelines(chapters, char_global, loc_global)
     timeline_amb = check_abs_consistency(global_scenes, timelines) + conc_amb
