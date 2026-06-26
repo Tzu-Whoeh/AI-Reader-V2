@@ -125,7 +125,7 @@ export default function GraphPane({ graph, show, onSelect }) {
 
   const visNodes = layout.nodes.filter(n => show[n.type])
   const visIds = new Set(visNodes.map(n => n.id))
-  const visEdges = layout.edges.filter(e => visIds.has(e.from) && visIds.has(e.to))
+  const visEdges = layout.edges.filter(e => visIds.has(e.from) && visIds.has(e.to) && e.from !== e.to)
 
   return (
     <svg ref={ref} viewBox={`0 0 ${size.W} ${size.H}`}>

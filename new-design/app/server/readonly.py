@@ -352,6 +352,10 @@ def build_graph():
             if p in char_ids:
                 edges.append({"from":f"event:{eid}","to":f"character:{p}","kind":"event"})
 
+    # 过滤自环边(from==to):同一全局实体的跨章关系两端归并到同一 global_id 后会自连,
+    # 属展示噪音(节点上的自指小圈),不携带有效关系信息,统一在出口剔除。
+    edges=[e for e in edges if e.get("from")!=e.get("to")]
+
     return {"nodes":nodes,"edges":edges}
 
 def build_events():
