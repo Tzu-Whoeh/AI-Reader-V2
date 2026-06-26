@@ -20,6 +20,7 @@ import os, sys, json, glob, re
 import time
 import clean_split as CS
 import storage, merge_core, aggregate, graph_index, gap_scan, org_extract
+import agg_worker
 import event_pipeline as EP
 
 # ---- 模型调用(默认直连;平台环境替换此函数,并赋给 EP.call_model)----
@@ -287,6 +288,10 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
     total=len(chapters)
     emit(stage="split", total=total, done=0)
 
+    # 后台聚合 worker:每章完成增量聚合,图谱/高亮随进度显现(不阻塞主分析循环)
+    worker=agg_worker.AggWorker(out_dir, aggregate.aggregate, storage)
+    worker.start()
+
     done=0
     stopped=False
     for c in chapters:
@@ -306,6 +311,7 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
         merged_path=os.path.join(cdir,"_merged.json")
         if os.path.exists(merged_path):
             print(f"[ch{ch:02d}] 已存在,跳过(断点续跑)"); done+=1
+            worker.mark_dirty()
             emit(stage="chapter", chapter=ch, total=total, done=done, skipped=True); continue
         emit(stage="chapter_start", chapter=ch, total=total, done=done)
         def _step_cb(k, nm, idx, tot, _ch=ch, _done=done, _total=total):
@@ -319,6 +325,7 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
             store.save_chapter_merged(ch, merged)
             done+=1
             print(f"[ch{ch:02d}] ✓ 「{c['title']}」 场景{len(merged.get('scenes',[]))} 人物{len(merged.get('characters',[]))} 事件{len(merged.get('parent_events',[]))}")
+            worker.mark_dirty()   # 触发后台增量聚合
             emit(stage="chapter", chapter=ch, total=total, done=done,
                  title=c["title"], scenes=len(merged.get("scenes",[])),
                  characters=len(merged.get("characters",[])), events=len(merged.get("parent_events",[])))
@@ -326,7 +333,9 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
             print(f"[ch{ch:02d}] ✗ 失败: {e} (跳过,继续下一章)")
             emit(stage="chapter_error", chapter=ch, total=total, done=done, error=str(e))
 
-    # 全局合并(确定性)
+    # 停止后台 worker(内部会同步跑最后一次聚合并原子提交 global/)
+    worker.stop(final=True)
+    # 再对正式 global/ 跑一次聚合取完整 idx 作返回值(幂等;确保返回 counts 完整)
     print("[全局] 跨章合并 + 聚合 + 图索引 + 漏标扫描")
     emit(stage="aggregate", total=total, done=done)
     idx=aggregate.aggregate(store)
