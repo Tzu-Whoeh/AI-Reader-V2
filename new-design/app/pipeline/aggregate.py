@@ -2,7 +2,7 @@
 import cross_chapter as cc
 import entity_normalize as EN
 
-def aggregate(store):
+def aggregate(store, call_model=None, novel_root=None, use_llm=True):
     chs=store.list_chapters()
     chapters=[]
     for ch in chs:
@@ -21,8 +21,13 @@ def aggregate(store):
             "location_relations": m.get("location_relations",[]),
         })
 
+    # novel_root 缺省时尝试从 store 推断(用于 .review_cache 落盘)
+    if novel_root is None:
+        novel_root = getattr(store, "root", None) or getattr(store, "novel_root", None) or getattr(store, "base", None)
+
     # 跨章核心(全局人物/物品/地点归一 + 事件/时间线/同步点)
-    cross=cc.run(chapters)
+    # call_model 提供且 use_llm 时,run() 内部启用封闭式清洗 + 模型复核归并(带磁盘缓存增量)。
+    cross=cc.run(chapters, call_model=call_model, novel_root=novel_root, use_llm=use_llm)
 
     # ---- 全局人物文档: 归一表 + 个人时间线 + 跨章人物关系(把各章关系的局部id映射到全局id) ----
     loc2glob_char={}
