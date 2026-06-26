@@ -18,6 +18,7 @@
 """
 import os, sys, json, glob, re
 import time
+import functools
 import clean_split as CS
 import storage, merge_core, aggregate, graph_index, gap_scan, org_extract
 import agg_worker
@@ -289,7 +290,10 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
     emit(stage="split", total=total, done=0)
 
     # 后台聚合 worker:每章完成增量聚合,图谱/高亮随进度显现(不阻塞主分析循环)
-    worker=agg_worker.AggWorker(out_dir, aggregate.aggregate, storage)
+    # 绑定 call_model + novel_root,使 worker 增量聚合也走封闭式清洗 + 复核归并(带磁盘缓存,
+    # 已判词/对复用,仅新章引入的新增词/对发起判定)。
+    _agg_fn=functools.partial(aggregate.aggregate, call_model=call_model, novel_root=out_dir)
+    worker=agg_worker.AggWorker(out_dir, _agg_fn, storage)
     worker.start()
 
     done=0
@@ -338,7 +342,7 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
     # 再对正式 global/ 跑一次聚合取完整 idx 作返回值(幂等;确保返回 counts 完整)
     print("[全局] 跨章合并 + 聚合 + 图索引 + 漏标扫描")
     emit(stage="aggregate", total=total, done=done)
-    idx=aggregate.aggregate(store)
+    idx=aggregate.aggregate(store, call_model=call_model, novel_root=out_dir)
     print(f"[全局] 完成: {idx['counts']}")
     emit(stage="done", total=total, done=done, counts=idx.get("counts",{}))
     return idx
