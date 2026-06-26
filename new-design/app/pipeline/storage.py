@@ -8,9 +8,10 @@
 import json, os
 
 class Store:
-    def __init__(self, root="output"):
+    def __init__(self, root="output", global_subdir="global"):
         self.root=root
-        os.makedirs(os.path.join(root,"global"), exist_ok=True)
+        self.global_subdir=global_subdir
+        os.makedirs(os.path.join(root, global_subdir), exist_ok=True)
 
     def _chdir(self, ch):
         d=os.path.join(self.root, f"ch{ch:02d}")
@@ -34,14 +35,31 @@ class Store:
     # ---- 第三层:全局分维度 ----
     def save_global(self, dimension, data):
         """dimension: characters|items|locations|timeline|scenes"""
-        path=os.path.join(self.root,"global",f"{dimension}.json")
+        path=os.path.join(self.root,self.global_subdir,f"{dimension}.json")
         self._dump(path, data)
         return path
 
     def save_index(self, index):
-        path=os.path.join(self.root,"global","_index.json")
+        path=os.path.join(self.root,self.global_subdir,"_index.json")
         self._dump(path, index)
         return path
+
+    def commit_global(self):
+        """原子提交:把 global_subdir(临时目录)替换正式 global/。
+        仅当 global_subdir != 'global' 时有意义(增量聚合写临时再切换,防读到半成品)。"""
+        if self.global_subdir=="global": return
+        src=os.path.join(self.root,self.global_subdir)
+        dst=os.path.join(self.root,"global")
+        bak=os.path.join(self.root,"global.swapold")
+        # 尽量原子:先把旧 global 移走,再把 tmp 移成 global,最后删旧
+        import shutil
+        try:
+            if os.path.exists(dst): os.replace(dst, bak)
+            os.replace(src, dst)
+        finally:
+            if os.path.exists(bak): shutil.rmtree(bak, ignore_errors=True)
+        # 重新创建临时目录供下次写入
+        os.makedirs(src, exist_ok=True)
 
     def load_chapter_merged(self, ch):
         return json.load(open(os.path.join(self.root,f"ch{ch:02d}","_merged.json"),encoding="utf-8"))
