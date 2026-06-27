@@ -115,6 +115,9 @@ mark.occ-pulse{background:transparent;color:inherit;border-radius:2px;
 .sc-tag-fn{color:var(--thread);border-color:var(--thread)}
 .sc-tag-fn:hover{background:var(--thread);color:var(--paper)}
 .sc-tag-fn.active{background:var(--thread);color:var(--paper);border-color:var(--thread)}
+.sc-tag-ac{color:var(--event);border-color:var(--event)}
+.sc-tag-ac:hover{background:var(--event);color:var(--paper)}
+.sc-tag-ac.active{background:var(--event);color:var(--paper);border-color:var(--event)}
 .sc-filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
   font-family:sans-serif;font-size:12px;padding:9px 13px;margin-bottom:14px;
   background:var(--paper2);border:1px solid var(--line);border-radius:4px}
