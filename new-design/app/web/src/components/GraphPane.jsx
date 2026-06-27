@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
+// 颜色单一来源(与 theme.css 的 --char/--item/--loc/--event/--org 同值;SVG 属性走 JS 取色,
+// CSS 变量供样式表/未来使用,二者保持一致)。节点按 node.type、边按 edge.kind 各取一表。
 const TC = { character: '#a8332a', item: '#b8884a', location: '#6f9b8e', event: '#9a7db8', organization: '#4a8fb8' }
+// 边色:kind→色。loc/event/item/org 与节点同系;membership 用 org 色;char 关系用默认褐线。
+const EDGE_C = { loc: '#6f9b8e', event: '#9a7db8', item: '#b8884a', membership: '#4a8fb8', org: '#3a7090', char: '#c98b6a' }
+const edgeColor = (kind) => EDGE_C[kind] || EDGE_C.char
 
 // 网格近似斥力的力导向布局。
 // 优化点(对比旧版 260 固定迭代 + O(n²) 全量斥力):
@@ -51,7 +56,13 @@ function computeLayout(nodes, edges) {
             if (bi === ai) continue
             const b = nodes[bi]
             let dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy
-            if (d2 < 1e-9) { dx = (Math.random() - 0.5) * 1e-3; dy = (Math.random() - 0.5) * 1e-3; d2 = dx * dx + dy * dy }
+            if (d2 < 1e-9) {
+              // 确定性微扰(取代 Math.random):由两节点下标定向,保证同图多次渲染坐标一致。
+              const h = (ai * 73856093) ^ (bi * 19349663)
+              dx = (((h & 1023) / 1023) - 0.5) * 1e-3
+              dy = ((((h >> 10) & 1023) / 1023) - 0.5) * 1e-3
+              d2 = dx * dx + dy * dy
+            }
             if (d2 > CELL * CELL * 9) continue // 超出作用域忽略
             const d = Math.sqrt(d2), f = REP / d2
             a.fx += (dx / d) * f; a.fy += (dy / d) * f
@@ -132,10 +143,7 @@ export default function GraphPane({ graph, show, onSelect }) {
       {visEdges.map((e, i) => {
         const a = layout.nodes[layout.idx[e.from]], b = layout.nodes[layout.idx[e.to]]
         if (!a || !b) return null
-        const stroke = e.kind === 'loc' ? '#6f9b8e' : e.kind === 'event' ? '#9a7db8'
-          : e.kind === 'item' ? '#b8884a'
-          : e.kind === 'membership' ? '#4a8fb8'
-          : e.kind === 'org' ? '#3a7090' : '#c98b6a'
+        const stroke = edgeColor(e.kind)
         return (
           <line key={i} x1={px(a.x)} y1={py(a.y)} x2={px(b.x)} y2={py(b.y)}
             stroke={stroke} strokeWidth="1" opacity=".4" />
