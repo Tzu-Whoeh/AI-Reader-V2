@@ -164,6 +164,9 @@ def node_anchors(ntype, nid):
     if ntype=="location":
         for g in GLOBALS.get("locations",{}).get("global_locations",[]):
             if g["global_id"]==nid: return g.get("all_names",[g.get("canonical")])
+    if ntype=="organization":
+        for g in GLOBALS.get("organizations",{}).get("global_organizations",[]):
+            if g["global_id"]==nid: return g.get("all_names",[g.get("canonical")])
     if ntype=="event":
         # 事件用 anchor_text
         for m in CHAPTERS:
