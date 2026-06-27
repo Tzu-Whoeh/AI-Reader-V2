@@ -173,6 +173,35 @@ def sanitize_function_tags(raw_scenes_tags, catalog=None):
     return out, report
 
 
+# ---------- 动作标签(与功能标签同构;两段式:宽触发 prompt + 此处词形复核)----------
+# 动作标签描述场景里"实际发生了什么动作行为"(审讯/跟踪/交接…),区别于"叙事功能"。
+ACTION_TAG_CATALOG=[
+    "审讯","跟踪","交接","接头","潜入","搜查","暗杀","逮捕","盯梢","传递",
+    "谈判","对峙","追逐","逃脱","埋伏","营救","拷打","告密","乔装","窃听",
+    "交谈","争吵","试探","威胁","盘问","刺探","掩护","撤离","部署","策反",
+]
+def sanitize_action_tags(raw_scenes_tags, catalog=None):
+    """校验模型返回的动作标签:复用 _bad_tag 词形过滤(废弃记 report)+ in_catalog 标注。
+    raw_scenes_tags: [{index, action_tags:[...]}]。
+    返回 {index: {tags:[...], novel:[...]}}, report。
+    清单外的合法标签【保留】并记入 novel(留作扩充清单的来源)。与 sanitize_function_tags 同构。"""
+    cat=set(catalog or ACTION_TAG_CATALOG)
+    out={}; report={"dropped":[], "novel":[]}
+    for item in (raw_scenes_tags or []):
+        idx=item.get("index")
+        kept=[]; novel=[]; seen=set()
+        for t in (item.get("action_tags") or []):
+            ts=t.strip() if isinstance(t,str) else t
+            if _bad_tag(ts):
+                report["dropped"].append({"index":idx,"tag":t}); continue
+            if ts in seen: continue
+            seen.add(ts); kept.append(ts)
+            if ts not in cat:
+                novel.append(ts); report["novel"].append({"index":idx,"tag":ts})
+        out[idx]={"tags":kept[:5], "novel":novel}
+    return out, report
+
+
     """物品 scene 字段 -> 场景 location_ref -> 物品 location_ref(确定性推导)。
     scene 可为 int 或 list。物品可经过多地点。"""
     scene_loc={}  # scene index -> location_id
