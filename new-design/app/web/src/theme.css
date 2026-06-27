@@ -3,6 +3,7 @@
   --paper:#1a1714; --paper2:#221d18; --ink:#e8dcc8; --dim:#9a8f7d;
   --stamp:#a8332a; --thread:#b8884a; --line:#3a322a;
   --char:#a8332a; --item:#b8884a; --loc:#6f9b8e;
+  --event:#9a7db8; --org:#4a8fb8; --membership:#4a8fb8; --edge-org:#3a7090; --edge-char:#c98b6a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--paper);color:var(--ink);

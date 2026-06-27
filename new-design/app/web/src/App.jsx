@@ -8,7 +8,7 @@ import Scenes from './views/Scenes.jsx'
 import Reader from './views/Reader.jsx'
 import Library from './views/Library.jsx'
 
-const TYPES = { character: '人物', item: '物品', location: '地点' }
+const TYPES = { character: '人物', item: '物品', location: '地点', event: '事件', organization: '组织' }
 const VIEWS = { library: '书库', graph: '图谱', reader: '阅读', timeline: '时间线', scenes: '场景' }
 const ACTIVE_STAGES = new Set(['uploaded', 'splitting', 'starting', 'analyzing', 'aggregating', 'paused', 'stopping'])
 
@@ -23,15 +23,27 @@ function progPct(p) {
   return Math.min(99, Math.round((completedUnits / units) * 100))
 }
 
+// ── Hash 路由(无路由库):#/<view>/<novel>。支持深链、刷新保持、前进/后退 ──
+const _ALLOWED_VIEWS = new Set(['library', 'graph', 'reader', 'timeline', 'scenes'])
+function parseHash() {
+  const h = (typeof window !== 'undefined' ? window.location.hash : '') || ''
+  const m = h.replace(/^#\/?/, '').split('/')
+  const v = _ALLOWED_VIEWS.has(m[0]) ? m[0] : null
+  const nv = m[1] ? decodeURIComponent(m[1]) : null
+  return { view: v, novel: nv }
+}
+
 export default function App() {
+  const _h0 = parseHash()
   const [summary, setSummary] = useState(null)
   const [graph, setGraph] = useState({ nodes: [], edges: [] })
-  const [show, setShow] = useState({ character: true, item: true, location: true })
+  const [show, setShow] = useState({ character: true, item: true, location: true, event: true, organization: true })
   const [selected, setSelected] = useState(null)
-  const [view, setView] = useState('graph')
+  const [view, setView] = useState(_h0.view || 'graph')
   const [navOpen, setNavOpen] = useState(false)   // 窄屏视图汉堡菜单
   const [novels, setNovels] = useState([])
-  const [novel, setNovel] = useState(null)   // 当前小说 slug(全局,所有视图跟随)
+  const [novel, setNovel] = useState(_h0.novel || null)   // 当前小说 slug(全局,所有视图跟随)
+  const hashNovelRef = useRef(_h0.novel)   // 初始 hash 指定的小说(若有效则优先于"最近上传")
 
   // ── 应用级"进行中任务":状态与轮询提到 App,任意视图可见、切走不中断 ──
   const [job, setJob] = useState(null)        // { slug, prog }
@@ -40,8 +52,16 @@ export default function App() {
 
   const refreshNovels = useCallback(() => {
     return getNovels().then(d => {
-      setNovels(d.novels || [])
-      setNovel(cur => cur || d.current || (d.novels?.[0]?.slug ?? null))
+      const list = d.novels || []
+      setNovels(list)
+      const valid = (s) => s && list.some(n => n.slug === s)
+      setNovel(cur => {
+        // 优先级:已选 → 初始 hash 指定(若有效)→ 后端 current → 列表首本
+        if (cur) return cur
+        const hinted = hashNovelRef.current
+        if (valid(hinted)) return hinted
+        return d.current || (list[0]?.slug ?? null)
+      })
       return d
     }).catch(console.error)
   }, [])
@@ -75,6 +95,27 @@ export default function App() {
 
   // 卸载清定时器
   useEffect(() => () => clearInterval(pollRef.current), [])
+
+  // view/novel 变化 → 写回 URL hash(刷新保持、可分享深链)
+  useEffect(() => {
+    const next = '#/' + view + (novel ? '/' + encodeURIComponent(novel) : '')
+    if (window.location.hash !== next) {
+      // 用 replaceState 避免每次状态变动都堆进历史栈(仅反映当前态)
+      try { window.history.replaceState(null, '', next) }
+      catch { window.location.hash = next }
+    }
+  }, [view, novel])
+
+  // 浏览器前进/后退 → 同步回组件状态
+  useEffect(() => {
+    const onHash = () => {
+      const { view: v, novel: nv } = parseHash()
+      if (v) setView(v)
+      if (nv) setNovel(nv)
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   // 启动:载入小说列表 + 扫描未完成任务自动重连轮询(刷新页面/重进也能恢复)
   useEffect(() => {
