@@ -38,13 +38,19 @@
 - `resolve_global_entities(..., alias_is_mentions)`:characters/orgs 的 aliases 参与归并+展示;
   items/locations 的 mentions 仅入 `aux`(原文定位,不作键不展示)。
 - 并查集:名字(过 mkeys)有交集则 union;完全同名=高置信,仅别名重叠=ambiguities。
-- `run(chapters, call_model, novel_root, use_llm)`:铁律顺序 clean→exact-merge→review→stitch。
+- `run(chapters, call_model, novel_root, use_llm)`:顺序 clean(仅人物)→ 人物归一 → review(仅人物)
+  → 物品/地点/组织纯算法归一 → stitch_timelines。**LLM 清洗/复核只作用于 characters**;
+  items/locations/organizations 走纯 exact-only `resolve_global_entities`,不调模型。
+  `use_llm=False` 或无 `call_model` 时人物也降级为纯 exact-only(保证可离线运行)。
 
 ### 1.3 event_pipeline.py
 - `extract_parent_events`:章级父事件(看全章,participants 从人物候选选,带 scene_ref+anchor_text+story_order)。
 - 子事件:逐场景补细节,挂父,从候选清单选 participants/items。
 - 两道确定性校验:(a) 施事者从父继承;(b) 物品锚点必须出现在子事件 anchor_text 句内,否则剔除。
 - `set_prompts_dir` / `call_model` 由 app.py 注入(`EP.call_model=call_model`)。
+- ⚠️ event_pipeline.py **自带的** `call_model` 写死 `http://127.0.0.1:11434`(默认端口),仅作模块独立运行的兜底;
+  运行时被 app.py 的 `EP.call_model=call_model` 整体覆盖,实际经 `OLLAMA_URL`(默认 18434 隧道)调用。
+  读源码勿被自带默认端口误导。其自带 `num_ctx` 默认 8192(整章管线 49152,事件管道沿用 8192)。
 
 ## 2. server/ 合并后端
 
