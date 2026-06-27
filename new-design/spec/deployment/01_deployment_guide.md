@@ -40,7 +40,7 @@ app/input/<slug>/chNN.txt             清洗+拆章后各章原文
 app/output/<slug>/meta.json           小说元数据 + 进度状态
 app/output/<slug>/chNN/_merged.json   每章中间结果
 app/output/<slug>/global/*.json       global 结果(+ 原子提交临时目录)
-app/output/<slug>/global/.review_cache/{review,clean}.json   LLM 复核磁盘缓存
+app/output/<slug>/.review_cache/{review,clean}.json   LLM 人物复核/清洗磁盘缓存(在 novel_root 即 output/<slug>/ 下,非 global/ 内)
 ```
 
 ## 4. 前端构建
@@ -75,14 +75,24 @@ cd new-design && python3 -m app.server.main \
 
 ## 7. 暖缓存先行(冷启动纪律)
 
-LLM 复核在跨章聚合热路径时,首跑空缓存会与章分析争 GPU 拖垮管线。正式跑前:
+LLM 人物清洗/复核在跨章聚合热路径时,首跑空缓存会触发对全部新词/新对的模型判定,
+与逐章分析争抢同一块 GPU,可能拖垮管线(历史现象:增量聚合的全量判定耗时与章分析叠加)。
+
+**注:仓库当前无独立的 warmcache 脚本**;暖缓存是一种**运行策略**,不是现成命令。其原理:
 
 ```
-1. 离线 warmcache(约 66 min):预填 .review_cache/{review,clean}.json
-2. 用缓存重建 global(near-instant 聚合)
+缓存载体: output/<slug>/.review_cache/{review,clean}.json
+          —— entity_review/entity_clean 命中即复用,仅新词/新对发起模型判定。
+策略:    先让聚合(aggregate.aggregate,带 call_model + novel_root)在不与章分析
+          抢 GPU 的时机跑一遍,把 .review_cache 填满;之后正式跑/重建 global 时
+          判定多为缓存命中,近瞬时,不再与章分析竞争。
 ```
 
-缓存暖化必须先于「LLM 判定在热路径」的正式运行。
+实现方式(任选其一,均用现有代码,不需新脚本):
+- 先单独触发一次跨章聚合(章分析空闲时),填充缓存,再正式重跑;或
+- 若要一键化暖缓存,需**单独提 PR 新增 `warmcache.py`**(属功能,不在本规格范围)。
+
+缓存暖化应先于「LLM 判定在热路径」的正式运行。
 
 ## 8. 运维红线(L4 自治档)
 
