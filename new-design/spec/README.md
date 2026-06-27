@@ -9,7 +9,7 @@
 
 | 子目录 | 内容 | 主文档 |
 |---|---|---|
-| `requirements/` | 需求规格:产品目标、功能性/非功能性需求、可靠性红线、约束 | `01_product_requirements.md` |
+| `requirements/` | 需求规格:产品目标、功能性/非功能性需求、可靠性红线、约束、**用户故事** | `01_product_requirements.md`、`02_user_stories.md` |
 | `architecture/` | 架构规格:系统分层、数据流、存储布局、模型适配、部署拓扑、**前端 UI 设计** | `01_system_architecture.md`、`02_ui_design.md` |
 | `modules/` | 模块规格:每个 pipeline / server 模块的职责、输入输出、依赖 | `01_module_catalog.md` |
 | `testing/` | 测试规格:校验四道防线、CI 结构校验、提示词稳定性测试、验收口径 | `01_test_strategy.md` |
