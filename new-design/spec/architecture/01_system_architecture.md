@@ -63,19 +63,30 @@
 ## 3. 跨章缝合架构(cross_chapter.run)
 
 ```
-各章局部实体 ─→ resolve_global_entities(并查集)
+各章局部实体 ─→ resolve_global_entities(并查集,四类实体都走)
                   归并键过 _is_merge_key(剔代词/泛称/绰号/单字/姓+职务)
                   mentions → aux(不作键不展示)
                   完全同名=高置信合并;仅别名重叠=ambiguities
-  启用 LLM 复核(use_llm + call_model)时铁律顺序:
-    entity_clean 封闭式清洗  →  精确同名合并  →  entity_review 模型复核  →  stitch_timelines
-    复核/清洗均带磁盘缓存(novel_root/.review_cache/{review,clean}.json),3 票多数自洽投票
-  产出:global_characters/items/locations/organizations
-        + character_timelines + sync_points + ambiguities
+
+  ⚠️ LLM 清洗/复核【仅作用于人物维度】。物品/地点/组织走纯 resolve_global_entities
+     (exact-only,无模型)。run() 的实际顺序:
+
+    1) entity_clean 封闭式清洗(仅 characters,净化复合名/描述名/描述别名)
+    2) resolve_global_entities("characters")  →  char_global + char_amb
+    3) entity_review 模型复核(仅 characters,消化①欠合并,same=True 才并)
+    4) resolve_global_entities("items"/"locations"/"organizations")  ← 纯算法,无 LLM
+    5) stitch_timelines(全局场景/时间线/同步点) + check_abs_consistency
+
+  复核/清洗带磁盘缓存(novel_root/.review_cache/{review,clean}.json),3 票多数自洽投票。
+  复核置于 char_global 之后、stitch_timelines 之前,确保 timelines/relations 引用的
+  global_id 映射到复核合并后的最终人物节点(id 自洽)。
+  产出:global_characters/items/locations/organizations + global_scenes/events
+        + character_timelines + sync_points + concurrency_links + ambiguities
 ```
 
 模型判断与确定性兜底的边界:`merge_core` / `graph_index` / `gap_scan` / `sanitize_*` 纯确定性;
-`entity_review` / `entity_clean` 是显式 LLM 复核层(独立模块 + 缓存),不污染确定性归并主路径。
+物品/地点/组织的跨章归一亦纯算法(exact-only);`entity_review` / `entity_clean` 是**仅针对人物**的
+显式 LLM 复核层(独立模块 + 缓存),不污染确定性归并主路径。
 
 ## 4. 三层存储契约(storage.py)
 
