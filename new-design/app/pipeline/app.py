@@ -147,7 +147,7 @@ def _redo_scene_summaries(text, merged, Lload):
             done.append({"index":idx,"action":fb["reason"],"kept_len":fb["kept_len"]})
     merged["_validation"]["scene_redo_result"]=done
 
-def analyze_chapter(text, step_cb=None, function_catalog=None):
+def analyze_chapter(text, step_cb=None, function_catalog=None, action_catalog=None):
     """单章五维度 + 事件 + 章节归并。返回 merged dict。
     step_cb(step, name, idx, total) 可选:每个子步骤开始时回调,用于细粒度进度。"""
     def step(i):
@@ -224,6 +224,28 @@ def analyze_chapter(text, step_cb=None, function_catalog=None):
         merged.setdefault("_validation",{})["function_tags"]=ft_report
     except Exception as e:
         merged.setdefault("_postproc_errors",[]).append(f"function_tags: {e}")
+    # 动作标签(独立 pass,模型):依据场景标题+摘要打 1-5 个动作类标签(审讯/跟踪/交接…)。
+    # 与功能标签同构两段式:候选清单引导优先复用 + 后处理词形校验 + in_catalog 标注,清单外保留记 novel。
+    # 写入 s.tags.action / s.tags.action_novel,与 function/function_novel 并存。
+    try:
+        a_catalog=action_catalog or getattr(merge_core,"ACTION_TAG_CATALOG",[])
+        a_slist="\n".join(f'  index={s.get("index")} 标题="{s.get("title","")}" 摘要="{s.get("summary","")}"'
+                          for s in merged.get("scenes",[]))
+        at_raw=call_model(L("01d_scene_action_tags.txt")
+                          .replace("{CATALOG}", "、".join(a_catalog))
+                          .replace("{SCENELIST}", a_slist),
+                          temperature=0.15, model=model_for("scene"))
+        at_clean, at_report=merge_core.sanitize_action_tags(at_raw.get("scenes",[]), a_catalog)
+        for s in merged.get("scenes",[]):
+            res=at_clean.get(s.get("index"))
+            if res:
+                tags=s.get("tags") if isinstance(s.get("tags"),dict) else {}
+                tags["action"]=res["tags"]
+                if res["novel"]: tags["action_novel"]=res["novel"]
+                s["tags"]=tags
+        merged.setdefault("_validation",{})["action_tags"]=at_report
+    except Exception as e:
+        merged.setdefault("_postproc_errors",[]).append(f"action_tags: {e}")
     # 组织维度(明说成员归属守红线;确定性后处理 + 成员名归一)
     step(8)
     try:
@@ -261,7 +283,7 @@ def load_presplit(dir_path):
     chapters.sort(key=lambda c:c["index"])
     return chapters
 
-def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_continue=None, function_catalog=None):
+def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_continue=None, function_catalog=None, action_catalog=None):
     """progress_cb(event:dict) 可选回调,用于任务层捕获进度;不传则纯命令行行为不变。
     should_continue() -> "go"|"pause"|"stop" 可选:每章开始前查询控制状态。
       pause:run 在章间阻塞轮询(2s)直到 go/stop —— 实现章间软停(不打断进行中的章)。
@@ -324,7 +346,7 @@ def run(input_path, out_dir="output", presplit=False, progress_cb=None, should_c
         try:
             if len(c["text"])>40000:
                 print(f"[ch{ch:02d}] 超长章({len(c['text'])}字),可能逼近上下文上限")
-            merged=analyze_chapter(c["text"], step_cb=_step_cb, function_catalog=function_catalog)
+            merged=analyze_chapter(c["text"], step_cb=_step_cb, function_catalog=function_catalog, action_catalog=action_catalog)
             merged["_title"]=c["title"]
             store.save_chapter_merged(ch, merged)
             done+=1
