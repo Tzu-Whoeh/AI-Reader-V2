@@ -172,6 +172,8 @@ CREATE TABLE tag (
     label       TEXT    NOT NULL,
     in_catalog  INTEGER NOT NULL DEFAULT 1 CHECK (in_catalog IN (0,1)),
     rank        INTEGER,                                   -- 重要性序(1 最重要;可空)
+    source      TEXT NOT NULL DEFAULT 'model'             -- 'model' | 'human':人工新增标签不被重导出覆盖
+                  CHECK (source IN ('model','human')),
     UNIQUE (target_type, target_id, kind, label)
 ) STRICT;
 
@@ -300,3 +302,66 @@ WHEN NEW.target_type='character'
 BEGIN
     SELECT RAISE(ABORT, 'tag.target_id 指向不存在的 character');
 END;
+
+-- ============================================================================
+-- 9. 可写人工标注层(annotation layer)
+-- ----------------------------------------------------------------------------
+-- 目的:承接【人工评价 / 调整 / 补充】,与模型产出分层共存、可追溯、不被重导出覆盖。
+-- 分层原则(关键):
+--   * 模型产出的行 source='model';人工产出 source='human'。
+--   * 重导出(global/*.json → DB)只 wipe+reload 'model' 行,**绝不删 'human' 行**。
+--   * 合并展示/回写时,人工层优先(human overrides model),并保留模型原值可回溯。
+-- 这样 DB 成为"模型结果 + 人工修订"的叠加视图,而文件主存储仍只承载模型结果(可靠性防线不变)。
+-- ============================================================================
+
+-- 9.1 自由标注:对任意对象的人工补充说明/纠正建议/评分(不改原始字段)
+CREATE TABLE annotation (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    target_type TEXT    NOT NULL CHECK (target_type IN
+                    ('scene','character','item','location','organization','event','relation')),
+    target_id   INTEGER NOT NULL,                          -- 指向对应表主键
+    field       TEXT,                                      -- 针对哪个字段(空=整体标注)
+    kind        TEXT    NOT NULL CHECK (kind IN
+                    ('note','correction','rating','flag')), -- 备注/纠错建议/评分/标记存疑
+    body        TEXT,                                      -- 标注正文 / 建议的新值
+    rating      INTEGER CHECK (rating IS NULL OR rating BETWEEN 1 AND 5),  -- 仅 kind='rating'
+    author      TEXT    NOT NULL DEFAULT 'human',
+    created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+    UNIQUE (target_type, target_id, field, kind, author, created_at)
+) STRICT;
+
+CREATE INDEX idx_annotation_target ON annotation (target_type, target_id);
+CREATE INDEX idx_annotation_kind   ON annotation (kind);
+
+-- 9.2 人工裁决:对模型【判断】的复核结论(归并/关系/歧义/成员关系…)
+--     记录:对象 + 模型原值 + 人工裁决 + 操作者 + 时间,完全可追溯。
+CREATE TABLE review (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject     TEXT    NOT NULL CHECK (subject IN
+                    ('entity_merge','relation','ambiguity','org_membership','event','tag')),
+    ref_table   TEXT,                                      -- 指向的表名(如 'relation','ambiguity')
+    ref_id      INTEGER,                                   -- 指向的行 id(可空,如对 global_id 的裁决)
+    ref_global  INTEGER,                                   -- 涉及的 global_id(归并/关系裁决用)
+    verdict     TEXT    NOT NULL CHECK (verdict IN
+                    ('confirm','reject','merge','split','correct','defer')),
+    original    TEXT,                                      -- 模型原值(JSON 片段,回溯用)
+    corrected   TEXT,                                      -- 人工修正后的值(JSON 片段;verdict=correct/merge/split)
+    rationale   TEXT,                                      -- 裁决理由
+    author      TEXT    NOT NULL DEFAULT 'human',
+    created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+    applied     INTEGER NOT NULL DEFAULT 0 CHECK (applied IN (0,1)) -- 是否已回写文件主存储
+) STRICT;
+
+CREATE INDEX idx_review_subject ON review (subject);
+CREATE INDEX idx_review_ref ON review (ref_table, ref_id);
+CREATE INDEX idx_review_unapplied ON review (applied) WHERE applied = 0;
+
+-- 9.3 视图:有效标签(人工优先;人工新增可见,人工不会"删模型标签"——如需隐藏用 annotation flag)
+CREATE VIEW v_effective_tag AS
+SELECT target_type, target_id, kind, label, in_catalog, rank, source
+FROM tag;  -- 当前模型/人工标签同表共存;source 列区分。前端可按需过滤或合并展示。
+
+-- 9.4 视图:待回写的人工裁决(回写器据此把人工层合并回 global/*.json)
+CREATE VIEW v_pending_reviews AS
+SELECT id, subject, ref_table, ref_id, ref_global, verdict, original, corrected, rationale, created_at
+FROM review WHERE applied = 0 ORDER BY created_at;
