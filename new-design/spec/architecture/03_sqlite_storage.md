@@ -151,8 +151,12 @@ SELECT story_order, chapter, description, is_flashback FROM event ORDER BY story
   **可写层亦实跑验证**:`tag.source` 模型/人工分层、重导出只删模型行而人工标签存活、
   `annotation`(纠错/评分)、`review`(裁决 + 原值/修正值/理由 + applied 标记)、
   `v_effective_tag`/`v_pending_reviews` 视图 —— 均通过。
+- **`tools/export_sqlite.py` 已实现并实跑验证**(wangcai「潜伏」真实数据,207 章):
+  导出 entity 1827 / relation 3447 / event 1927 / scene 447 / tag 1147 / membership 221 /
+  ambiguity 3615,relation 悬空 0、event_participant 悬空 0;**幂等**(重导出计数不变)、
+  **人工标签跨重导出存活**。据真实数据修正了 schema 两处:`relation_type` 增 `allegiance`;
+  `story_order`/`narrative_order` 改 REAL(实数据用小数序保序,范围实测 -10..26)。
 - **未做(刻意留作后续功能,各需单独 PR)**:
-  - `export_sqlite.py` 导出器(`global/*.json` → `novel.db`);
   - 回写器(DB 人工裁决 → 合并回 `global/*.json`,经原子提交);
   - pipeline 产出人物标签的 pass(本设计已为其预留落点);
   - 可选的跨书汇总库 / FTS5 全文检索(原文/摘要)扩展。
