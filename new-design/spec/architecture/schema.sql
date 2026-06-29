@@ -113,7 +113,7 @@ CREATE TABLE relation (
     from_global   INTEGER,                                 -- 来源实体 global_id
     to_global     INTEGER,                                 -- 目标实体 global_id
     relation_type TEXT    NOT NULL CHECK (relation_type IN
-                    ('social','kin','affective','attitude','event','awareness',
+                    ('social','kin','affective','attitude','event','awareness','allegiance',
                      'adjacency','containment','movement','remote')),
     label         TEXT    NOT NULL,
     evidence      TEXT,                                    -- 锚点(R1)
@@ -196,8 +196,8 @@ CREATE TABLE event (
     event_id        INTEGER PRIMARY KEY,                   -- 全局事件 id(缝合后)
     chapter         INTEGER NOT NULL,
     description     TEXT    NOT NULL,
-    narrative_order INTEGER,
-    story_order     INTEGER,
+    narrative_order REAL,
+    story_order     REAL,                                  -- 可为小数:插入事件用分数序(如 1.5)保序
     is_flashback    INTEGER NOT NULL DEFAULT 0 CHECK (is_flashback IN (0,1)),
     storyline       TEXT,                                  -- 自由文本线索名
     abs_start       TEXT,                                  -- 绝对时间(R3:无依据为 NULL)
