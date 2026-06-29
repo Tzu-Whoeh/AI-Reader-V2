@@ -156,8 +156,14 @@ SELECT story_order, chapter, description, is_flashback FROM event ORDER BY story
   ambiguity 3615,relation 悬空 0、event_participant 悬空 0;**幂等**(重导出计数不变)、
   **人工标签跨重导出存活**。据真实数据修正了 schema 两处:`relation_type` 增 `allegiance`;
   `story_order`/`narrative_order` 改 REAL(实数据用小数序保序,范围实测 -10..26)。
+- **`tools/writeback_sqlite.py` 已实现并实跑验证**(wangcai「潜伏」global 副本):把 DB 人工层
+  (`tag.source='human'` / `annotation` / 安全 `review`)**仅叠加**回 `scenes.json`(场景标签 → `s.tags`)
+  与 `characters.json`(人物标签 → 新增 `tags` 字段;标注 → `_annotations` sidecar)。
+  默认 **dry-run** 只出计划;`--apply` 才写盘,落盘前**逐文件备份** + 临时文件 `os.replace` 原子替换;
+  应用后置安全 `review.applied=1`。**结构性裁决(entity_merge/split)不自动应用**(需重新聚合,非叠加可安全完成),
+  记为 deferred 并在输出标注。实跑验证:dry-run 不动文件、apply 正确叠加+备份、**重复 apply 幂等(0 净改动)**、
+  结构裁决正确 deferred。
 - **未做(刻意留作后续功能,各需单独 PR)**:
-  - 回写器(DB 人工裁决 → 合并回 `global/*.json`,经原子提交);
   - pipeline 产出人物标签的 pass(本设计已为其预留落点);
   - 可选的跨书汇总库 / FTS5 全文检索(原文/摘要)扩展。
 
